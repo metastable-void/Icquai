@@ -15,6 +15,8 @@ Naming is done by [@MAJUKYI](https://github.com/MAJUKYI).
 
 ----
 
+![Itquai icon](icon-0.svg)
+
 WebRTC peer-to-peer ephemeral chat in text and voice calls.
 
 ## License
