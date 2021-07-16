@@ -25,6 +25,10 @@ Licensed under the GNU Affero General Public License, version 3.0 or any later v
 
 Some parts of the code may contain materials available in other compatible licenses.
 
+## Authors
+
+* 真空 ([@metastable-void](https://github.com/metastable-void)); Cofounder at Menhera.org. Twitter [@masora_m](https://twitter.com/intent/user?user_id=847315328744865793).
+
 ----
 
 ## Footnotes
