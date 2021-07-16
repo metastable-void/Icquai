@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- vim: set ts=2 sw=2 et ai :
+  Copyright (C) 2021 metastable-void.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+-->
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 256 256" style="enable-background:new 0 0 256 256;" xml:space="preserve">
+<style type="text/css">
+  .st0{fill:#3B9EA3;}
+  .st1{fill:none;stroke:#FFFFFF;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+</style>
+<ellipse class="st0" cx="139" cy="114.5" rx="96" ry="76.5"/>
+<circle class="st0" cx="65.5" cy="191.5" r="12.5"/>
+<circle class="st0" cx="45" cy="212" r="8"/>
+<polyline class="st1" points="88,80 104,96 88,112 "/>
+<line class="st1" x1="113" y1="122" x2="139" y2="122"/>
+</svg>
