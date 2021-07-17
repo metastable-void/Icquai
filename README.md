@@ -9,7 +9,10 @@ Codename | (Modern) Japanese
 ---------|-----------
 Itquai | 一会 (いっかい) /ˈiQkai/ <sup id="a1"><a href="#f1">[1]</a></sup><sup id="a2"><a href="#f2">[2]</a></sup>
 
-**Meaning:** 「一度だけ会うこと。ただ一度の対面」「しばらく。わずかな時間」
+Language | Meaning
+---------|---------
+English | Meeting just once / a moment
+Japanese | 「一度だけ会うこと。ただ一度の対面」「しばらく。わずかな時間」
 
 Naming is done by [@MAJUKYI](https://github.com/MAJUKYI).
 
