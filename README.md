@@ -5,9 +5,9 @@
 https://itquai.com/ (Work in progress)
 
 
-Codename | (Modern) Japanese
----------|-----------
-Itquai | 一会 (いっかい) /ˈiQkai/ <sup id="a1"><a href="#f1">[1]</a></sup><sup id="a2"><a href="#f2">[2]</a></sup>
+Codename | (Modern) Japanese | Late Middle Japanese
+---------|-------------------|----------------------
+Itquai | 一会 (いっかい) /ˈiQkai/ <sup id="a1"><a href="#f1">[1]</a></sup><sup id="a2"><a href="#f2">[2]</a></sup> | /iQkwai/ <sup>[?][citation needed]</sup>
 
 Language | Meaning
 ---------|---------
