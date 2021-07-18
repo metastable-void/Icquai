@@ -16,6 +16,8 @@ Japanese | 「一度だけ会うこと。ただ一度の対面」「しばらく
 
 Naming is done by [@MAJUKYI](https://github.com/MAJUKYI).
 
+Source: _Hōyaku Nippo jisho_ (1980), p.330.
+
 ----
 
 ![Icquai icon](icon-0.svg)
