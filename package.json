@@ -1,5 +1,5 @@
 {
-  "name": "itquai",
+  "name": "icquai",
   "version": "1.0.0",
   "description": "WebRTC peer-to-peer ephemeral chat in text and voice calls.",
   "main": "index.js",
@@ -8,12 +8,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/metastable-void/Itquai.git"
+    "url": "git+https://github.com/metastable-void/Icquai.git"
   },
   "author": "Menhera.org",
   "license": "AGPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/metastable-void/Itquai/issues"
+    "url": "https://github.com/metastable-void/Icquai/issues"
   },
-  "homepage": "https://github.com/metastable-void/Itquai#readme"
+  "homepage": "https://github.com/metastable-void/Icquai#readme",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "ws": "^7.5.3"
+  }
 }

@@ -1,13 +1,13 @@
-# Itquai
+# Icquai
 
 *Future of realtime communication realized.*
 
-https://itquai.com/ (Work in progress)
+https://icquai.com/ (Work in progress)
 
 
 Codename | (Modern) Japanese | Late Middle Japanese
 ---------|-------------------|----------------------
-Itquai | 一会 (いっかい) /ˈiQkai/ <sup id="a1"><a href="#f1">[1]</a></sup><sup id="a2"><a href="#f2">[2]</a></sup> | /iQkwai/ <sup>[?][citation needed]</sup>
+Icquai | 一会 (いっかい) /ˈiQkai/ <sup id="a1"><a href="#f1">[1]</a></sup><sup id="a2"><a href="#f2">[2]</a></sup> | /iQkwai/ <sup>[?][citation needed]</sup>
 
 Language | Meaning
 ---------|---------
@@ -18,7 +18,7 @@ Naming is done by [@MAJUKYI](https://github.com/MAJUKYI).
 
 ----
 
-![Itquai icon](icon-0.svg)
+![Icquai icon](icon-0.svg)
 
 WebRTC peer-to-peer ephemeral chat in text and voice calls.
 
