@@ -62,6 +62,8 @@ wss.on('connection', (ws, req) => {
   });
 });
 
+app.use(express.static('client/dist'));
+
 server.listen(PORT, () => {
   console.log('Icquai server listening on port ' + PORT);
 });
