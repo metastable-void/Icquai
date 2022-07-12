@@ -89,6 +89,10 @@
   z-index: 1;
 }
 
+#drawer-main-header-content {
+  display: grid;
+}
+
 #drawer-main-content {
   grid-row: content-start / content-end;
   grid-column: content-start / content-end;
