@@ -125,6 +125,7 @@
   word-wrap: normal;
   direction: ltr;
   -moz-font-feature-settings: 'liga';
+  font-feature-settings: 'liga';
   -moz-osx-font-smoothing: grayscale;
 }
 /* Material Icons end */
@@ -177,7 +178,7 @@ body {
 .header-headding {
   display: grid;
   padding-inline: 1rem;
-  font-size: 1.5rem !important;
+  font-size: 1.5rem;
   margin: 0;
   align-content: center;
 }

@@ -142,7 +142,7 @@
 
 .header-button {
   display: grid;
-  font-size: 2rem;
+  font-size: 2rem !important;
   inline-size: 3rem;
   min-block-size: 3rem;
   overflow: hidden;
