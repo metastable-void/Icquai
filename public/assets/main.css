@@ -189,4 +189,9 @@ body {
   margin: 0;
   align-content: center;
   justify-content: start;
+  grid-template-columns: max-content 1fr;
+}
+
+.drawer-logo > img {
+  inline-size: 2rem;
 }
