@@ -66,7 +66,7 @@ const renderDrawer = (isOpen, mainContent, drawerContent, mainHeader, drawerHead
       ], [
         EH.button([
           EA.id('drawer-open-button'),
-          EP.classes(['material-icons']),
+          EP.classes(['material-icons', 'header-button']),
           EA.eventListener('click', (ev) => {
             openDrawer.dispatch(null);
           }),
@@ -102,7 +102,7 @@ const renderDrawer = (isOpen, mainContent, drawerContent, mainHeader, drawerHead
         ], [
           EH.button([
             EA.id('drawer-close-button'),
-            EP.classes(['material-icons']),
+            EP.classes(['material-icons', 'header-button']),
             EA.eventListener('click', (ev) => {
               closeDrawer.dispatch(null);
             }),
