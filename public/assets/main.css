@@ -129,6 +129,41 @@
 }
 /* Material Icons end */
 
+body, input, textarea, button, select {
+  font: inherit;
+  border-radius: 0;
+}
+
+input[type="text"] {
+  -moz-user-select: text;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+pre {
+  white-space: pre-wrap;
+}
+
+a {
+  text-decoration: none;
+  color: var(--theme-accent-color);
+}
+
+details, summary {
+  outline: none;
+}
+
+::selection {
+  background-color: var(--theme-selection-background-color);
+}
+
+.not-displayed {
+  display: none;
+}
+
+.transparent {
+  opacity: 0;
+}
 
 body {
   margin: 0;
