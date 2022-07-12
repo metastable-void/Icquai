@@ -23,14 +23,72 @@
 @namespace url(http://www.w3.org/1999/xhtml);
 @namespace svg url(http://www.w3.org/2000/svg);
 
+
 :root {
-  --theme-background-color: #eee;
-  --theme-text-color: #333;
-  --theme-input-background-color: #fff;
-  --theme-shadow-color: rgba(0, 0, 0, .75);
-  --theme-overlay-color: rgba(0, 0, 0, .5);
+  --theme-main-font: system-ui, -apple-system, sans-serif;
   --theme-accent-color: #5eaf30;
+  --theme-selection-background-color: rgba(94, 175, 48, .5);
   --theme-highlighted-text-color: #fff;
+  --theme-highlighted-active-color: rgba(0, 0, 0, .25);
+
+  /* light theme */
+  --theme-light-text-color: #333;
+  --theme-light-background-color: #eee;
+  --theme-light-overlay-color: rgba(127, 127, 127, .5);
+  --theme-light-inverted-text-color: #fff;
+  --theme-light-input-background-color: #fff;
+  --theme-light-secondary-text-color: #ccc;
+  --theme-light-input-border-color: #aaa;
+  --theme-light-disabled-text-color: #888;
+  --theme-light-border-color: #ccc;
+  --theme-light-label-text-color: #888;
+  --theme-light-shadow-color: rgba(0, 0, 0, .5);
+
+  /* dark theme */
+  --theme-dark-text-color: #eee;
+  --theme-dark-background-color: #000;
+  --theme-dark-overlay-color: rgba(0, 0, 0, .5);
+  --theme-dark-inverted-text-color: #000;
+  --theme-dark-input-background-color: #333;
+  --theme-dark-secondary-text-color: #666;
+  --theme-dark-input-border-color: #888;
+  --theme-dark-disabled-text-color: #888;
+  --theme-dark-border-color: #666;
+  --theme-dark-label-text-color: #999;
+  --theme-dark-shadow-color: rgba(255, 255, 255, .75);
+
+  --theme-main-text-color: var(--theme-light-text-color);
+  --theme-main-background-color: var(--theme-light-background-color);
+  --theme-inverted-text-color: var(--theme-light-inverted-text-color);
+  --theme-input-background-color: var(--theme-light-input-background-color);
+  --theme-input-border-color: var(--theme-light-input-border-color);
+  --theme-secondary-text-color: var(--theme-light-secondary-text-color);
+  --theme-disabled-text-color: var(--theme-light-disabled-text-color);
+  --theme-border-color: var(--theme-light-border-color);
+  --theme-label-text-color: var(--theme-light-label-text-color);
+  --theme-overlay-color: var(--theme-dark-overlay-color);
+  --theme-shadow-color: var(--theme-light-shadow-color);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+      --theme-main-text-color: var(--theme-dark-text-color);
+      --theme-main-background-color: var(--theme-dark-background-color);
+      --theme-inverted-text-color: var(--theme-dark-inverted-text-color);
+      --theme-input-background-color: var(--theme-dark-input-background-color);
+      --theme-input-border-color: var(--theme-dark-input-border-color);
+      --theme-secondary-text-color: var(--theme-dark-secondary-text-color);
+      --theme-disabled-text-color: var(--theme-dark-disabled-text-color);
+      --theme-border-color: var(--theme-dark-border-color);
+      --theme-label-text-color: var(--theme-dark-label-text-color);
+      --theme-overlay-color: var(--theme-light-overlay-color);
+      --theme-shadow-color: var(--theme-dark-shadow-color);
+  }
+}
+
+:root {
+  --theme-background-color: var(--theme-main-background-color);
+  --theme-text-color: var(--theme-main-text-color);
   font-family: var(--theme-main-font);
   font-size: 100%;
   display: grid;
