@@ -3,10 +3,8 @@
 <svg version="1.0" id="レイヤー_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
 	 y="0px" viewBox="0 0 256 256" style="enable-background:new 0 0 256 256;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill:none;stroke:#FFFFFF;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st0{fill:none;stroke:#FFFFFF;stroke-width:32;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
 </style>
-<g>
-	<polyline class="st0" points="32,48.9 92.2,109.2 32,169.4 	"/>
-	<line class="st0" x1="126.1" y1="207.1" x2="224" y2="207.1"/>
-</g>
+<polyline class="st0" points="32,48.9 92.2,109.2 32,169.4 "/>
+<line class="st0" x1="126.1" y1="207.1" x2="224" y2="207.1"/>
 </svg>
