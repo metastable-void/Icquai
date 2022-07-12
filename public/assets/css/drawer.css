@@ -136,7 +136,7 @@
   overflow: auto;
 }
 
-#drawer-open-button, #drawer-close-button {
+.header-button {
   display: grid;
   font-size: 2rem;
   inline-size: 3rem;
