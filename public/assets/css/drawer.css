@@ -134,6 +134,10 @@
   color: var(--theme-highlighted-text-color);
 }
 
+#drawer-inner-header-content {
+  display: grid;
+}
+
 #drawer-inner-content {
   grid-column: content-start / content-end;
   grid-row: content-start / content-end;
