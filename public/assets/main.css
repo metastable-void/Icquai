@@ -173,3 +173,11 @@ body {
 #container {
   display: grid;
 }
+
+.header-headding {
+  display: grid;
+  padding-inline: 1rem;
+  font-size: 1.5rem;
+  margin: 0;
+  align-content: center;
+}

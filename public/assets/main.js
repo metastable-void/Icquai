@@ -130,7 +130,7 @@ store.render(containerElement, (state) => {
   //
   const mainContent = EH.div([], [EH.text('Main content')]);
   const drawerContent = EH.div([], [EH.text('Drawer content')]);
-  const mainHeader = EH.h2([], [EH.text('Home')]);
+  const mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('Home')]);
   const drawerHeader = EH.h2([], [EH.text('Icquai')]);
   return renderDrawer(state.drawerIsOpen, mainContent, drawerContent, mainHeader, drawerHeader);
 });
