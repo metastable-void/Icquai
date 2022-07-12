@@ -21,4 +21,116 @@
 
 import "./lib/noble-ed25519.js";
 import "./lib/es-first-aid.js";
-import {LocalStorageData, Eternity, HtmlView as EH, ViewProperty as EP} from "./lib/Eternity.js";
+import {LocalStorageData, Eternity, HtmlView as EH, ViewProperty as EP, ViewAttribute as EA} from "./lib/Eternity.js";
+
+const ed = nobleEd25519;
+
+const containerElement = document.querySelector('#container');
+
+const app = new Eternity;
+const store = app.getStore("store", (state) => {
+  const drawerIsOpen = "drawerIsOpen" in state ? state.drawerIsOpen : false;
+  return {
+    ... state,
+    drawerIsOpen,
+  };
+});
+
+const openDrawer = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, "open_drawer");
+const closeDrawer = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, "close_drawer");
+
+store.subscribe(openDrawer, (state, _action) => {
+  return {
+    ... state,
+    drawerIsOpen: true,
+  };
+});
+
+store.subscribe(closeDrawer, (state, _action) => {
+  return {
+    ... state,
+    drawerIsOpen: false,
+  };
+});
+
+const renderDrawer = (isOpen, mainContent, drawerContent, mainHeader, drawerHeader) => {
+  return EH.div([
+    EA.id('drawer-wrapper'),
+    EP.classes([isOpen ? 'drawer-open' : 'drawer-closed']),
+  ], [
+    EH.div([
+      EA.id('drawer-main'),
+    ], [
+      EH.div([
+        EA.id('drawer-main-header'),
+      ], [
+        EH.button([
+          EA.id('drawer-open-button'),
+          EP.classes(['material-icons']),
+          EA.eventListener('click', (ev) => {
+            openDrawer.dispatch(null);
+          }),
+        ], [
+          EH.text('menu'),
+        ]),
+        EH.div([
+          EA.id('drawer-main-header-content'),
+        ], [
+          mainHeader,
+        ]),
+      ]),
+      EH.div([
+        EA.id('drawer-main-content'),
+      ], [
+        mainContent,
+      ]),
+    ]),
+    EH.div([
+      EA.id('drawer-backdrop'),
+      EA.eventListener('click', (ev) => {
+        closeDrawer.dispatch(null);
+      }),
+    ], []),
+    EH.div([
+      EA.id('drawer'),
+    ], [
+      EH.div([
+        EA.id('drawer-inner'),
+      ], [
+        EH.div([
+          EA.id('drawer-inner-header'),
+        ], [
+          EH.button([
+            EA.id('drawer-close-button'),
+            EP.classes(['material-icons']),
+            EA.eventListener('click', (ev) => {
+              closeDrawer.dispatch(null);
+            }),
+          ], [
+            EH.text('arrow_back'),
+          ]),
+          EH.div([
+            EA.id('drawer-inner-header-content'),
+          ], [
+            drawerHeader,
+          ]),
+          //
+        ]),
+        EH.div([
+          EA.id('drawer-inner-content'),
+        ], [
+          drawerContent,
+        ]),
+      ]),
+    ]),
+  ]);
+};
+
+store.render(containerElement, (state) => {
+  //
+  const mainContent = EH.div([], [EH.text('Main content')]);
+  const drawerContent = EH.div([], [EH.text('Drawer content')]);
+  const mainHeader = EH.h2([], [EH.text('Home')]);
+  const drawerHeader = EH.h2([], [EH.text('Icquai')]);
+  return renderDrawer(state.drawerIsOpen, mainContent, drawerContent, mainHeader, drawerHeader);
+});
