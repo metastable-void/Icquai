@@ -31,4 +31,26 @@
   --theme-overlay-color: rgba(0, 0, 0, .5);
   --theme-accent-color: #5eaf30;
   --theme-highlighted-text-color: #fff;
+  font-family: var(--theme-main-font);
+  font-size: 100%;
+  display: grid;
+  min-width: 100%;
+  min-height: 100%;
+  font-synthesis: none;
+  background-color: var(--theme-accent-color);
+  color: var(--theme-text-color);
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  font-kerning: normal;
+  caret-color: var(--theme-accent-color);
+}
+
+body {
+  margin: 0;
+  display: grid;
+}
+
+#container {
+  display: grid;
 }
