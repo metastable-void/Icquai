@@ -19,3 +19,6 @@
   @file
 */
 
+import "./lib/noble-ed25519.js";
+import "./lib/es-first-aid.js";
+import {LocalStorageData, Eternity, HtmlView as EH, ViewProperty as EP} from "./lib/Eternity.js";
