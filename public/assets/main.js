@@ -30,9 +30,11 @@ const containerElement = document.querySelector('#container');
 const app = new Eternity;
 const store = app.getStore("store", (state) => {
   const drawerIsOpen = "drawerIsOpen" in state ? state.drawerIsOpen : false;
+  const title = "title" in state ? state.title : 'Icquai';
   return {
     ... state,
     drawerIsOpen,
+    title,
   };
 });
 
@@ -51,6 +53,10 @@ store.subscribe(closeDrawer, (state, _action) => {
     ... state,
     drawerIsOpen: false,
   };
+});
+
+store.observe((state) => {
+  document.title = state.title;
 });
 
 const renderDrawer = (isOpen, mainContent, drawerContent, mainHeader, drawerHeader) => {
