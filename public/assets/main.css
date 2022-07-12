@@ -18,3 +18,17 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+@charset "UTF-8";
+@import url(./css/drawer.css);
+@namespace url(http://www.w3.org/1999/xhtml);
+@namespace svg url(http://www.w3.org/2000/svg);
+
+:root {
+  --theme-background-color: #eee;
+  --theme-text-color: #333;
+  --theme-input-background-color: #fff;
+  --theme-shadow-color: rgba(0, 0, 0, .75);
+  --theme-overlay-color: rgba(0, 0, 0, .5);
+  --theme-accent-color: #5eaf30;
+  --theme-highlighted-text-color: #fff;
+}

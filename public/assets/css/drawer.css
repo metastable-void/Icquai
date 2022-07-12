@@ -1,0 +1,153 @@
+/* -*- indent-tabs-mode: nil; tab-width: 2; -*- */
+/* vim: set ts=2 sw=2 et ai : */
+/*
+  Icquai: WebRTC peer-to-peer ephemeral chat in text and voice calls.
+  Copyright (C) 2022. metastable-void and Menhera.org developers.
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+@charset "UTF-8";
+@namespace url(http://www.w3.org/1999/xhtml);
+@namespace svg url(http://www.w3.org/2000/svg);
+
+
+#drawer-wrapper {
+  display: grid;
+  margin: 0;
+  grid-template-rows: [viewport-start content-start] auto [content-end viewport-end];
+  grid-template-columns: [viewport-start drawer-start content-start] max-content [drawer-end] 1fr [content-end viewport-end];
+  transition: opacity linear .5s;
+  background-color: var(--theme-background-color);
+  color: var(--theme-text-color);
+}
+
+@media (min-width: 35rem) {
+  #drawer-wrapper {
+    grid-template-columns: [drawer-start] max-content [drawer-end content-start] 1fr [content-end];
+  }
+  #drawer-backdrop {
+    visibility: hidden;
+  }
+}
+
+#drawer {
+  grid-row: 1 / -1;
+  grid-column: drawer-start / drawer-end;
+  inline-size: 80vmin;
+  max-inline-size: 15rem;
+  transition: all .25s ease;
+  z-index: 11;
+  background-color: var(--theme-input-background-color);
+  box-shadow: 0 0 .5rem var(--theme-shadow-color);
+  overflow: hidden;
+  opacity: 1;
+  position: relative;
+  display: grid;
+}
+
+#drawer-inner {
+  display: grid;
+  inline-size: 80vmin;
+  max-inline-size: 15rem;
+  grid-template-columns: [content-start] 1fr [content-end];
+  grid-template-rows: [header-start] max-content [header-end content-start] 1fr [end];
+}
+
+#drawer-main {
+  grid-column: content-start / content-end;
+  grid-row: content-start / content-end;
+  display: grid;
+  grid-template-rows: [header-start] max-content [header-end content-start] 1fr [content-end];
+  grid-template-columns: [content-start] 1fr [content-end];
+}
+
+#drawer-main-header {
+  grid-row: header-start / header-end;
+  grid-column: content-start / content-end;
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  background-color: var(--theme-accent-color);
+  color: var(--theme-highlighted-text-color);
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  inline-size: 100%;
+  z-index: 1;
+}
+
+#drawer-main-content {
+  grid-row: content-start / content-end;
+  grid-column: content-start / content-end;
+}
+
+#drawer-backdrop {
+  grid-row: 1 / -1;
+  grid-column: 1 / -1;
+  z-index: 10;
+  background-color: var(--theme-overlay-color);
+  -webkit-backdrop-filter: blur(.5rem);
+  backdrop-filter: blur(.5rem);
+  opacity: 1;
+  transition: opacity .25s ease-in;
+}
+
+.drawer-collapsed #drawer {
+  inline-size: 0;
+  opacity: 0;
+}
+
+.drawer-collapsed #drawer-backdrop {
+  visibility: hidden;
+  opacity: 0;
+}
+
+#drawer-inner-header {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  grid-column: content-start / content-end;
+  grid-row: header-start / header-end;
+  inline-size: 100%;
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  background-color: var(--theme-accent-color);
+  color: var(--theme-highlighted-text-color);
+}
+
+#drawer-inner-content {
+  grid-column: content-start / content-end;
+  grid-row: content-start / content-end;
+  overflow: auto;
+}
+
+#drawer-open-button, #drawer-close-button {
+  display: grid;
+  font-size: 2rem;
+  inline-size: 3rem;
+  block-size: 3rem;
+  overflow: hidden;
+  align-content: center;
+  justify-content: center;
+  appearance: none;
+  border: none;
+  background-color: transparent;
+  margin: 0;
+  padding: 0;
+  color: inherit;
+}

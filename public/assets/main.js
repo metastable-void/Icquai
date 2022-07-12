@@ -56,7 +56,7 @@ store.subscribe(closeDrawer, (state, _action) => {
 const renderDrawer = (isOpen, mainContent, drawerContent, mainHeader, drawerHeader) => {
   return EH.div([
     EA.id('drawer-wrapper'),
-    EP.classes([isOpen ? 'drawer-open' : 'drawer-closed']),
+    EP.classes([isOpen ? 'drawer-open' : 'drawer-collapsed']),
   ], [
     EH.div([
       EA.id('drawer-main'),
