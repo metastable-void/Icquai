@@ -182,3 +182,11 @@ body {
   margin: 0;
   align-content: center;
 }
+
+.drawer-logo {
+  display: grid;
+  padding-inline: 1rem;
+  margin: 0;
+  align-content: center;
+  justify-content: start;
+}
