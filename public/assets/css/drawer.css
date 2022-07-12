@@ -129,7 +129,7 @@
   grid-row: header-start / header-end;
   inline-size: 100%;
   display: grid;
-  grid-template-columns: max-content 1fr;
+  /*grid-template-columns: max-content 1fr;*/
   background-color: var(--theme-accent-color);
   color: var(--theme-highlighted-text-color);
 }

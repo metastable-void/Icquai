@@ -185,7 +185,7 @@ body {
 
 .drawer-logo {
   display: grid;
-  padding-inline: 1rem;
+  padding: 1rem;
   margin: 0;
   align-content: center;
   justify-content: start;
@@ -194,5 +194,5 @@ body {
 }
 
 .drawer-logo > img {
-  inline-size: 2rem;
+  inline-size: 4rem;
 }
