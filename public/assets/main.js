@@ -176,24 +176,24 @@ const store = app.getStore("store", (state) => {
   return {
     ... state,
     online: navigator.onLine,
-    wlOpen: false,
+    webSocketIsOpen: false,
     drawerIsOpen,
     title,
     headingText,
   };
 });
 
-store.subscribe(wlOpen, (state, _action) => {
+store.subscribe(wsOpen, (state, _action) => {
   return {
     ... state,
-    wlOpen: true,
+    webSocketIsOpen: true,
   };
 });
 
 store.subscribe(wsClosed, (state, _action) => {
   return {
     ... state,
-    wlOpen: false,
+    webSocketIsOpen: false,
   };
 });
 
