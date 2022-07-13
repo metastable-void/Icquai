@@ -25,16 +25,20 @@ import {LocalStorageData, Eternity, HtmlView as EH, ViewProperty as EP, ViewAttr
 
 const ed = nobleEd25519;
 
+const privateKeyStore = new LocalStorageData('icquai.private_key', () => firstAid.encodeBase64(ed.utils.randomPrivateKey()));
+
 const containerElement = document.querySelector('#container');
 
 const app = new Eternity;
 const store = app.getStore("store", (state) => {
   const drawerIsOpen = "drawerIsOpen" in state ? state.drawerIsOpen : false;
   const title = "title" in state ? state.title : 'Icquai';
+  const headingText = "headingText" in state ? state.headingText : 'Home';
   return {
     ... state,
     drawerIsOpen,
     title,
+    headingText,
   };
 });
 
@@ -136,7 +140,7 @@ store.render(containerElement, (state) => {
   //
   const mainContent = EH.div([], [EH.text('Main content')]);
   const drawerContent = EH.div([], [EH.text('Drawer content')]);
-  const mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('Home')]);
+  const mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text(state.headingText)]);
   const drawerHeader = EH.h2([EP.classes(['drawer-logo'])], [
     EH.img([EP.attribute('src', '/assets/img/logo.svg')]),
     EH.text('Icquai'),
