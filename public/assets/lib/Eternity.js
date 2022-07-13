@@ -1265,6 +1265,8 @@ class Topic {
 
 export class Eternity {
   #instanceId;
+  #sessionId;
+  #clientId;
 
   static get TOPIC_SCOPE_CLIENT() {
     return TOPIC_SCOPE_CLIENT;
@@ -1280,14 +1282,16 @@ export class Eternity {
 
   constructor() {
     this.#instanceId = firstAid.getRandomUuid();
+    this.#sessionId = getSessionId();
+    this.#clientId = getClientId();
   }
 
   get clientId() {
-    return getClientId();
+    return this.#clientId;
   }
 
   get sessionId() {
-    return getSessionId();
+    return this.#sessionId;
   }
 
   get instanceId() {
