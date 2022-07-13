@@ -22,23 +22,192 @@
 import "./lib/noble-ed25519.js";
 import "./lib/es-first-aid.js";
 import {LocalStorageData, Eternity, HtmlView as EH, ViewProperty as EP, ViewAttribute as EA} from "./lib/Eternity.js";
+import { sha256 } from "./lib/crypto.js";
 
 const ed = nobleEd25519;
 
 const privateKeyStore = new LocalStorageData('icquai.private_key', () => firstAid.encodeBase64(ed.utils.randomPrivateKey()));
 
+const getMyKeys = async () => {
+  const base64PrivateKey = privateKeyStore.getValue();
+  const privateKey = firstAid.decodeBase64(base64PrivateKey);
+
+  /**
+   * @type {Uint8Array}
+   */
+  const publicKey = await ed.getPublicKey(privateKey);
+
+  const sha256Fingerprint = await sha256(publicKey);
+
+  return {
+    publicKey,
+    privateKey,
+    sha256Fingerprint,
+  };
+};
+
 const containerElement = document.querySelector('#container');
 
 const app = new Eternity;
+
+
+// global topics
+
+const wsOpen = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ws.open');
+const wsClosed = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ws.closed');
+const wsMessageReceived = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ws.message.received');
+const becomingOnline = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'network.online');
+const becomingOffline = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'network.offline');
+const becomingVisible = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'page.visible');
+const becomingHidden = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'page.hidden');
+
+
+// global event listeners
+
+document.addEventListener('visibilitychange', ev => {
+  if (!document.hidden) {
+    becomingVisible.dispatch(null);
+  } else {
+    becomingHidden.dispatch(null);
+  }
+});
+
+window.addEventListener('online', ev => {
+  becomingOnline.dispatch(null);
+});
+
+window.addEventListener('offline', ev => {
+  becomingOffline.dispatch(null);
+});
+
+
+/**
+ * @type {WebSocket?}
+ * */
+ let ws = null;
+
+ let wsUrl = `wss://${location.host}/ws`;
+
+ const wsCallbacks = [];
+ const waitForWs = () => new Promise((res) => {
+  if (ws && ws.readyState == ws.OPEN) {
+    res(ws);
+  }
+  wsCallbacks.push(res);
+ });
+
+ const openSocket = (force) => {
+  if (!ws || ws.readyState == WebSocket.CLOSED || ws.readyState == WebSocket.CLOSING || force) {
+      if (ws && ws.readyState == WebSocket.OPEN) {
+          ws.close();
+      }
+
+      ws = new WebSocket(String(wsUrl));
+      
+      ws.addEventListener('open', ev => {
+          console.log('ws: open');
+          (async () => {
+            const keys = await getMyKeys();
+            const message = {
+              type: "register",
+            };
+            const json = JSON.stringify(message);
+            const data = firstAid.encodeString(json);
+            const signature = await ed.sign(data, keys.privateKey);
+            const signedMessage = {
+              type: 'signed_envelope',
+              algo: 'sign-ed25519',
+              data: firstAid.encodeBase64(data),
+              public_key: firstAid.encodeBase64(keys.publicKey),
+              signature: firstAid.encodeBase64(signature),
+            };
+            const registerMsg = JSON.stringify(signedMessage);
+            ws.send(registerMsg);
+
+            wsOpen.dispatch(ws);
+            for (const callback of wsCallbacks) {
+              callback(ws);
+            }
+            wsCallbacks.length = 0; // clear the array
+          })();
+      });
+      ws.addEventListener('close', ev => {
+          console.log('ws: close');
+          wsClosed.dispatch(null);
+          setTimeout(() => {
+              if (document.hidden || !navigator.onLine) return;
+              console.log('Trying reconnection...');
+              openSocket();
+          }, 50);
+      });
+
+      ws.addEventListener('message', ev => {
+          if (ev.target.readyState != WebSocket.OPEN) return;
+          if (ws != ev.target) return;
+          wsMessageReceived.dispatch(ev.data);
+      });
+  }
+};
+
+becomingHidden.addListener(() => {
+  // This is the last place to do something reliably.
+  console.log('Page is now hidden!');
+  // navigator.sendBeacon('/log', analyticsData);
+});
+
+becomingVisible.addListener(() => {
+  console.log('Page is now visible!');
+  openSocket();
+})
+
+becomingOnline.addListener(() => {
+  console.log('Becoming online, reconnecting...');
+  openSocket();
+});
+
+becomingOffline.addListener(() => {
+  console.log('Becoming offline');
+});
+
 const store = app.getStore("store", (state) => {
   const drawerIsOpen = "drawerIsOpen" in state ? state.drawerIsOpen : false;
   const title = "title" in state ? state.title : 'Icquai';
   const headingText = "headingText" in state ? state.headingText : 'Home';
   return {
     ... state,
+    online: navigator.onLine,
+    wlOpen: false,
     drawerIsOpen,
     title,
     headingText,
+  };
+});
+
+store.subscribe(wlOpen, (state, _action) => {
+  return {
+    ... state,
+    wlOpen: true,
+  };
+});
+
+store.subscribe(wsClosed, (state, _action) => {
+  return {
+    ... state,
+    wlOpen: false,
+  };
+});
+
+store.subscribe(becomingOnline, (state, _action) => {
+  return {
+    ... state,
+    online: true,
+  };
+});
+
+store.subscribe(becomingOffline, (state, _action) => {
+  return {
+    ... state,
+    online: false,
   };
 });
 
@@ -146,4 +315,9 @@ store.render(containerElement, (state) => {
     EH.text('Icquai'),
   ]);
   return renderDrawer(state.drawerIsOpen, mainContent, drawerContent, mainHeader, drawerHeader);
+});
+
+
+document.addEventListener('dblclick', ev => {
+  ev.preventDefault();
 });

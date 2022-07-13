@@ -41,12 +41,30 @@ const TOPIC_SCOPES = new Set([
  * @param callback {function}
  * @param args {any[]}
  */
- const callAsync = (callback, ... args) => {
-  Promise.resolve()
-  .then(() => callback(... args))
-  .catch(e => console.error(e));
+const callTruelyAsync = (callback, ... args) => 
+  new Promise((res) => setTimeout(res, 0)).then(() => callback(... args));
+
+/**
+ * 
+ * @param callback {function}
+ * @param args {any[]}
+ */
+const callMaybeAsync = (callback, ... args) => {
+  try {
+    return Promise.resolve(callback(... args));
+  } catch (e) {
+    return Promise.reject(e);
+  }
 };
 
+/**
+ * 
+ * @param callback {function}
+ * @param args {any[]}
+ */
+const callMaybeAsyncIgnoringError = (callback, ... args) => {
+  callMaybeAsync(callback, ... args).catch((e) => console.error(e));
+};
 
 let clientIdCache = null;
 
@@ -1119,7 +1137,7 @@ class Store {
           console.error('Error writing sessionStorage:', e);
         }
         for (const observer of this.#observers) {
-          callAsync(observer, this.state);
+          callMaybeAsyncIgnoringError(observer, this.state);
         }
       } catch (e) {
         console.error('Error calling reducer:', e);
@@ -1147,7 +1165,7 @@ class Store {
       throw new TypeError('Observer must be a function');
     }
     this.#observers.add(observer);
-    callAsync(observer, this.state);
+    callMaybeAsyncIgnoringError(observer, this.state);
   }
 
   unobserve(observer) {
@@ -1240,7 +1258,7 @@ class Topic {
       throw new TypeError('Listener must be a function');
     }
     const eventHandler = (ev) => {
-      callAsync(listener, ev.data);
+      callMaybeAsyncIgnoringError(listener, ev.data);
     };
     this.#listenerMap.set(listener, eventHandler);
     this.#broadcastChannel.addEventListener('message', eventHandler);
@@ -1349,7 +1367,7 @@ export class LocalStorageData {
         JSON.parse(newValue); // test if throws
         this.#data = newValue;
         for (const observer of this.#observers) {
-          callAsync(observer, this.getValue());
+          callMaybeAsyncIgnoringError(observer, this.getValue());
         }
       } catch (e) {
         console.error(e);
@@ -1381,7 +1399,7 @@ export class LocalStorageData {
       console.error(e);
     }
     for (const observer of this.#observers) {
-      callAsync(observer, this.getValue());
+      callMaybeAsyncIgnoringError(observer, this.getValue());
     }
   }
 
@@ -1390,7 +1408,7 @@ export class LocalStorageData {
       throw new TypeError('Observer must be a function');
     }
     this.#observers.add(aObserver);
-    callAsync(aObserver, this.getValue());
+    callMaybeAsyncIgnoringError(aObserver, this.getValue());
   }
 
   unobserve(aObserver) {
