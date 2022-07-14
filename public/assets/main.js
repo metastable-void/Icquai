@@ -61,9 +61,14 @@ const becomingOnline = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'network.onlin
 const becomingOffline = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'network.offline');
 const becomingVisible = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'page.visible');
 const becomingHidden = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'page.hidden');
+const becomingInteractive = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'page.interactive');
 
 
 // global event listeners
+
+document.addEventListener('DOMContentLoaded', ev => {
+  becomingInteractive.dispatch(null);
+});
 
 document.addEventListener('visibilitychange', ev => {
   if (!document.hidden) {
@@ -202,6 +207,11 @@ becomingOnline.addListener(() => {
 becomingOffline.addListener(() => {
   console.log('Becoming offline');
 });
+
+becomingInteractive.addListener(() => {
+  console.log('Becoming interactive');
+  openSocket();
+})
 
 const store = app.getStore("store", (state) => {
   const drawerIsOpen = "drawerIsOpen" in state ? state.drawerIsOpen : false;
