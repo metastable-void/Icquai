@@ -142,7 +142,7 @@ window.addEventListener('offline', ev => {
               };
               const messageJson = JSON.stringify(message);
               ws.send(messageJson);
-            }, 10000);
+            }, 15000);
           })();
       });
       ws.addEventListener('close', ev => {
