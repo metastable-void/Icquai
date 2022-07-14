@@ -232,6 +232,10 @@ wsMessageReceived.addListener((json) => {
         wsRegistered.dispatch(null);
         break;
       }
+      case 'bounce': {
+        console.warn('Message sent to %s bounced', message.recipient);
+        break;
+      }
     }
   } catch (e) {
     console.error(e);
