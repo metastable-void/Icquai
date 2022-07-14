@@ -149,6 +149,23 @@ window.addEventListener('offline', ev => {
   }
 };
 
+const wsSendMessage = async (message) => {
+  //
+  const keys = await getMyKeys();
+  const json = JSON.stringify(message);
+  const data = firstAid.encodeString(json);
+  const signature = await ed.sign(data, keys.privateKey);
+  const signedMessage = {
+    type: 'signed_envelope',
+    algo: 'sign-ed25519',
+    data: firstAid.encodeBase64(data),
+    public_key: firstAid.encodeBase64(keys.publicKey),
+    signature: firstAid.encodeBase64(signature),
+  };
+  const signedJson = JSON.stringify(signedMessage);
+  ws.send(signedJson);
+};
+
 becomingHidden.addListener(() => {
   // This is the last place to do something reliably.
   console.log('Page is now hidden!');
