@@ -221,7 +221,7 @@ body {
 }
 
 #connection-status.connection-connecting > div:nth-of-type(1) {
-  color: #a29200;
+  color: #f0ad00;
 }
 
 #connection-status.connection-connected > div:nth-of-type(1) {
