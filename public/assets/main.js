@@ -108,6 +108,8 @@ window.addEventListener('offline', ev => {
       }
 
       ws = new WebSocket(String(wsUrl));
+
+      let keepAliveInterval;
       
       ws.addEventListener('open', ev => {
           console.log('ws: open');
@@ -134,10 +136,18 @@ window.addEventListener('offline', ev => {
               callback(ws);
             }
             wsCallbacks.length = 0; // clear the array
+            keepAliveInterval = setInterval(() => {
+              const message = {
+                type: "keep_alive",
+              };
+              const messageJson = JSON.stringify(message);
+              ws.send(messageJson);
+            }, 10000);
           })();
       });
       ws.addEventListener('close', ev => {
           console.log('ws: close');
+          clearInterval(keepAliveInterval);
           wsClosed.dispatch(null);
           setTimeout(() => {
               if (document.hidden || !navigator.onLine) return;
