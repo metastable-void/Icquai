@@ -89,6 +89,11 @@ window.addEventListener('offline', ev => {
  let wsUrl = `wss://${location.host}/ws`;
 
  const wsCallbacks = [];
+
+ /**
+  * 
+  * @returns {Promise<WebSocket}
+  */
  const waitForWs = () => new Promise((res) => {
   if (ws && ws.readyState == ws.OPEN) {
     res(ws);
@@ -150,7 +155,7 @@ window.addEventListener('offline', ev => {
 };
 
 const wsSendMessage = async (message) => {
-  //
+  const ws = await waitForWs();
   const keys = await getMyKeys();
   const json = JSON.stringify(message);
   const data = firstAid.encodeString(json);
