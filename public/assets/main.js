@@ -54,6 +54,7 @@ const app = new Eternity;
 // global topics
 
 const wsOpen = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ws.open');
+const wsConnecting = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ws.connecting');
 const wsClosed = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ws.closed');
 const wsMessageReceived = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ws.message.received');
 const becomingOnline = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'network.online');
@@ -109,6 +110,7 @@ window.addEventListener('offline', ev => {
 
       ws = new WebSocket(String(wsUrl));
 
+      wsConnecting.dispatch(null);
       let keepAliveInterval;
       
       ws.addEventListener('open', ev => {
@@ -209,6 +211,7 @@ const store = app.getStore("store", (state) => {
     ... state,
     online: navigator.onLine,
     webSocketIsOpen: false,
+    webSocketStatus: 'CLOSED',
     drawerIsOpen,
     title,
     headingText,
@@ -219,6 +222,14 @@ store.subscribe(wsOpen, (state, _action) => {
   return {
     ... state,
     webSocketIsOpen: true,
+    webSocketStatus: 'OPEN',
+  };
+});
+
+store.subscribe(wsConnecting, (state, _action) => {
+  return {
+    ... state,
+    webSocketStatus: 'CONNECTING',
   };
 });
 
@@ -226,6 +237,7 @@ store.subscribe(wsClosed, (state, _action) => {
   return {
     ... state,
     webSocketIsOpen: false,
+    webSocketStatus: 'CLOSED',
   };
 });
 
@@ -340,7 +352,33 @@ const renderDrawer = (isOpen, mainContent, drawerContent, mainHeader, drawerHead
 store.render(containerElement, (state) => {
   //
   const mainContent = EH.div([], [EH.text('Main content')]);
-  const drawerContent = EH.div([], [EH.text('Drawer content')]);
+  let connectionStatus;
+  if (!state.online) {
+    connectionStatus = EH.div([EA.id('connection-status'), EP.classes(['connection-offline'])], [
+      EH.div([EP.classes(['material-icons'])], [EH.text('circle')]),
+      EH.div([], [EH.text('Offline')]),
+    ]);
+  } else if ('CLOSED' == state.webSocketStatus) {
+    connectionStatus = EH.div([EA.id('connection-status'), EP.classes(['connection-closed'])], [
+      EH.div([EP.classes(['material-icons'])], [EH.text('circle')]),
+      EH.div([], [EH.text('Connection closed')]),
+    ]);
+  } else if ('CONNECTING' == state.webSocketStatus) {
+    connectionStatus = EH.div([EA.id('connection-status'), EP.classes(['connection-connecting'])], [
+      EH.div([EP.classes(['material-icons'])], [EH.text('circle')]),
+      EH.div([], [EH.text('Connecting')]),
+    ]);
+  } else {
+    connectionStatus = EH.div([EA.id('connection-status'), EP.classes(['connection-connected'])], [
+      EH.div([EP.classes(['material-icons'])], [EH.text('circle')]),
+      EH.div([], [EH.text('Connected')]),
+    ]);
+  }
+  const drawerContent = EH.div([], [
+    EH.div([EA.id('connection-status')], [
+
+    ]),
+  ]);
   const mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text(state.headingText)]);
   const drawerHeader = EH.h2([EP.classes(['drawer-logo'])], [
     EH.img([EP.attribute('src', '/assets/img/logo.svg')]),
