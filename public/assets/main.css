@@ -228,7 +228,7 @@ body {
   color: #008b00;
 }
 
-#connection-status > div:nth-last-of-type(2) {
+#connection-status > div:nth-of-type(2) {
   display: grid;
   align-content: center;
   opacity: .5;
