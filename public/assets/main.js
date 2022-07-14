@@ -223,13 +223,18 @@ pageShow.addListener(() => {
   openSocket();
 });
 
-wsMessageReceived.addListener((message) => {
-  console.log('Message received:', message);
-  switch (message.type) {
-    case 'registered': {
-      wsRegistered.dispatch(null);
-      break;
+wsMessageReceived.addListener((json) => {
+  try {
+    const message = JSON.parse(json);
+    console.log('Message received:', message);
+    switch (message.type) {
+      case 'registered': {
+        wsRegistered.dispatch(null);
+        break;
+      }
     }
+  } catch (e) {
+    console.error(e);
   }
 });
 
