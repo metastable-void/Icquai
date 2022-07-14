@@ -376,7 +376,7 @@ store.render(containerElement, (state) => {
   }
   const drawerContent = EH.div([], [
     EH.div([EA.id('connection-status')], [
-
+      connectionStatus,
     ]),
   ]);
   const mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text(state.headingText)]);
