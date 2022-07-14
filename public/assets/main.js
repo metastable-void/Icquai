@@ -57,6 +57,7 @@ const wsOpen = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ws.open');
 const wsConnecting = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ws.connecting');
 const wsClosed = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ws.closed');
 const wsMessageReceived = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ws.message.received');
+const wsRegistered = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ws.registered');
 const becomingOnline = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'network.online');
 const becomingOffline = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'network.offline');
 const becomingVisible = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'page.visible');
@@ -222,6 +223,16 @@ pageShow.addListener(() => {
   openSocket();
 });
 
+wsMessageReceived.addListener((message) => {
+  console.log('Message received:', message);
+  switch (message.type) {
+    case 'registered': {
+      wsRegistered.dispatch(null);
+      break;
+    }
+  }
+});
+
 const store = app.getStore("store", (state) => {
   const drawerIsOpen = "drawerIsOpen" in state ? state.drawerIsOpen : false;
   const title = "title" in state ? state.title : 'Icquai';
@@ -231,6 +242,7 @@ const store = app.getStore("store", (state) => {
     online: navigator.onLine,
     webSocketIsOpen: false,
     webSocketStatus: 'CLOSED',
+    wsRegistered: false,
     drawerIsOpen,
     title,
     headingText,
@@ -257,6 +269,14 @@ store.subscribe(wsClosed, (state, _action) => {
     ... state,
     webSocketIsOpen: false,
     webSocketStatus: 'CLOSED',
+    wsRegistered: false,
+  };
+});
+
+store.subscribe(wsRegistered, (state, _action) => {
+  return {
+    ... state,
+    wsRegistered: true,
   };
 });
 
@@ -382,15 +402,15 @@ store.render(containerElement, (state) => {
       EH.div([EP.classes(['material-icons'])], [EH.text('circle')]),
       EH.div([], [EH.text('Connection closed')]),
     ]);
-  } else if ('CONNECTING' == state.webSocketStatus) {
-    connectionStatus = EH.div([EA.id('connection-status'), EP.classes(['connection-connecting'])], [
-      EH.div([EP.classes(['material-icons'])], [EH.text('circle')]),
-      EH.div([], [EH.text('Connecting')]),
-    ]);
-  } else {
+  } else if ('OPEN' == state.webSocketStatus && state.wsRegistered) {
     connectionStatus = EH.div([EA.id('connection-status'), EP.classes(['connection-connected'])], [
       EH.div([EP.classes(['material-icons'])], [EH.text('circle')]),
       EH.div([], [EH.text('Connected')]),
+    ]);
+  } else {
+    connectionStatus = EH.div([EA.id('connection-status'), EP.classes(['connection-connecting'])], [
+      EH.div([EP.classes(['material-icons'])], [EH.text('circle')]),
+      EH.div([], [EH.text('Connecting')]),
     ]);
   }
   const drawerContent = EH.div([], [
