@@ -212,11 +212,11 @@ wsMessageReceived.addListener((json) => {
     console.log('Message received:', message);
     switch (message.type) {
       case 'server_hello': {
-        const message = {
+        const registerMsg = {
           type: "register",
           nonce: message.nonce,
         };
-        wsSendMessage(message).catch((e) => {
+        wsSendMessage(registerMsg).catch((e) => {
           console.error(e);
         });
         break;
