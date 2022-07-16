@@ -156,7 +156,7 @@ class SimpleBroadcastChannel extends EventTarget {
       channelName: this.channelName,
       data,
     });
-    
+
     try {
       localStorage.setItem(STORAGE_KEY_BROADCAST, value);
     } finally {
@@ -184,7 +184,7 @@ class CompatBroadcastChannel extends EventTarget {
       throw new TypeError('Empty channel name');
     }
 
-    simpBroadcastChannel.addEventListener("storage", (ev) => {
+    simpBroadcastChannel.addEventListener("message", (ev) => {
       const {data} = ev;
       if (data.channelName != this.channelName) {
         return;
