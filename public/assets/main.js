@@ -194,7 +194,7 @@ becomingHidden.addListener(() => {
 becomingVisible.addListener(() => {
   console.log('Page is now visible!');
   openSocket();
-})
+});
 
 becomingOnline.addListener(() => {
   console.log('Becoming online, reconnecting...');

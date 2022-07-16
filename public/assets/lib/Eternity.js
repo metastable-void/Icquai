@@ -114,58 +114,94 @@ const getSessionId = () => {
   }
 };
 
-class CompatBroadcastChannel extends EventTarget {
+class SimpleBroadcastChannel extends EventTarget {
   constructor(channelName) {
-      super();
+    super();
 
-      if ('string' != typeof channelName) {
-          throw new TypeError('Invalid channel name');
+    if ('string' != typeof channelName) {
+      throw new TypeError('Invalid channel name');
+    }
+
+    this.channelName = String(channelName).trim().toLowerCase();
+    if (!this.channelName) {
+      throw new TypeError('Empty channel name');
+    }
+
+    window.addEventListener('storage', ev => {
+      if (null === ev.key) {
+        console.log('The storage was cleared');
+        return;
+      }
+      if (STORAGE_KEY_BROADCAST != ev.key) {
+        return;
+      }
+      if (!ev.newValue) {
+        return;
       }
 
-      this.channelName = String(channelName).trim().toLowerCase();
-      if (!this.channelName) {
-          throw new TypeError('Empty channel name');
+      const {channelName, data} = JSON.parse(ev.newValue);
+      if (channelName != this.channelName) {
+        return;
       }
-
-      window.addEventListener('storage', ev => {
-          if (null === ev.key) {
-              console.log('The storage was cleared');
-              return;
-          }
-          if (STORAGE_KEY_BROADCAST != ev.key) {
-              return;
-          }
-          if (!ev.newValue) {
-              return;
-          }
-
-          const {channelName, data} = JSON.parse(ev.newValue);
-          if (channelName != this.channelName) {
-              return;
-          }
-          const messageEvent = new MessageEvent('message', {
-              data,
-              origin: document.origin,
-          });
-          this.dispatchEvent(messageEvent);
+      const messageEvent = new MessageEvent('message', {
+        data,
+        origin: document.origin,
       });
+      this.dispatchEvent(messageEvent);
+    });
   }
 
   postMessage(data) {
-      const value = JSON.stringify({
-          channelName: this.channelName,
-          data,
+    const value = JSON.stringify({
+      channelName: this.channelName,
+      data,
+    });
+    
+    try {
+      localStorage.setItem(STORAGE_KEY_BROADCAST, value);
+    } finally {
+      const {data} = JSON.parse(value);
+      const messageEvent = new MessageEvent('message', {
+        data,
+        origin: document.origin,
       });
-      try {
-          localStorage.setItem(STORAGE_KEY_BROADCAST, value);
-      } finally {
-          const {data} = JSON.parse(value);
-          const messageEvent = new MessageEvent('message', {
-              data,
-              origin: document.origin,
-          });
-          this.dispatchEvent(messageEvent);
+      this.dispatchEvent(messageEvent);
+    }
+  }
+}
+
+const simpBroadcastChannel = new SimpleBroadcastChannel("eternity.broadcast.simple");
+class CompatBroadcastChannel extends EventTarget {
+  constructor(channelName) {
+    super();
+
+    if ('string' != typeof channelName) {
+      throw new TypeError('Invalid channel name');
+    }
+
+    this.channelName = String(channelName).trim().toLowerCase();
+    if (!this.channelName) {
+      throw new TypeError('Empty channel name');
+    }
+
+    simpBroadcastChannel.addEventListener("storage", (ev) => {
+      const {data} = ev;
+      if (data.channelName != this.channelName) {
+        return;
       }
+      const messageEvent = new MessageEvent('message', {
+        data: data.data,
+        origin: document.origin,
+      });
+      this.dispatchEvent(messageEvent);
+    });
+  }
+
+  postMessage(data) {
+    simpBroadcastChannel.postMessage({
+      channelName: this.channelName,
+      data: data,
+    });
   }
 }
 
