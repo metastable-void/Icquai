@@ -48,7 +48,7 @@ const getMyKeys = async () => {
 
 const containerElement = document.querySelector('#container');
 
-const app = new Eternity;
+globalThis.app = new Eternity;
 
 
 // global topics
@@ -58,6 +58,7 @@ const wsConnecting = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ws.connecting')
 const wsClosed = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ws.closed');
 const wsMessageReceived = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ws.message.received');
 const wsRegistered = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ws.registered');
+const wsMessageSend = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ws.message.send');
 const becomingOnline = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'network.online');
 const becomingOffline = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'network.offline');
 const becomingVisible = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'page.visible');
@@ -176,6 +177,12 @@ const wsSendMessage = async (message) => {
   const signedJson = JSON.stringify(signedMessage);
   ws.send(signedJson);
 };
+
+wsMessageSend.addListener((message) => {
+  wsSendMessage(message).catch((e) => {
+    console.error(e);
+  });
+});
 
 becomingHidden.addListener(() => {
   // This is the last place to do something reliably.
