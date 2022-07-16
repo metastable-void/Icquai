@@ -179,6 +179,7 @@ const wsSendMessage = async (message) => {
 };
 
 wsMessageSend.addListener((message) => {
+  console.log('Sending message:', message);
   wsSendMessage(message).catch((e) => {
     console.error(e);
   });
