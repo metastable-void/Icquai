@@ -161,7 +161,7 @@ window.addEventListener('offline', ev => {
   }
 };
 
-const wsSendMessage = async (message) => {
+globalThis.wsSendMessage = async (message) => {
   const ws = await waitForWs();
   const keys = await getMyKeys();
   const json = JSON.stringify(message);
