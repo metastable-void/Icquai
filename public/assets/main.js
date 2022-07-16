@@ -127,23 +127,6 @@ window.addEventListener('offline', ev => {
       ws.addEventListener('open', ev => {
           console.log('ws: open');
           (async () => {
-            const keys = await getMyKeys();
-            const message = {
-              type: "register",
-            };
-            const json = JSON.stringify(message);
-            const data = firstAid.encodeString(json);
-            const signature = await ed.sign(data, keys.privateKey);
-            const signedMessage = {
-              type: 'signed_envelope',
-              algo: 'sign-ed25519',
-              data: firstAid.encodeBase64(data),
-              public_key: firstAid.encodeBase64(keys.publicKey),
-              signature: firstAid.encodeBase64(signature),
-            };
-            const registerMsg = JSON.stringify(signedMessage);
-            ws.send(registerMsg);
-
             wsOpen.dispatch(ws);
             for (const callback of wsCallbacks) {
               callback(ws);
@@ -228,6 +211,16 @@ wsMessageReceived.addListener((json) => {
     const message = JSON.parse(json);
     console.log('Message received:', message);
     switch (message.type) {
+      case 'server_hello': {
+        const message = {
+          type: "register",
+          nonce: message.nonce,
+        };
+        wsSendMessage(message).catch((e) => {
+          console.error(e);
+        });
+        break;
+      }
       case 'registered': {
         wsRegistered.dispatch(null);
         break;
