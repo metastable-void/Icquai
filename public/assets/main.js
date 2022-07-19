@@ -502,6 +502,7 @@ store.render(containerElement, (state) => {
     ], [
       createNavigationItem('/me', 'My Profile', 'account_circle'),
       createNavigationItem('/friends', 'Friends', 'people'),
+      createNavigationItem('/settings', 'Settings', 'settings'),
       createNavigationItem('/help', 'Help', 'help'),
     ]),
   ]);
