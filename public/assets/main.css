@@ -243,6 +243,7 @@ body {
 #main-navigation ul > li > a {
   display: grid;
   grid-template-columns: max-content 1fr;
+  column-gap: .5rem;
   align-content: center;
   align-items: center;
   padding: .5rem;
