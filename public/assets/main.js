@@ -65,6 +65,7 @@ const becomingVisible = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'page.visible
 const becomingHidden = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'page.hidden');
 const becomingInteractive = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'page.interactive');
 const pageShow = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'page.show');
+const pageNavigate = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'page.navigate');
 
 
 // global event listeners
@@ -75,6 +76,10 @@ document.addEventListener('DOMContentLoaded', ev => {
 
 window.addEventListener('pageshow', ev => {
   pageShow.dispatch(null);
+});
+
+window.addEventListener('popstate', (ev) => {
+  pageNavigate.dispatch(location.href);
 });
 
 document.addEventListener('visibilitychange', ev => {
@@ -178,6 +183,18 @@ globalThis.wsSendMessage = async (message) => {
   ws.send(signedJson);
 };
 
+pageNavigate.addListener((newUrl) => {
+  const url = new URL(newUrl, location.href);
+  const path = url.pathname;
+  const query = url.searchParams;
+  const hash = url.hash;
+  if (path == '/') {
+    history.replaceState({}, '', '/me');
+  } else if (url.href != location.href) {
+    history.pushState({}, '', newState.url);
+  }
+});
+
 wsMessageSend.addListener((message) => {
   console.log('Sending message:', message);
   wsSendMessage(message).catch((e) => {
@@ -249,6 +266,9 @@ const store = app.getStore("store", (state) => {
   const headingText = "headingText" in state ? state.headingText : 'Home';
   return {
     ... state,
+    urlPath: location.pathname,
+    urlHash: '',
+    urlQuery: '',
     online: navigator.onLine,
     webSocketIsOpen: false,
     webSocketStatus: 'CLOSED',
@@ -256,6 +276,19 @@ const store = app.getStore("store", (state) => {
     drawerIsOpen,
     title,
     headingText,
+  };
+});
+
+store.subscribe(pageNavigate, (state, url) => {
+  const newUrl = new URL(url, location.href);
+  const path = newUrl.pathname;
+  const hash = newUrl.hash;
+  const query = newUrl.search;
+  return {
+    ... state,
+    urlPath: path,
+    urlHash: hash,
+    urlQuery: query,
   };
 });
 
@@ -399,6 +432,24 @@ const renderDrawer = (isOpen, mainContent, drawerContent, mainHeader, drawerHead
 };
 
 store.render(containerElement, (state) => {
+  let mainHeader;
+  switch (state.urlPath) {
+    case '/me': {
+      // my profile
+      mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('My Profile')]);
+      break;
+    }
+    case '/friends': {
+      // friends
+      mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('Friends')]);
+      break;
+    }
+    default: {
+      // not found
+      mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('Not Found')]);
+      break;
+    }
+  }
   //
   const mainContent = EH.div([], [EH.text('Main content')]);
   let connectionStatus;
@@ -426,7 +477,6 @@ store.render(containerElement, (state) => {
   const drawerContent = EH.div([], [
     connectionStatus,
   ]);
-  const mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text(state.headingText)]);
   const drawerHeader = EH.h2([EP.classes(['drawer-logo'])], [
     EH.img([EP.attribute('src', '/assets/img/logo.svg')]),
     EH.text('Icquai'),
@@ -438,3 +488,5 @@ store.render(containerElement, (state) => {
 document.addEventListener('dblclick', ev => {
   ev.preventDefault();
 });
+
+pageNavigate.dispatch(location.href);
