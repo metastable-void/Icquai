@@ -233,3 +233,17 @@ body {
   align-content: center;
   opacity: .5;
 }
+
+#main-navigation ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#main-navigation ul > li > a {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  align-content: center;
+  align-items: center;
+  padding: .5rem;
+}
