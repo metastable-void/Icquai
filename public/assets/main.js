@@ -189,7 +189,9 @@ pageNavigate.addListener((newUrl) => {
   const query = url.searchParams;
   const hash = url.hash;
   if (path == '/') {
-    pageNavigate.dispatch('/me');
+    setTimeout(() => {
+      pageNavigate.dispatch('/me');
+    }, 0);
   } else if (url.href != location.href) {
     history.replaceState({}, '', url.href);
   }
