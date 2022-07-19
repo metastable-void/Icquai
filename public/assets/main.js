@@ -485,12 +485,13 @@ store.render(containerElement, (state) => {
       EH.div([], [EH.text('Connecting')]),
     ]);
   }
-  const createNavigationItem = (url, label) => EH.ul([], [
+  const createNavigationItem = (url, label, icon) => EH.ul([], [
     EH.li([], [
       EH.a([
         EP.attribute('href', url),
       ], [
-        EH.text(label),
+        EH.span([EA.classes(['material-icons'])], [EH.text(icon)]),
+        EH.span([], [EH.text(label)]),
       ]),
     ]),
   ]);
@@ -499,9 +500,9 @@ store.render(containerElement, (state) => {
     EH.nav([
       EA.id('main-navigation'),
     ], [
-      createNavigationItem('/me', 'My Profile'),
-      createNavigationItem('/friends', 'Friends'),
-      createNavigationItem('/help', 'Help'),
+      createNavigationItem('/me', 'My Profile', 'account_circle'),
+      createNavigationItem('/friends', 'Friends', 'people'),
+      createNavigationItem('/help', 'Help', 'help'),
     ]),
   ]);
   const drawerHeader = EH.h2([EP.classes(['drawer-logo'])], [
