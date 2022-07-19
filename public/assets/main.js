@@ -23,6 +23,23 @@ import "./lib/noble-ed25519.js";
 import "./lib/es-first-aid.js";
 import {LocalStorageData, Eternity, HtmlView as EH, ViewProperty as EP, ViewAttribute as EA} from "./lib/Eternity.js";
 import { sha256 } from "./lib/crypto.js";
+import { app } from './app.js';
+import { store } from "./store.js";
+import {
+  wsOpen,
+  wsConnecting,
+  wsClosed,
+  wsMessageReceived,
+  wsRegistered,
+  wsMessageSend,
+  becomingOnline,
+  becomingOffline,
+  becomingVisible,
+  becomingHidden,
+  becomingInteractive,
+  pageShow,
+  pageNavigate,
+} from "./topics.js";
 
 const ed = nobleEd25519;
 
@@ -46,57 +63,8 @@ const getMyKeys = async () => {
   };
 };
 
-const containerElement = document.querySelector('#container');
 
-globalThis.app = new Eternity;
-
-
-// global topics
-
-const wsOpen = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ws.open');
-const wsConnecting = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ws.connecting');
-const wsClosed = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ws.closed');
-const wsMessageReceived = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ws.message.received');
-const wsRegistered = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ws.registered');
-const wsMessageSend = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ws.message.send');
-const becomingOnline = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'network.online');
-const becomingOffline = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'network.offline');
-const becomingVisible = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'page.visible');
-const becomingHidden = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'page.hidden');
-const becomingInteractive = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'page.interactive');
-const pageShow = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'page.show');
-const pageNavigate = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'page.navigate');
-
-
-// global event listeners
-
-document.addEventListener('DOMContentLoaded', ev => {
-  becomingInteractive.dispatch(null);
-});
-
-window.addEventListener('pageshow', ev => {
-  pageShow.dispatch(null);
-});
-
-window.addEventListener('popstate', (ev) => {
-  pageNavigate.dispatch(location.href);
-});
-
-document.addEventListener('visibilitychange', ev => {
-  if (!document.hidden) {
-    becomingVisible.dispatch(null);
-  } else {
-    becomingHidden.dispatch(null);
-  }
-});
-
-window.addEventListener('online', ev => {
-  becomingOnline.dispatch(null);
-});
-
-window.addEventListener('offline', ev => {
-  becomingOffline.dispatch(null);
-});
+globalThis.app = app;
 
 
 /**
@@ -262,24 +230,6 @@ wsMessageReceived.addListener((json) => {
   }
 });
 
-const store = app.getStore("store", (state) => {
-  const drawerIsOpen = "drawerIsOpen" in state ? state.drawerIsOpen : false;
-  const title = "title" in state ? state.title : 'Icquai';
-  const headingText = "headingText" in state ? state.headingText : 'Home';
-  return {
-    ... state,
-    urlPath: location.pathname,
-    urlHash: '',
-    urlQuery: '',
-    online: navigator.onLine,
-    webSocketIsOpen: false,
-    webSocketStatus: 'CLOSED',
-    wsRegistered: false,
-    drawerIsOpen,
-    title,
-    headingText,
-  };
-});
 
 store.subscribe(pageNavigate, (state, url) => {
   const newUrl = new URL(url, location.href);
@@ -433,6 +383,7 @@ const renderDrawer = (isOpen, mainContent, drawerContent, mainHeader, drawerHead
   ]);
 };
 
+const containerElement = document.querySelector('#container');
 store.render(containerElement, (state) => {
   const query = new URLSearchParams(state.urlQuery);
   let mainHeader;
