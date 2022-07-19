@@ -457,7 +457,7 @@ store.render(containerElement, (state) => {
           EP.attribute('name', 'robot'),
           EP.attribute('content', 'noindex'),
         ]),
-        EH.h1([], 'Not Found'),
+        EH.h1([], EH.text('Not Found')),
       ]);
       break;
     }
