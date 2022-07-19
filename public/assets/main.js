@@ -189,9 +189,9 @@ pageNavigate.addListener((newUrl) => {
   const query = url.searchParams;
   const hash = url.hash;
   if (path == '/') {
-    history.replaceState({}, '', '/me');
+    pageNavigate.dispatch('/me');
   } else if (url.href != location.href) {
-    history.pushState({}, '', newState.url);
+    history.replaceState({}, '', url.href);
   }
 });
 
