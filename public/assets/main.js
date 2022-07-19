@@ -435,25 +435,34 @@ const renderDrawer = (isOpen, mainContent, drawerContent, mainHeader, drawerHead
 
 store.render(containerElement, (state) => {
   let mainHeader;
+  let mainContent;
   switch (state.urlPath) {
     case '/me': {
       // my profile
       mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('My Profile')]);
+      mainContent = EH.div([], [EH.text('Main content')]);
       break;
     }
     case '/friends': {
       // friends
       mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('Friends')]);
+      mainContent = EH.div([], [EH.text('Main content')]);
       break;
     }
     default: {
       // not found
       mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('Not Found')]);
+      mainContent = EH.div([], [
+        EH.meta([
+          EP.attribute('name', 'robot'),
+          EP.attribute('content', 'noindex'),
+        ]),
+        EH.h1([], 'Not Found'),
+      ]);
       break;
     }
   }
   //
-  const mainContent = EH.div([], [EH.text('Main content')]);
   let connectionStatus;
   if (!state.online) {
     connectionStatus = EH.div([EA.id('connection-status'), EP.classes(['connection-offline'])], [
@@ -476,8 +485,24 @@ store.render(containerElement, (state) => {
       EH.div([], [EH.text('Connecting')]),
     ]);
   }
+  const createNavigationItem = (url, label) => EH.ul([], [
+    EH.li([], [
+      EH.a([
+        EP.attribute('href', url),
+      ], [
+        EH.text(label),
+      ]),
+    ]),
+  ]);
   const drawerContent = EH.div([], [
     connectionStatus,
+    EH.nav([
+      EA.id('main-navigation'),
+    ], [
+      createNavigationItem('/me', 'My Profile'),
+      createNavigationItem('/friends', 'Friends'),
+      createNavigationItem('/help', 'Help'),
+    ]),
   ]);
   const drawerHeader = EH.h2([EP.classes(['drawer-logo'])], [
     EH.img([EP.attribute('src', '/assets/img/logo.svg')]),
@@ -489,6 +514,30 @@ store.render(containerElement, (state) => {
 
 document.addEventListener('dblclick', ev => {
   ev.preventDefault();
+});
+
+document.addEventListener ('click', ev => {
+	const composedPath = ev.composedPath();
+	for (let target of composedPath) {
+		if (!target.tagName || 'a' !== target.tagName.toLowerCase ()) {
+			continue;
+		}
+		
+		if (!target.href) {
+			continue;
+		}
+		
+		ev.preventDefault();
+		
+		const action = new URL (target.href, location.href);
+		console.log (action);
+		if (action.host !== location.host) {
+			window.open(action.href, '_blank');
+		} else {
+			pageNavigate.dispatch(action.href);
+		}
+		return;
+	}
 });
 
 pageNavigate.dispatch(location.href);
