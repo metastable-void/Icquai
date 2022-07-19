@@ -434,8 +434,19 @@ const renderDrawer = (isOpen, mainContent, drawerContent, mainHeader, drawerHead
 };
 
 store.render(containerElement, (state) => {
+  const query = new URLSearchParams(state.urlQuery);
   let mainHeader;
   let mainContent;
+  const notFound = () => {
+    mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('Not Found')]);
+    mainContent = EH.div([], [
+      EH.meta([
+        EP.attribute('name', 'robot'),
+        EP.attribute('content', 'noindex'),
+      ]),
+      EH.h1([], [EH.text('Not Found')]),
+    ]);
+  };
   switch (state.urlPath) {
     case '/me': {
       // my profile
@@ -449,16 +460,18 @@ store.render(containerElement, (state) => {
       mainContent = EH.div([], [EH.text('Main content')]);
       break;
     }
+    case '/talk': {
+      if (!query.has('public_key')) {
+        notFound();
+        break;
+      }
+      mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('Talk')]);
+      mainContent = EH.div([], [EH.text('Main content')]);
+      break;
+    }
     default: {
       // not found
-      mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('Not Found')]);
-      mainContent = EH.div([], [
-        EH.meta([
-          EP.attribute('name', 'robot'),
-          EP.attribute('content', 'noindex'),
-        ]),
-        EH.h1([], [EH.text('Not Found')]),
-      ]);
+      notFound();
       break;
     }
   }
