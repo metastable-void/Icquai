@@ -556,7 +556,6 @@ store.render(containerElement, async (state) => {
           EP.attribute('readonly', ''),
         ], '');
         const nickName = createInputField('Nickname', 'invite-link-nickname', [
-          EP.attribute('value', state.myName),
           EP.eventListener('change', (ev) => {
             const value = String(ev.target.value).trim();
             if ('' == value) {
