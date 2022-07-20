@@ -251,12 +251,12 @@ wsMessageReceived.addListener((json) => {
         break;
       }
       case 'signed_envelope': {
-        try {
+        (async () => {
           const {publicKey, payload} = await verifyMessage(message);
           console.log('Message from %s:', publicKey, payload);
-        } catch (e) {
+        })().catch((e) => {
           console.error(e);
-        }
+        });
       }
     }
   } catch (e) {
