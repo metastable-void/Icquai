@@ -41,5 +41,7 @@ export const store = app.getStore("store", (state) => {
     myName: '',
     myFingerprint: '',
     myInviteLink: '',
+    inviteLinkPublicKey: '',
+    inviteLinkName: '',
   };
 });

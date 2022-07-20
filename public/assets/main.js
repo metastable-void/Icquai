@@ -42,6 +42,7 @@ import {
   myNameChange,
   myFingerprintChange,
   myInviteLinkChange,
+  updateInviteLink,
 } from "./topics.js";
 
 const ed = nobleEd25519;
@@ -69,6 +70,27 @@ const getMyKeys = async () => {
 
 
 globalThis.app = app;
+
+const verifyMessage = async (message) => {
+  if (message.type != 'signed_envelope') {
+    throw new TypeError('Not a signed message');
+  }
+  if (message.algo != 'sign-ed25519') {
+    throw new TypeError('Unsupported algorithm');
+  }
+  const data = firstAid.decodeBase64(message.data);
+  const signature = firstAid.decodeBase64(message.signature);
+  const publicKey = firstAid.decodeBase64(message.public_key);
+  if (!await ed.verify(signature, data, publicKey)) {
+    throw new TypeError('Failed to verify message');
+  }
+  const json = firstAid.decodeString(data);
+  const decodedMessage = JSON.parse(json);
+  return {
+    payload: decodedMessage,
+    publicKey: message.public_key,
+  };
+};
 
 
 /**
@@ -228,6 +250,14 @@ wsMessageReceived.addListener((json) => {
         console.warn('Message sent to %s bounced', message.recipient);
         break;
       }
+      case 'signed_envelope': {
+        try {
+          const {publicKey, payload} = await verifyMessage(message);
+          console.log('Message from %s:', publicKey, payload);
+        } catch (e) {
+          console.error(e);
+        }
+      }
     }
   } catch (e) {
     console.error(e);
@@ -333,6 +363,15 @@ store.subscribe(closeDrawer, (state, _action) => {
 
 store.observe((state) => {
   document.title = state.title;
+});
+
+store.subscribe(updateInviteLink, (state, {publicKey, payload}) => {
+  const {name} = payload;
+  return {
+    ... state,
+    inviteLinkName: name,
+    inviteLinkPublicKey: publicKey,
+  };
 });
 
 
@@ -462,6 +501,7 @@ const createInputField = (label, id, eventListeners, placeholder) => {
 const containerElement = document.querySelector('#container');
 store.render(containerElement, (state) => {
   const query = new URLSearchParams(state.urlQuery);
+  const hash = state.urlHash;
   let mainHeader;
   let mainContent;
   const notFound = () => {
@@ -501,6 +541,47 @@ store.render(containerElement, (state) => {
         name,
         inviteLink,
       ]);
+      break;
+    }
+    case '/invite': {
+      // invite link
+      try {
+        const bytes = firstAid.decodeBase64(hash);
+        const signedJson = firstAid.decodeString(bytes);
+        // TODO: This is not how pure functions work
+        verifyMessage(message).then(({publicKey, payload}) => {
+          if (payload.type != 'invite_link') {
+            throw new TypeError('Not an invite link');
+          }
+          updateInviteLink.dispatch({publicKey, payload});
+        }).catch((e) => {
+          console.error(e);
+          updateInviteLink.dispatch({publicKey: '', payload: {name: ''}});
+        });
+        mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('Add Friend')]);
+        if (state.inviteLinkPublicKey == '') {
+          mainContent = EH.div([EA.classes(['profile'])], [
+            EH.p([], [EH.text('Invite link is invalid.')]),
+          ]);
+        } else {
+          const publicKey = createInputField('Public Key', 'invite-public-key', [
+            EP.attribute('value', state.inviteLinkPublicKey),
+            EP.attribute('readonly', ''),
+          ], '');
+          const name = createInputField('Name', 'invite-link-name', [
+            EP.attribute('value', state.inviteLinkName),
+            EP.attribute('readonly', ''),
+          ], '');
+          mainContent = EH.div([EA.classes(['profile'])], [
+            publicKey,
+            name,
+          ]);
+
+        }
+      } catch (e) {
+        notFound();
+        break;
+      }
       break;
     }
     case '/friends': {
