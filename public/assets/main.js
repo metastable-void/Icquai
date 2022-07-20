@@ -410,6 +410,19 @@ const renderDrawer = (isOpen, mainContent, drawerContent, mainHeader, drawerHead
   ]);
 };
 
+const createInputField = (label, id, eventListeners, placeholder) => {
+  const input = EH.div([EA.classes(['input-field'])], [
+    EH.label([EP.attribute('for', id)], [EH.text(label)]),
+    EH.input([
+      EP.attribute('type', 'text'),
+      EA.id(id),
+      ... eventListeners,
+      EP.attribute('placeholder', placeholder),
+    ]),
+  ]);
+  //
+};
+
 const containerElement = document.querySelector('#container');
 store.render(containerElement, (state) => {
   const query = new URLSearchParams(state.urlQuery);
@@ -429,7 +442,14 @@ store.render(containerElement, (state) => {
     case '/me': {
       // my profile
       mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('My Profile')]);
-      mainContent = EH.div([], [EH.text('Main content')]);
+      const fingerprint = createInputField('Fingerprint', 'my-fingerprint', [
+        EP.attribute('readonly', ''),
+        EP.attribute('value', state.myFingerprint),
+      ], '');
+      mainContent = EH.div([EA.classes(['profile'])], [
+        EH.text('Main content'),
+        fingerprint,
+      ]);
       break;
     }
     case '/friends': {
