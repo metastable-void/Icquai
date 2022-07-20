@@ -280,8 +280,18 @@ wsMessageReceived.addListener((json) => {
                 break;
               }
               case 'pong': {
-                console.log('Received pong.');
+                console.log('Received pong. Name:', message.name);
                 friendBecomingOnline.dispatch(publicKey);
+                if (!message.name) {
+                  break;
+                }
+                const friends = friendsStore.getValue();
+                for (const friend of friends) {
+                  if (publicKey == friend.publicKey) {
+                    friend.savedName = message.name;
+                  }
+                }
+                friendsStore.setValue(friends);
                 break;
               }
             }
