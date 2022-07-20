@@ -364,7 +364,8 @@ const inviteLinkObserver = async () => {
     signature: firstAid.encodeBase64(signature),
   };
   const signedJson = JSON.stringify(signedMessage);
-  const link = new URL(`/invite#${firstAid.encodeBase64(signedJson)}`, location.href).href;
+  const bytes = firstAid.encodeString(signedJson);
+  const link = new URL(`/invite#${firstAid.encodeBase64(bytes)}`, location.href).href;
   myInviteLinkChange.dispatch(link);
 };
 
