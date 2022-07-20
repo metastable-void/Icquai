@@ -596,7 +596,7 @@ store.render(containerElement, async (state) => {
         if (payload.type != 'invite_link') {
           throw new TypeError('Not an invite link');
         }
-        const publicKey = createInputField('Public Key', 'invite-public-key', [
+        const publicKeyField = createInputField('Public Key', 'invite-public-key', [
           EP.attribute('value', message.publicKey),
           EP.attribute('readonly', ''),
         ], '');
@@ -615,14 +615,14 @@ store.render(containerElement, async (state) => {
         ], 'Add nickname');
         const addFriendButton = EH.button([
           EP.eventListener('click', (ev) => {
-            addFriend(publicKey, payload.name, state.friendsInviteNickname);
+            addFriend(message.publicKey, payload.name, state.friendsInviteNickname);
             pageNavigate.dispatch('/friends');
           }),
         ], [
           EH.text('Add friend'),
         ]);
         mainContent = EH.div([EA.classes(['profile'])], [
-          publicKey,
+          publicKeyField,
           name,
           nickName,
           EH.p([], [addFriendButton]),
@@ -640,7 +640,6 @@ store.render(containerElement, async (state) => {
       // friends
       mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('Friends')]);
       mainContent = EH.div([EA.classes(['profile'])], [
-        EH.text('Main content'),
         EH.div([], [
           createInputField('Invite link', 'friends-invite-link', [
             EP.eventListener('change', (ev) => {
