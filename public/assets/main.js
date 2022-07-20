@@ -48,6 +48,7 @@ const ed = nobleEd25519;
 
 const privateKeyStore = new LocalStorageData('icquai.private_key', () => firstAid.encodeBase64(ed.utils.randomPrivateKey()));
 const myNameStore = new LocalStorageData('icquai.my.name', () => '');
+const friendsStore = new LocalStorageData('icquai.friends', () => []);
 
 const getMyKeys = async () => {
   const base64PrivateKey = privateKeyStore.getValue();
@@ -563,10 +564,18 @@ store.render(containerElement, async (state) => {
             }
           }),
         ], 'Add nickname');
+        const addFriend = EH.button([
+          EP.eventListener('click', (ev) => {
+            //
+          }),
+        ], [
+          EH.text('Add friend'),
+        ]);
         mainContent = EH.div([EA.classes(['profile'])], [
           publicKey,
           name,
           nickName,
+          addFriend,
         ]);
       } catch (e) {
         console.error(e);
