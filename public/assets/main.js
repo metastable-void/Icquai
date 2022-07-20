@@ -447,9 +447,20 @@ store.render(containerElement, (state) => {
         EP.attribute('readonly', ''),
         EP.attribute('value', state.myFingerprint),
       ], '');
+      const name = createInputField('Name', 'my-name', [
+        EP.attribute('value', state.myName),
+        EP.eventListener('change', (ev) => {
+          const value = String(ev.target.value).trim();
+          if ('' == value) {
+            return;
+          }
+          myNameStore.setValue(value);
+        }),
+      ], 'name');
       mainContent = EH.div([EA.classes(['profile'])], [
         EH.text('Main content'),
         fingerprint,
+        name,
       ]);
       break;
     }
