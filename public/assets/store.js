@@ -38,5 +38,7 @@ export const store = app.getStore("store", (state) => {
     drawerIsOpen,
     title,
     headingText,
+    myName: '',
+    myFingerprint: '',
   };
 });

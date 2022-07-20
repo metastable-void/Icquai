@@ -39,6 +39,8 @@ import {
   becomingInteractive,
   pageShow,
   pageNavigate,
+  myNameChange,
+  myFingerprintChange,
 } from "./topics.js";
 
 const ed = nobleEd25519;
@@ -231,6 +233,30 @@ wsMessageReceived.addListener((json) => {
   }
 });
 
+myNameStore.observe((newName) => {
+  myNameChange.dispatch(newName);
+});
+
+privateKeyStore.observe(async (_newPrivateKey) => {
+  const keys = await getMyKeys();
+  const fingerprint = firstAid.encodeHex(keys.sha256Fingerprint);
+  myFingerprintChange.dispatch(fingerprint);
+});
+
+
+store.subscribe(myNameChange, (state, newName) => {
+  return {
+    ... state,
+    myName: newName,
+  };
+});
+
+store.subscribe(myFingerprintChange, (state, newFingerprint) => {
+  return {
+    ... state,
+    myFingerprint: newFingerprint,
+  };
+});
 
 store.subscribe(pageNavigate, (state, url) => {
   const newUrl = new URL(url, location.href);

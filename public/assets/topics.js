@@ -37,6 +37,8 @@ export const becomingHidden = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'page.h
 export const becomingInteractive = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'page.interactive');
 export const pageShow = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'page.show');
 export const pageNavigate = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'page.navigate');
+export const myNameChange = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'my.name.change');
+export const myFingerprintChange = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'my.fingerprint.change');
 
 
 // global event listeners
