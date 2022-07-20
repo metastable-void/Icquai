@@ -537,6 +537,7 @@ store.render(containerElement, (state) => {
         EP.attribute('value', state.myInviteLink),
       ], '');
       mainContent = EH.div([EA.classes(['profile'])], [
+        EH.p([], [EH.text('Please set your name.')]),
         fingerprint,
         name,
         inviteLink,
@@ -573,6 +574,15 @@ store.render(containerElement, (state) => {
             EP.attribute('value', state.inviteLinkName),
             EP.attribute('readonly', ''),
           ], '');
+          const nickName = createInputField('Nickname', 'invite-link-nickname', [
+            EP.attribute('value', state.myName),
+            EP.eventListener('change', (ev) => {
+              const value = String(ev.target.value).trim();
+              if ('' == value) {
+                return;
+              }
+            }),
+          ], 'Add nickname');
           mainContent = EH.div([EA.classes(['profile'])], [
             publicKey,
             name,
