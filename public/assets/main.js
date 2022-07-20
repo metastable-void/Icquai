@@ -546,7 +546,7 @@ store.render(containerElement, (state) => {
     case '/invite': {
       // invite link
       try {
-        const bytes = firstAid.decodeBase64(hash);
+        const bytes = firstAid.decodeBase64(hash.slice(1));
         const signedJson = firstAid.decodeString(bytes);
         const signedData = JSON.parse(signedJson);
         // TODO: This is not how pure functions work
