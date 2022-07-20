@@ -278,3 +278,14 @@ body {
   margin: 0;
   padding: .5rem;
 }
+
+table.friends {
+  border-spacing: 0;
+  border-collapse: collapse;
+  block-size: 100%;
+}
+
+table.friends tr {
+  border-block-start: solid .0625rem var(--theme-border-color);
+  border-block-end: solid .0625rem var(--theme-border-color);
+}
