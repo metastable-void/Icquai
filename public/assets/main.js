@@ -91,7 +91,7 @@ const verifyMessage = async (message) => {
   const decodedMessage = JSON.parse(json);
   return {
     payload: decodedMessage,
-    publicKey: message.public_key,
+    publicKey: String(message.public_key),
   };
 };
 
@@ -257,6 +257,25 @@ wsMessageReceived.addListener((json) => {
         (async () => {
           const {publicKey, payload} = await verifyMessage(message);
           console.log('Message from %s:', publicKey, payload);
+          if ('forward' == payload.type) {
+            const message = payload.payload;
+            switch (message.type) {
+              case 'ping': {
+                console.log('Received ping; ponging.');
+                const pongMsg = {
+                  type: 'forward',
+                  recipient: publicKey,
+                  payload: {
+                    type: 'pong',
+                  },
+                };
+                wsSendMessage(pongMsg).catch((e) => {
+                  console.error(e);
+                });
+                break;
+              }
+            }
+          }
         })().catch((e) => {
           console.error(e);
         });
@@ -387,6 +406,27 @@ store.subscribe(friendsInviteNicknameChange, (state, friendsInviteNickname) => {
     ... state,
     friendsInviteNickname,
   };
+});
+
+let lastUrlPath;
+store.observe((state) => {
+  const urlPath = state.urlPath;
+  if ('/friends' == urlPath && lastUrlPath != urlPath) {
+    const friends = friendsStore.getValue();
+    for (const friend of friends) {
+      const message = {
+        type: 'forward',
+        recipient: friend.publicKey,
+        payload: {
+          type: 'ping',
+        },
+      };
+      wsSendMessage(message).catch((e) => {
+        console.error(e);
+      });
+    }
+  }
+  lastUrlPath = urlPath;
 });
 
 
@@ -652,6 +692,16 @@ store.render(containerElement, async (state) => {
     }
     case '/friends': {
       // friends
+      const friendsList = [];
+      for (const friend of state.friends) {
+        const isOnline = state.onlineFriends.includes(friend.publicKey);
+        const tr = EH.tr([EA.classes([isOnline ? 'online' : 'offline'])], [
+          EH.td([EA.classes(['material-icons'])], [EH.text('circle')]),
+          EH.td([EA.classes(['name'])], [EH.text(friend.savedName)]),
+          EH.td([EA.classes(['nickname'])], [EH.text(friend.nickname)]),
+        ]);
+        friendsList.push(tr);
+      }
       mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('Friends')]);
       mainContent = EH.div([EA.classes(['profile'])], [
         EH.div([], [
@@ -670,6 +720,11 @@ store.render(containerElement, async (state) => {
                 pageNavigate.dispatch(`/invite${url.hash}`);
               }),
             ], [EH.text('Add friend')]),
+          ]),
+        ]),
+        EH.table([EA.classes(['friends'])], [
+          EH.tbody([], [
+            ... friendsList,
           ]),
         ]),
       ]);

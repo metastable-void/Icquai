@@ -44,5 +44,6 @@ export const store = app.getStore("store", (state) => {
     friendsInviteLink: '',
     friendsInviteNickname: '',
     friends: [],
+    onlineFriends: [],
   };
 });
