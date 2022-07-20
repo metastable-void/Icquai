@@ -296,6 +296,7 @@ table.friends td, table.friends th {
 
 table.friends td.online-status {
   font-size: 1rem;
+  inline-size: max-content;
 }
 
 table.friends tr.offline td.online-status {
