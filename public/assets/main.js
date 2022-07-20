@@ -567,6 +567,7 @@ store.render(containerElement, async (state) => {
         mainContent = EH.div([EA.classes(['profile'])], [
           publicKey,
           name,
+          nickName,
         ]);
       } catch (e) {
         console.error(e);
