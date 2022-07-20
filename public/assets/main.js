@@ -619,7 +619,9 @@ store.render(containerElement, async (state) => {
         const addFriendButton = EH.button([
           EP.eventListener('click', (ev) => {
             addFriend(message.publicKey, payload.name, state.friendsInviteNickname);
-            pageNavigate.dispatch('/friends');
+            setTimeout(() => {
+              pageNavigate.dispatch('/friends');
+            }, 0);
           }),
         ], [
           EH.text('Add friend'),
