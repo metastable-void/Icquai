@@ -548,8 +548,9 @@ store.render(containerElement, (state) => {
       try {
         const bytes = firstAid.decodeBase64(hash);
         const signedJson = firstAid.decodeString(bytes);
+        const signedData = JSON.parse(signedJson);
         // TODO: This is not how pure functions work
-        verifyMessage(signedJson).then(({publicKey, payload}) => {
+        verifyMessage(signedData).then(({publicKey, payload}) => {
           if (payload.type != 'invite_link') {
             throw new TypeError('Not an invite link');
           }
