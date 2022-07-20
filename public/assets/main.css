@@ -313,3 +313,15 @@ table.friends tr.offline td.online-status {
 table.friends tr.online td.online-status {
   color: #00a800;
 }
+
+table.friends td.nickname {
+  opacity: .5;
+}
+
+table.friends td.nickname::before {
+  content: '[';
+}
+
+table.friends td.nickname::after {
+  content: ']';
+}
