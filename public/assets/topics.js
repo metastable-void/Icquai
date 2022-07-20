@@ -40,7 +40,6 @@ export const pageNavigate = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'page.nav
 export const myNameChange = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'my.name.change');
 export const myFingerprintChange = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'my.fingerprint.change');
 export const myInviteLinkChange = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'my.invite_link.change');
-export const updateInviteLink = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'invite_link.update');
 
 
 // global event listeners

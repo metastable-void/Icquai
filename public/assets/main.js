@@ -42,7 +42,6 @@ import {
   myNameChange,
   myFingerprintChange,
   myInviteLinkChange,
-  updateInviteLink,
 } from "./topics.js";
 
 const ed = nobleEd25519;
@@ -363,15 +362,6 @@ store.subscribe(closeDrawer, (state, _action) => {
 
 store.observe((state) => {
   document.title = state.title;
-});
-
-store.subscribe(updateInviteLink, (state, {publicKey, payload}) => {
-  const {name} = payload;
-  return {
-    ... state,
-    inviteLinkName: name,
-    inviteLinkPublicKey: publicKey,
-  };
 });
 
 
