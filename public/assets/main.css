@@ -248,3 +248,19 @@ body {
   align-items: center;
   padding: .5rem;
 }
+
+.profile {
+  margin: auto;
+  max-inline-size: 45rem;
+}
+
+.input-field {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+}
+
+.input-field > input {
+  border: none;
+  font: inherit;
+  background-color: transparent;
+}
