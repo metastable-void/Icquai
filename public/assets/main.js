@@ -45,6 +45,8 @@ import {
   friendsInviteLinkChange,
   friendsChange,
   friendsInviteNicknameChange,
+  friendBecomingOnline,
+  friendBecomingOffline,
 } from "./topics.js";
 
 const ed = nobleEd25519;
@@ -251,6 +253,7 @@ wsMessageReceived.addListener((json) => {
       }
       case 'bounce': {
         console.warn('Message sent to %s bounced', message.recipient);
+        friendBecomingOffline.dispatch(message.recipient);
         break;
       }
       case 'signed_envelope': {
@@ -262,16 +265,23 @@ wsMessageReceived.addListener((json) => {
             switch (message.type) {
               case 'ping': {
                 console.log('Received ping; ponging.');
+                const name = myNameStore.getValue();
                 const pongMsg = {
                   type: 'forward',
                   recipient: publicKey,
                   payload: {
                     type: 'pong',
+                    name,
                   },
                 };
                 wsSendMessage(pongMsg).catch((e) => {
                   console.error(e);
                 });
+                break;
+              }
+              case 'pong': {
+                console.log('Received pong.');
+                friendBecomingOnline.dispatch(publicKey);
                 break;
               }
             }
@@ -405,6 +415,27 @@ store.subscribe(friendsInviteNicknameChange, (state, friendsInviteNickname) => {
   return {
     ... state,
     friendsInviteNickname,
+  };
+});
+
+store.subscribe(friendBecomingOnline, (state, publicKey) => {
+  const {onlineFriends} = state;
+  if (!onlineFriends.includes(publicKey)) {
+    onlineFriends.push(publicKey);
+  }
+  return {
+    ... state,
+    onlineFriends,
+  };
+});
+
+store.subscribe(friendBecomingOffline, (state, publicKey) => {
+  const {onlineFriends} = state;
+  const set = new Set(onlineFriends);
+  set.delete(publicKey);
+  return {
+    ... state,
+    onlineFriends: [... set],
   };
 });
 

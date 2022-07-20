@@ -43,6 +43,8 @@ export const myInviteLinkChange = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'my
 export const friendsInviteLinkChange = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'friends.invite_link.change');
 export const friendsChange = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'friends.change');
 export const friendsInviteNicknameChange = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'friends.invite_link.nickname.change');
+export const friendBecomingOnline = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'friends.online');
+export const friendBecomingOffline = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'friends.offline');
 
 
 // global event listeners
