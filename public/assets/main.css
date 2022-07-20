@@ -293,6 +293,7 @@ table.friends tr {
 table.friends td, table.friends th {
   padding: .5rem;
   box-sizing: border-box;
+  vertical-align: middle;
 }
 
 table.friends td.online-status {
@@ -302,6 +303,7 @@ table.friends td.online-status {
 
 table.friends td.online-status .material-icons {
   font-size: inherit;
+  display: inline;
 }
 
 table.friends tr.offline td.online-status {
