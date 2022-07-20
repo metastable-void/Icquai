@@ -44,6 +44,7 @@ import {
 const ed = nobleEd25519;
 
 const privateKeyStore = new LocalStorageData('icquai.private_key', () => firstAid.encodeBase64(ed.utils.randomPrivateKey()));
+const myNameStore = new LocalStorageData('icquai.my.name', () => '');
 
 const getMyKeys = async () => {
   const base64PrivateKey = privateKeyStore.getValue();
@@ -483,27 +484,27 @@ document.addEventListener('dblclick', ev => {
 });
 
 document.addEventListener ('click', ev => {
-	const composedPath = ev.composedPath();
-	for (let target of composedPath) {
-		if (!target.tagName || 'a' !== target.tagName.toLowerCase ()) {
-			continue;
-		}
-		
-		if (!target.href) {
-			continue;
-		}
-		
-		ev.preventDefault();
-		
-		const action = new URL (target.href, location.href);
-		console.log (action);
-		if (action.host !== location.host) {
-			window.open(action.href, '_blank');
-		} else {
-			pageNavigate.dispatch(action.href);
-		}
-		return;
-	}
+  const composedPath = ev.composedPath();
+  for (let target of composedPath) {
+    if (!target.tagName || 'a' !== target.tagName.toLowerCase ()) {
+      continue;
+    }
+    
+    if (!target.href) {
+      continue;
+    }
+    
+    ev.preventDefault();
+    
+    const action = new URL (target.href, location.href);
+    console.log (action);
+    if (action.host !== location.host) {
+      window.open(action.href, '_blank');
+    } else {
+      pageNavigate.dispatch(action.href);
+    }
+    return;
+  }
 });
 
 pageNavigate.dispatch(location.href);

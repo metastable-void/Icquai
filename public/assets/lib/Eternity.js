@@ -235,6 +235,10 @@ export class HtmlView {
     return new HtmlText(aText);
   }
 
+  static customTag(aTagName, aAttributes, aContent) {
+    return new HtmlView(aTagName, aAttributes, aContent);
+  }
+
   static a(aAttributes, aContent) {
     return new HtmlView('a', aAttributes, aContent);
   }

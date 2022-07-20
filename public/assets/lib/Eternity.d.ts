@@ -45,6 +45,8 @@ type TopicScope = 'client' | 'session' | 'instance';
 export class HtmlView {
   static text(aText: string): HtmlText;
 
+  static customTag(aTagName: string, aAttriibutes: [ViewProperty], aContent: [HtmlView]): HtmlView;
+
   static a(aAttriibutes: [ViewProperty], aContent: [HtmlView]): HtmlView;
 
   static abbr(aAttriibutes: [ViewProperty], aContent: [HtmlView]): HtmlView;
