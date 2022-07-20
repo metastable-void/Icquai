@@ -580,6 +580,7 @@ store.render(containerElement, (state) => {
 
         }
       } catch (e) {
+        console.error(e);
         notFound();
         break;
       }
