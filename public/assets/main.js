@@ -42,6 +42,7 @@ import {
   myNameChange,
   myFingerprintChange,
   myInviteLinkChange,
+  friendsInviteLinkChange,
 } from "./topics.js";
 
 const ed = nobleEd25519;
@@ -365,6 +366,13 @@ store.observe((state) => {
   document.title = state.title;
 });
 
+store.subscribe(friendsInviteLinkChange, (state, link) => {
+  return {
+    ... state,
+    friendsInviteLink: link,
+  };
+});
+
 
 myNameStore.observe((newName) => {
   myNameChange.dispatch(newName);
@@ -594,13 +602,17 @@ store.render(containerElement, async (state) => {
         EH.div([], [
           createInputField('Invite link', 'friends-invite-link', [
             EP.eventListener('change', (ev) => {
-              //
+              friendsInviteLinkChange.dispatch(ev.target.value);
             }),
           ], 'Paste invite link here'),
           EH.p([], [
             EH.button([
               EP.eventListener('click', (ev) => {
-                //
+                const url = new URL(state.friendsInviteLink, location.href);
+                if ('/invite' != url.pathname) {
+                  return;
+                }
+                pageNavigate.dispatch(`/invite${url.hash}`);
               }),
             ], [EH.text('Add friend')]),
           ]),
