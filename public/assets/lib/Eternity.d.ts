@@ -29,7 +29,7 @@ interface Store {
   unsubscribe(topic: Topic): void;
   observe(observer: (state: any) => void): void;
   unobserve(observer: (state: any) => void): void;
-  render(element: HTMLElement, renderer: (state: any) => ([HtmlView] | HtmlView)): void;
+  render(element: HTMLElement, renderer: (state: any) => (Promise<[HtmlView]> | Promise<HtmlView> | [HtmlView] | HtmlView)): void;
 }
 
 interface Topic {

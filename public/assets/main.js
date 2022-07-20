@@ -499,7 +499,7 @@ const createInputField = (label, id, eventListeners, placeholder) => {
 };
 
 const containerElement = document.querySelector('#container');
-store.render(containerElement, (state) => {
+store.render(containerElement, async (state) => {
   const query = new URLSearchParams(state.urlQuery);
   const hash = state.urlHash;
   let mainHeader;
@@ -546,52 +546,43 @@ store.render(containerElement, (state) => {
     }
     case '/invite': {
       // invite link
+      mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('Add Friend')]);
       try {
         const bytes = firstAid.decodeBase64(hash.slice(1));
         const signedJson = firstAid.decodeString(bytes);
         const signedData = JSON.parse(signedJson);
         // TODO: This is not how pure functions work
-        verifyMessage(signedData).then(({publicKey, payload}) => {
-          if (payload.type != 'invite_link') {
-            throw new TypeError('Not an invite link');
-          }
-          updateInviteLink.dispatch({publicKey, payload});
-        }).catch((e) => {
-          console.error(e);
-          updateInviteLink.dispatch({publicKey: '', payload: {name: ''}});
-        });
-        mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('Add Friend')]);
-        if (state.inviteLinkPublicKey == '') {
-          mainContent = EH.div([EA.classes(['profile'])], [
-            EH.p([], [EH.text('Invite link is invalid.')]),
-          ]);
-        } else {
-          const publicKey = createInputField('Public Key', 'invite-public-key', [
-            EP.attribute('value', state.inviteLinkPublicKey),
-            EP.attribute('readonly', ''),
-          ], '');
-          const name = createInputField('Name', 'invite-link-name', [
-            EP.attribute('value', state.inviteLinkName),
-            EP.attribute('readonly', ''),
-          ], '');
-          const nickName = createInputField('Nickname', 'invite-link-nickname', [
-            EP.attribute('value', state.myName),
-            EP.eventListener('change', (ev) => {
-              const value = String(ev.target.value).trim();
-              if ('' == value) {
-                return;
-              }
-            }),
-          ], 'Add nickname');
-          mainContent = EH.div([EA.classes(['profile'])], [
-            publicKey,
-            name,
-          ]);
-
+        const message = await verifyMessage(signedData);
+        const {payload} = message;
+        if (payload.type != 'invite_link') {
+          throw new TypeError('Not an invite link');
         }
+        const publicKey = createInputField('Public Key', 'invite-public-key', [
+          EP.attribute('value', message.publicKey),
+          EP.attribute('readonly', ''),
+        ], '');
+        const name = createInputField('Name', 'invite-link-name', [
+          EP.attribute('value', payload.name),
+          EP.attribute('readonly', ''),
+        ], '');
+        const nickName = createInputField('Nickname', 'invite-link-nickname', [
+          EP.attribute('value', state.myName),
+          EP.eventListener('change', (ev) => {
+            const value = String(ev.target.value).trim();
+            if ('' == value) {
+              return;
+            }
+          }),
+        ], 'Add nickname');
+        mainContent = EH.div([EA.classes(['profile'])], [
+          publicKey,
+          name,
+        ]);
       } catch (e) {
         console.error(e);
-        notFound();
+        mainContent = EH.div([EA.classes(['profile'])], [
+          EH.p([], [EH.text('Invite link is invalid.')]),
+        ]);
         break;
       }
       break;

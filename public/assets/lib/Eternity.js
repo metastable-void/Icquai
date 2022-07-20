@@ -1228,8 +1228,8 @@ class Store {
       throw new TypeError('Renderer must be a function');
     }
 
-    this.observe((state) => {
-      const result = renderer(state);
+    this.observe(async (state) => {
+      const result = await callMaybeAsync(renderer, state);
       const views = result instanceof HtmlView ? [result] : [... result];
       render(element, views);
     });
