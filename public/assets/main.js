@@ -458,7 +458,6 @@ store.render(containerElement, (state) => {
         }),
       ], 'name');
       mainContent = EH.div([EA.classes(['profile'])], [
-        EH.text('Main content'),
         fingerprint,
         name,
       ]);

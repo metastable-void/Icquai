@@ -252,6 +252,7 @@ body {
 .profile {
   margin: auto;
   max-inline-size: 45rem;
+  padding: 1rem;
 }
 
 .input-field {
