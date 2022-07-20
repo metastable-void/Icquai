@@ -512,6 +512,9 @@ const addFriend = (publicKey, savedName, nickname) => {
       break;
     }
   }
+  if (!nickname) {
+    nickname = savedName;
+  }
   if (!found) {
     const friend = {
       publicKey,
