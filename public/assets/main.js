@@ -233,10 +233,6 @@ wsMessageReceived.addListener((json) => {
   }
 });
 
-myNameStore.observe((newName) => {
-  myNameChange.dispatch(newName);
-});
-
 privateKeyStore.observe(async (_newPrivateKey) => {
   const keys = await getMyKeys();
   const fingerprint = firstAid.encodeHex(keys.sha256Fingerprint);
@@ -335,6 +331,11 @@ store.subscribe(closeDrawer, (state, _action) => {
 
 store.observe((state) => {
   document.title = state.title;
+});
+
+
+myNameStore.observe((newName) => {
+  myNameChange.dispatch(newName);
 });
 
 const renderDrawer = (isOpen, mainContent, drawerContent, mainHeader, drawerHeader) => {
