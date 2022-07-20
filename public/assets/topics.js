@@ -41,6 +41,8 @@ export const myNameChange = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'my.name.
 export const myFingerprintChange = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'my.fingerprint.change');
 export const myInviteLinkChange = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'my.invite_link.change');
 export const friendsInviteLinkChange = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'friends.invite_link.change');
+export const friendsChange = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'friends.change');
+export const friendsInviteNicknameChange = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'friends.invite_link.nickname.change');
 
 
 // global event listeners

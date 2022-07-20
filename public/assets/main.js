@@ -43,6 +43,8 @@ import {
   myFingerprintChange,
   myInviteLinkChange,
   friendsInviteLinkChange,
+  friendsChange,
+  friendsInviteNicknameChange,
 } from "./topics.js";
 
 const ed = nobleEd25519;
@@ -373,6 +375,20 @@ store.subscribe(friendsInviteLinkChange, (state, link) => {
   };
 });
 
+store.subscribe(friendsChange, (state, friends) => {
+  return {
+    ... state,
+    friends,
+  };
+});
+
+store.subscribe(friendsInviteNicknameChange, (state, friendsInviteNickname) => {
+  return {
+    ... state,
+    friendsInviteNickname,
+  };
+});
+
 
 myNameStore.observe((newName) => {
   myNameChange.dispatch(newName);
@@ -409,6 +425,10 @@ const inviteLinkObserver = async () => {
 
 myNameStore.observe(inviteLinkObserver);
 privateKeyStore.observe(inviteLinkObserver);
+
+friendsStore.observe((friends) => {
+  friendsChange.dispatch(friends);
+});
 
 const renderDrawer = (isOpen, mainContent, drawerContent, mainHeader, drawerHeader) => {
   return EH.div([
@@ -481,6 +501,26 @@ const renderDrawer = (isOpen, mainContent, drawerContent, mainHeader, drawerHead
       ]),
     ]),
   ]);
+};
+
+const addFriend = (publicKey, savedName, nickname) => {
+  const friends = friendsStore.getValue();
+  let found = false;
+  for (const friend of friends) {
+    if (friend.publicKey == publicKey) {
+      found = true;
+      break;
+    }
+  }
+  if (!found) {
+    const friend = {
+      publicKey,
+      savedName,
+      nickname,
+    };
+    friends.push(friend);
+  }
+  friendsStore.setValue(friends);
 };
 
 const createInputField = (label, id, eventListeners, placeholder) => {
@@ -570,11 +610,13 @@ store.render(containerElement, async (state) => {
             if ('' == value) {
               return;
             }
+            friendsInviteNicknameChange.dispatch(value);
           }),
         ], 'Add nickname');
-        const addFriend = EH.button([
+        const addFriendButton = EH.button([
           EP.eventListener('click', (ev) => {
-            //
+            addFriend(publicKey, payload.name, state.friendsInviteNickname);
+            pageNavigate.dispatch('/friends');
           }),
         ], [
           EH.text('Add friend'),
@@ -583,10 +625,10 @@ store.render(containerElement, async (state) => {
           publicKey,
           name,
           nickName,
-          EH.p([], [addFriend]),
+          EH.p([], [addFriendButton]),
         ]);
       } catch (e) {
-        console.error(e);
+        console.warn(e);
         mainContent = EH.div([EA.classes(['profile'])], [
           EH.p([], [EH.text('Invite link is invalid.')]),
         ]);
