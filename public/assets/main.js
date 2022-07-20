@@ -589,7 +589,21 @@ store.render(containerElement, async (state) => {
     case '/friends': {
       // friends
       mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('Friends')]);
-      mainContent = EH.div([], [EH.text('Main content')]);
+      mainContent = EH.div([EA.classes(['profile'])], [
+        EH.text('Main content'),
+        EH.div([], [
+          createInputField('Invite link', 'friends-invite-link', [
+            EP.eventListener('change', (ev) => {
+              //
+            }),
+          ], 'Paste invite link here'),
+          EH.button([
+            EP.eventListener('click', (ev) => {
+              //
+            }),
+          ], [EH.text('Add friend')]),
+        ]),
+      ]);
       break;
     }
     case '/talk': {
