@@ -41,6 +41,7 @@ import {
   pageNavigate,
   myNameChange,
   myFingerprintChange,
+  myInviteLinkChange,
 } from "./topics.js";
 
 const ed = nobleEd25519;
@@ -306,6 +307,13 @@ store.subscribe(becomingOffline, (state, _action) => {
   };
 });
 
+store.subscribe(myInviteLinkChange, (state, link) => {
+  return {
+    ... state,
+    myInviteLink: link,
+  };
+});
+
 const openDrawer = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, "open_drawer");
 const closeDrawer = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, "close_drawer");
 
@@ -337,6 +345,31 @@ privateKeyStore.observe(async (_newPrivateKey) => {
   const fingerprint = firstAid.encodeHex(keys.sha256Fingerprint);
   myFingerprintChange.dispatch(fingerprint);
 });
+
+const inviteLinkObserver = async () => {
+  const myName = myNameStore.getValue();
+  const keys = await getMyKeys();
+  const message = {
+    type: 'invite_link',
+    name: myName,
+  };
+  const json = JSON.stringify(message);
+  const data = firstAid.encodeString(json);
+  const signature = await ed.sign(data, keys.privateKey);
+  const signedMessage = {
+    type: 'signed_envelope',
+    algo: 'sign-ed25519',
+    data: firstAid.encodeBase64(data),
+    public_key: firstAid.encodeBase64(keys.publicKey),
+    signature: firstAid.encodeBase64(signature),
+  };
+  const signedJson = JSON.stringify(signedMessage);
+  const link = new URL(`/invite#${firstAid.encodeBase64(signedJson)}`, location.href).href;
+  myInviteLinkChange.dispatch(link);
+};
+
+myNameStore.observe(inviteLinkObserver);
+privateKeyStore.observe(inviteLinkObserver);
 
 const renderDrawer = (isOpen, mainContent, drawerContent, mainHeader, drawerHeader) => {
   return EH.div([
@@ -458,9 +491,14 @@ store.render(containerElement, (state) => {
           myNameStore.setValue(value);
         }),
       ], 'name');
+      const inviteLink = createInputField('Invite Link', 'my-invite-link', [
+        EP.attribute('readonly', ''),
+        EP.attribute('value', state.myInviteLink),
+      ], '');
       mainContent = EH.div([EA.classes(['profile'])], [
         fingerprint,
         name,
+        inviteLink,
       ]);
       break;
     }
