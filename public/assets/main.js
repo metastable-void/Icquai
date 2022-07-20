@@ -575,7 +575,7 @@ store.render(containerElement, async (state) => {
           publicKey,
           name,
           nickName,
-          addFriend,
+          EH.p([], [addFriend]),
         ]);
       } catch (e) {
         console.error(e);
@@ -597,11 +597,13 @@ store.render(containerElement, async (state) => {
               //
             }),
           ], 'Paste invite link here'),
-          EH.button([
-            EP.eventListener('click', (ev) => {
-              //
-            }),
-          ], [EH.text('Add friend')]),
+          EH.p([], [
+            EH.button([
+              EP.eventListener('click', (ev) => {
+                //
+              }),
+            ], [EH.text('Add friend')]),
+          ]),
         ]),
       ]);
       break;
