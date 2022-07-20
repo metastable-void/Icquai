@@ -233,12 +233,6 @@ wsMessageReceived.addListener((json) => {
   }
 });
 
-privateKeyStore.observe(async (_newPrivateKey) => {
-  const keys = await getMyKeys();
-  const fingerprint = firstAid.encodeHex(keys.sha256Fingerprint);
-  myFingerprintChange.dispatch(fingerprint);
-});
-
 
 store.subscribe(myNameChange, (state, newName) => {
   return {
@@ -336,6 +330,12 @@ store.observe((state) => {
 
 myNameStore.observe((newName) => {
   myNameChange.dispatch(newName);
+});
+
+privateKeyStore.observe(async (_newPrivateKey) => {
+  const keys = await getMyKeys();
+  const fingerprint = firstAid.encodeHex(keys.sha256Fingerprint);
+  myFingerprintChange.dispatch(fingerprint);
 });
 
 const renderDrawer = (isOpen, mainContent, drawerContent, mainHeader, drawerHeader) => {
