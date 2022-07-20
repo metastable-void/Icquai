@@ -696,7 +696,7 @@ store.render(containerElement, async (state) => {
       for (const friend of state.friends) {
         const isOnline = state.onlineFriends.includes(friend.publicKey);
         const tr = EH.tr([EA.classes([isOnline ? 'online' : 'offline'])], [
-          EH.td([EA.classes(['material-icons'])], [EH.text('circle')]),
+          EH.td([EA.classes(['material-icons', 'online-status'])], [EH.text('circle')]),
           EH.td([EA.classes(['name'])], [EH.text(friend.savedName)]),
           EH.td([EA.classes(['nickname'])], [EH.text(friend.nickname)]),
         ]);

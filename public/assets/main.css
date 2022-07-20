@@ -289,3 +289,19 @@ table.friends tr {
   border-block-start: solid .0625rem var(--theme-border-color);
   border-block-end: solid .0625rem var(--theme-border-color);
 }
+
+table.friends td, table.friends th {
+  padding: .5rem;
+}
+
+table.friends td.online-status {
+  font-size: 1rem;
+}
+
+table.friends tr.offline td.online-status {
+  color: #919191;
+}
+
+table.friends tr.online td.online-status {
+  color: #00a800;
+}
