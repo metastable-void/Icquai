@@ -421,6 +421,7 @@ const createInputField = (label, id, eventListeners, placeholder) => {
     ]),
   ]);
   //
+  return input;
 };
 
 const containerElement = document.querySelector('#container');
