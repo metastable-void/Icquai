@@ -503,7 +503,13 @@ const renderDrawer = (isOpen, mainContent, drawerContent, mainHeader, drawerHead
   ]);
 };
 
-const addFriend = (publicKey, savedName, nickname) => {
+const addFriend = async (publicKey, savedName, nickname) => {
+  publicKey = firstAid.encodeBase64(firstAid.decodeBase64(publicKey));
+  const keys = await getMyKeys();
+  const myPublicKey = firstAid.encodeBase64(keys.publicKey);
+  if (publicKey == myPublicKey) {
+    return;
+  }
   const friends = friendsStore.getValue();
   let found = false;
   for (const friend of friends) {
@@ -618,10 +624,13 @@ store.render(containerElement, async (state) => {
         ], 'Add nickname');
         const addFriendButton = EH.button([
           EP.eventListener('click', (ev) => {
-            addFriend(message.publicKey, payload.name, state.friendsInviteNickname);
-            setTimeout(() => {
-              pageNavigate.dispatch('/friends');
-            }, 0);
+            addFriend(message.publicKey, payload.name, state.friendsInviteNickname).then(() => {
+              setTimeout(() => {
+                pageNavigate.dispatch('/friends');
+              }, 0);
+            }).catch((e) => {
+              console.error(e);
+            });
           }),
         ], [
           EH.text('Add friend'),
