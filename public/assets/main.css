@@ -257,10 +257,23 @@ body {
 .input-field {
   display: grid;
   grid-template-columns: max-content 1fr;
+  background-color: var(--theme-input-background-color);
+  column-gap: 1rem;
+}
+
+.input-field > label {
+  display: grid;
+  align-content: center;
+  padding: .5rem;
 }
 
 .input-field > input {
+  display: grid;
+  align-content: center;
   border: none;
   font: inherit;
   background-color: transparent;
+  outline: none !important;
+  margin: 0;
+  padding: .5rem;
 }
