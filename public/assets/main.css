@@ -265,6 +265,10 @@ body {
   font-size: 1.25rem;
 }
 
+#main-navigation ul > li > a:hover, #main-navigation ul > li > a:active {
+  background-color: var(--theme-active-background-color);
+}
+
 .profile {
   margin: auto;
   max-inline-size: 45rem;
