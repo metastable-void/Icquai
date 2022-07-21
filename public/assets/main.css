@@ -133,6 +133,7 @@
 body, input, textarea, button, select {
   font: inherit;
   border-radius: 0;
+  color: inherit;
 }
 
 input[type="text"] {
