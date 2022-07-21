@@ -294,6 +294,11 @@ table.friends td, table.friends th {
   padding: .5rem;
   box-sizing: border-box;
   vertical-align: middle;
+  text-align: start;
+}
+
+table.friends th {
+  font-weight: bold;
 }
 
 table.friends td.online-status {
