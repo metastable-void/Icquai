@@ -742,7 +742,10 @@ store.render(containerElement, async (state) => {
             pageNavigate.dispatch(`/talk?public_key=${encodeURIComponent(friend.publicKey)}`);
           }),
         ], [
-          EH.td([EA.classes(['online-status'])], [
+          EH.td([
+            EA.classes(['online-status']),
+            EP.attribute('title', isOnline ? 'Online' : 'Offline'),
+          ], [
             EH.span([EA.classes(['material-icons'])], [EH.text('circle')]),
           ]),
           EH.td([EA.classes(['name'])], [EH.text(friend.savedName)]),
@@ -806,7 +809,10 @@ store.render(containerElement, async (state) => {
       const isOnline = state.onlineFriends.includes(publicKey);
       mainHeader = EH.div([EP.classes(['talk-toolbar'])], [
         EH.h2([EA.classes(['header-headding'])], [EH.text(name)]),
-        EH.div([EA.classes(['talk-toolbar-status', 'material-icons', isOnline ? 'online' : 'offline'])], [
+        EH.div([
+          EA.classes(['talk-toolbar-status', 'material-icons', isOnline ? 'online' : 'offline']),
+          EP.attribute('title', isOnline ? 'Online' : 'Offline'),
+        ], [
           EH.text('circle'),
         ]),
         EH.button([EA.classes(['material-icons'])], [EH.text('call')]),
