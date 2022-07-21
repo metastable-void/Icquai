@@ -43,11 +43,12 @@
   --theme-light-border-color: #ccc;
   --theme-light-label-text-color: #888;
   --theme-light-shadow-color: rgba(0, 0, 0, .5);
+  --theme-light-active-background-color: rgba(127, 127, 127, .25);
 
   /* dark theme */
   --theme-dark-text-color: #eee;
   --theme-dark-background-color: #000;
-  --theme-dark-overlay-color: rgba(0, 0, 0, .5);
+  --theme-dark-overlay-color: rgba(127, 127, 127, .5);
   --theme-dark-inverted-text-color: #000;
   --theme-dark-input-background-color: #333;
   --theme-dark-secondary-text-color: #ccc;
@@ -56,6 +57,7 @@
   --theme-dark-border-color: #666;
   --theme-dark-label-text-color: #999;
   --theme-dark-shadow-color: rgba(255, 255, 255, .75);
+  --theme-dark-active-background-color: rgba(127, 127, 127, .25);
 
   --theme-main-text-color: var(--theme-light-text-color);
   --theme-main-background-color: var(--theme-light-background-color);
@@ -68,6 +70,7 @@
   --theme-label-text-color: var(--theme-light-label-text-color);
   --theme-overlay-color: var(--theme-dark-overlay-color);
   --theme-shadow-color: var(--theme-light-shadow-color);
+  --theme-active-background-color: var(--theme-light-active-background-color);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -81,8 +84,9 @@
       --theme-disabled-text-color: var(--theme-dark-disabled-text-color);
       --theme-border-color: var(--theme-dark-border-color);
       --theme-label-text-color: var(--theme-dark-label-text-color);
-      --theme-overlay-color: var(--theme-light-overlay-color);
+      --theme-overlay-color: var(--theme-dark-overlay-color);
       --theme-shadow-color: var(--theme-dark-shadow-color);
+      --theme-active-background-color: var(--theme-dark-active-background-color);
   }
 }
 
@@ -141,7 +145,7 @@ input, button, textarea {
 }
 
 button:hover, button:active {
-  background-color: var(--theme-overlay-color);
+  background-color: var(--theme-active-background-color);
 }
 
 input[type="text"] {
@@ -365,5 +369,5 @@ table.friends td.nickname::after {
 }
 
 .talk-toolbar button:active, .talk-toolbar button:hover {
-  background-color: var(--theme-overlay-color);
+  background-color: var(--theme-active-background-color);
 }

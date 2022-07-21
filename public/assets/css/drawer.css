@@ -162,5 +162,5 @@
 }
 
 .header-button:active, .header-button:hover {
-  background-color: var(--theme-overlay-color);
+  background-color: var(--theme-active-background-color);
 }
