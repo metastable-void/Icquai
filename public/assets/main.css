@@ -37,7 +37,7 @@
   --theme-light-overlay-color: rgba(127, 127, 127, .5);
   --theme-light-inverted-text-color: #fff;
   --theme-light-input-background-color: #fff;
-  --theme-light-secondary-text-color: #ccc;
+  --theme-light-secondary-text-color: #666;
   --theme-light-input-border-color: #aaa;
   --theme-light-disabled-text-color: #888;
   --theme-light-border-color: #ccc;
@@ -50,7 +50,7 @@
   --theme-dark-overlay-color: rgba(0, 0, 0, .5);
   --theme-dark-inverted-text-color: #000;
   --theme-dark-input-background-color: #333;
-  --theme-dark-secondary-text-color: #666;
+  --theme-dark-secondary-text-color: #ccc;
   --theme-dark-input-border-color: #888;
   --theme-dark-disabled-text-color: #888;
   --theme-dark-border-color: #666;
