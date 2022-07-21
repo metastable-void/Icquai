@@ -189,11 +189,9 @@ body {
 }
 
 .header-headding {
-  display: grid;
   padding-inline: 1rem;
   font-size: 1.5rem;
   margin: 0;
-  align-content: center;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -353,6 +351,7 @@ table.friends td.nickname::after {
 .talk-toolbar {
   display: grid;
   grid-template-columns: 1fr max-content max-content;
+  align-items: center;
 }
 
 .talk-toolbar button {

@@ -92,6 +92,7 @@
 
 #drawer-main-header-content {
   display: grid;
+  align-items: center;
 }
 
 #drawer-main-content {
