@@ -79,7 +79,7 @@
   display: grid;
   grid-template-columns: max-content 1fr;
   background-color: var(--theme-input-background-color);
-  color: var(--theme-light-text-color);
+  color: var(--theme-secondary-text-color);
   position: -webkit-sticky;
   position: sticky;
   top: 0;
@@ -87,6 +87,7 @@
   right: 0;
   inline-size: 100%;
   z-index: 1;
+  box-shadow: 0 0 .25rem var(--theme-shadow-color);
 }
 
 #drawer-main-header-content {
