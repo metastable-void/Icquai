@@ -766,6 +766,13 @@ store.render(containerElement, async (state) => {
           ]),
         ]),
         EH.table([EA.classes(['friends'])], [
+          EH.thead([], [
+            EH.tr([], [
+              EH.th([], []),
+              EH.th([], [EH.text('Name')]),
+              EH.th([], [EH.text('Nickname')]),
+            ]),
+          ]),
           EH.tbody([], [
             ... friendsList,
           ]),
