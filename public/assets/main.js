@@ -791,6 +791,10 @@ store.render(containerElement, async (state) => {
         break;
       }
       const publicKey = query.get('public_key');
+      if (!publicKey) {
+        notFound();
+        break;
+      }
       let friend;
       for (const value of state.friends) {
         if (value.publicKey == publicKey) {
@@ -799,9 +803,12 @@ store.render(containerElement, async (state) => {
         }
       }
       const name = friend ? friend.savedName : 'Talk';
+      const isOnline = state.onlineFriends.includes(publicKey);
       mainHeader = EH.div([EP.classes(['talk-toolbar'])], [
         EH.h2([EA.classes(['header-headding'])], [EH.text(name)]),
-        EH.div([], [EH.text('Status')]),
+        EH.div([EA.classes(['talk-toolbar-status', 'material-icons', isOnline ? 'online' : 'offline'])], [
+          EH.text('circle'),
+        ]),
         EH.button([EA.classes(['material-icons'])], [EH.text('call')]),
       ]);
       mainContent = EH.div([], [EH.text('Main content')]);
