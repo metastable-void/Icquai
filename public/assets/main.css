@@ -282,6 +282,8 @@ body {
 .talk {
   display: grid;
   align-content: end;
+  min-block-size: 100%;
+  box-sizing: border-box;
 }
 
 .input-field {
