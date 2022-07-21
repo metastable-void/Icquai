@@ -330,3 +330,8 @@ table.friends td.nickname::before {
 table.friends td.nickname::after {
   content: ']';
 }
+
+.talk-toolbar {
+  display: grid;
+  grid-template-columns: 1fr max-content max-content;
+}
