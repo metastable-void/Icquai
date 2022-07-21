@@ -277,6 +277,8 @@ body {
   outline: none !important;
   margin: 0;
   padding: .5rem;
+  inline-size: 100%;
+  block-size: 100%;
 }
 
 table.friends {
