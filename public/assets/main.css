@@ -105,7 +105,7 @@
   -moz-user-select: none;
   user-select: none;
   font-kerning: normal;
-  caret-color: var(--theme-accent-color);
+  caret-color: var(--theme-background-color);
 }
 
 /* Material Icons begin */
