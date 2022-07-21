@@ -736,7 +736,12 @@ store.render(containerElement, async (state) => {
       const friendsList = [];
       for (const friend of state.friends) {
         const isOnline = state.onlineFriends.includes(friend.publicKey);
-        const tr = EH.tr([EA.classes([isOnline ? 'online' : 'offline'])], [
+        const tr = EH.tr([
+          EA.classes([isOnline ? 'online' : 'offline']),
+          EP.eventListener('click', (ev) => {
+            pageNavigate.dispatch(`/talk?public_key=${encodeURIComponent(friend.publicKey)}`);
+          }),
+        ], [
           EH.td([EA.classes(['online-status'])], [
             EH.span([EA.classes(['material-icons'])], [EH.text('circle')]),
           ]),
@@ -785,7 +790,16 @@ store.render(containerElement, async (state) => {
         notFound();
         break;
       }
-      mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('Talk')]);
+      const publicKey = query.get('public_key');
+      let friend;
+      for (const value of state.friends) {
+        if (value.publicKey == publicKey) {
+          friend = value;
+          break;
+        }
+      }
+      const name = friend ? friend.savedName : 'Talk';
+      mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text(name)]);
       mainContent = EH.div([], [EH.text('Main content')]);
       break;
     }
