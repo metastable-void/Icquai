@@ -132,8 +132,16 @@
 
 body, input, textarea, button, select {
   font: inherit;
-  border-radius: 0;
+}
+
+input, button, textarea {
+  background-color: transparent;
   color: inherit;
+  border-radius: 0;
+}
+
+button:hover, button:active {
+  background-color: var(--theme-overlay-color);
 }
 
 input[type="text"] {
