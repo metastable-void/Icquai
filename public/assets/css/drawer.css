@@ -78,8 +78,8 @@
   grid-column: content-start / content-end;
   display: grid;
   grid-template-columns: max-content 1fr;
-  background-color: var(--theme-accent-color);
-  color: var(--theme-highlighted-text-color);
+  background-color: var(--theme-input-background-color);
+  color: var(--theme-light-text-color);
   position: -webkit-sticky;
   position: sticky;
   top: 0;
