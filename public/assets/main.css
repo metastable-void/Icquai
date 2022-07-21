@@ -273,10 +273,15 @@ body {
   background-color: var(--theme-active-background-color);
 }
 
-.profile {
+.profile, .talk {
   margin: auto;
   max-inline-size: 45rem;
   padding: 1rem;
+}
+
+.talk {
+  display: grid;
+  align-content: end;
 }
 
 .input-field {

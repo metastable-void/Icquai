@@ -817,7 +817,11 @@ store.render(containerElement, async (state) => {
         ]),
         EH.button([EA.classes(['material-icons'])], [EH.text('call')]),
       ]);
-      mainContent = EH.div([], [EH.text('Main content')]);
+      mainContent = EH.div([
+        EA.classes(['talk']),
+      ], [
+        EH.text('Main content')
+      ]);
       break;
     }
     default: {
