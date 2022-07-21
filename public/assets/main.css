@@ -365,5 +365,5 @@ table.friends td.nickname::after {
 }
 
 .talk-toolbar button:active, .talk-toolbar button:hover {
-  background-color: var(--theme-highlighted-active-color);
+  background-color: var(--theme-overlay-color);
 }
