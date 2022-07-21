@@ -799,7 +799,11 @@ store.render(containerElement, async (state) => {
         }
       }
       const name = friend ? friend.savedName : 'Talk';
-      mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text(name)]);
+      mainHeader = EH.div([EP.classes(['talk-toolbar'])], [
+        EH.h2([EA.classes(['header-headding'])], [EH.text(name)]),
+        EH.div([], [EH.text('Status')]),
+        EH.button([EA.classes(['material-icons'])], EH.text('call')),
+      ]);
       mainContent = EH.div([], [EH.text('Main content')]);
       break;
     }
