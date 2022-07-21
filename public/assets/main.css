@@ -99,13 +99,13 @@
   min-width: 100%;
   min-height: 100%;
   font-synthesis: none;
-  background-color: var(--theme-accent-color);
+  background-color: var(--theme-background-color);
   color: var(--theme-text-color);
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
   font-kerning: normal;
-  caret-color: var(--theme-background-color);
+  caret-color: var(--theme-accent-color);
 }
 
 /* Material Icons begin */
