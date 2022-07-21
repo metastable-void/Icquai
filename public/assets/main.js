@@ -635,7 +635,7 @@ store.render(containerElement, async (state) => {
   let mainContent;
   const notFound = () => {
     mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('Not Found')]);
-    mainContent = EH.div([], [
+    mainContent = EH.div([EA.classes(['profile'])], [
       EH.meta([
         EP.attribute('name', 'robot'),
         EP.attribute('content', 'noindex'),
