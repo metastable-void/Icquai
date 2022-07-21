@@ -277,6 +277,7 @@ body {
   outline: none !important;
   margin: 0;
   padding: .5rem;
+  box-sizing: border-box;
   inline-size: 100%;
   block-size: 100%;
 }
