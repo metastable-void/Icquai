@@ -337,3 +337,23 @@ table.friends td.nickname::after {
   display: grid;
   grid-template-columns: 1fr max-content max-content;
 }
+
+.talk-toolbar button {
+  display: grid;
+  font-size: 2rem !important;
+  inline-size: 3rem;
+  min-block-size: 3rem;
+  overflow: hidden;
+  align-content: center;
+  justify-content: center;
+  appearance: none;
+  border: none;
+  background-color: transparent;
+  margin: 0;
+  padding: 0;
+  color: inherit;
+}
+
+.talk-toolbar button:active, .talk-toolbar button:hover {
+  background-color: var(--theme-highlighted-active-color);
+}
