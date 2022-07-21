@@ -265,6 +265,10 @@ body {
   font-size: 1.25rem;
 }
 
+#main-navigation ul > li > a > .material-icons {
+  font-size: 2rem;
+}
+
 #main-navigation ul > li > a:hover, #main-navigation ul > li > a:active {
   background-color: var(--theme-active-background-color);
 }
