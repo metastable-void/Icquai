@@ -471,6 +471,31 @@ store.observe((state) => {
 });
 
 
+setInterval(() => {
+  const state = store.state;
+  if ('/talk' != state.urlPath) {
+    return;
+  }
+  const query = new URLSearchParams(state.urlQuery);
+  if (!query.has('public_key')) {
+    return;
+  }
+  const publicKey = query.get('public_key');
+  if (!publicKey) {
+    return;
+  }
+  const message = {
+    type: 'forward',
+    recipient: publicKey,
+    payload: {
+      type: 'ping',
+    },
+  };
+  wsSendMessage(message).catch((e) => {
+    console.error(e);
+  });
+}, 5000);
+
 myNameStore.observe((newName) => {
   myNameChange.dispatch(newName);
 });
