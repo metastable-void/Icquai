@@ -865,6 +865,14 @@ store.render(containerElement, async (state) => {
         EA.classes(['talk']),
       ], [
         EH.div([
+          EA.id('channel-status'),
+        ], [
+          EH.p([], [EH.text('Chat is closed.')]),
+          EH.p([], [
+            EH.button([], [EH.text('Request chat')]),
+          ]),
+        ]),
+        EH.div([
           EA.id('talk-box-friend'),
           EA.classes(['talk-box']),
         ], [
