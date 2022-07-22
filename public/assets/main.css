@@ -418,17 +418,18 @@ table.friends td.nickname::after {
   border-radius: .5rem;
   background-color: var(--theme-input-background-color);
   align-items: center;
-  box-shadow: 0 0 .5rem var(--theme-shadow-color);
 }
 
 #talk-box-friend {
   margin-inline-end: 10%;
+  box-shadow: 0 0 .5rem var(--theme-shadow-color);
 }
 
 #talk-box-self {
   margin-inline-start: 10%;
   margin-block-start: 1rem;
   border-color: var(--theme-accent-color);
+  box-shadow: 0 0 .5rem var(--theme-accent-color);
 }
 
 .talk-box > .name {
