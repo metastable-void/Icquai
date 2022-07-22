@@ -144,6 +144,11 @@ input, button, textarea {
   border-radius: 0;
 }
 
+button {
+  border-radius: .5rem;
+  border: solid .0625rem var(--theme-accent-color);
+}
+
 button:hover, button:active {
   background-color: var(--theme-active-background-color);
 }
@@ -387,6 +392,7 @@ table.friends td.nickname::after {
   margin: 0;
   padding: 0;
   color: inherit;
+  border-radius: 0;
 }
 
 .talk-toolbar button:active, .talk-toolbar button:hover {

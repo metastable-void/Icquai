@@ -160,6 +160,7 @@
   margin: 0;
   padding: 0;
   color: inherit;
+  border-radius: 0;
 }
 
 .header-button:active, .header-button:hover {
