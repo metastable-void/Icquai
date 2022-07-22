@@ -613,6 +613,22 @@ const addFriend = async (publicKey, savedName, nickname) => {
   friendsStore.setValue(friends);
 };
 
+const changeFriendNickname = (publicKey, nickname) => {
+  publicKey = firstAid.encodeBase64(firstAid.decodeBase64(publicKey));
+  nickname = String(nickname || '').trim();
+  if (!nickname) {
+    return;
+  }
+  const friends = friendsStore.getValue();
+  for (const friend of friends) {
+    if (friend.publicKey == publicKey) {
+      friend.nickname = nickname;
+      break;
+    }
+  }
+  friendsStore.setValue(friends);
+};
+
 const createInputField = (label, id, eventListeners, placeholder) => {
   const input = EH.div([EA.classes(['input-field'])], [
     EH.label([EP.attribute('for', id)], [EH.text(label)]),
@@ -831,6 +847,13 @@ store.render(containerElement, async (state) => {
             EA.classes(['name']),
             EP.attribute('type', 'text'),
             EP.attribute('value', friend.nickname),
+            EP.eventListener('change', (ev) => {
+              const value = String(ev.target.value).trim();
+              if ('' == value) {
+                return;
+              }
+              changeFriendNickname(publicKey, value);
+            }),
           ]),
           EH.div([EA.classes(['fingerprint'])], [
             EH.text(hexFingerprint),
