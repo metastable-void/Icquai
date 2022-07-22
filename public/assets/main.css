@@ -436,6 +436,7 @@ table.friends td.nickname::after {
   display: block;
   margin: 0;
   border: none;
+  padding: .25rem;
 }
 
 .talk-box > .fingerprint {
@@ -445,6 +446,9 @@ table.friends td.nickname::after {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  margin: 0;
+  padding: .25rem;
+  box-sizing: border-box;
 }
 
 .talk-box > .text {
@@ -458,4 +462,5 @@ table.friends td.nickname::after {
   block-size: 100%;
   box-sizing: border-box;
   border-block-start: solid .0625rem var(--theme-border-color);
+  padding: .25rem;
 }
