@@ -412,7 +412,8 @@ table.friends td.nickname::after {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: max-content 1fr;
-  margin-block: 1rem;
+  border: solid .0625rem var(--theme-border-color);
+  border-radius: .25rem;
 }
 
 #talk-box-friend {
@@ -421,6 +422,7 @@ table.friends td.nickname::after {
 
 #talk-box-self {
   margin-inline-start: 10%;
+  margin-block-start: 1rem;
 }
 
 .talk-box > .name {
@@ -429,14 +431,24 @@ table.friends td.nickname::after {
   inline-size: 100%;
   block-size: 100%;
   box-sizing: border-box;
+  display: block;
+  margin: 0;
+  border: none;
 }
 
 .talk-box > .fingerprint {
   grid-row: 1/ 1;
   grid-column: 2 / 2;
+  display: block;
 }
 
 .talk-box > .text {
   grid-row: 2 / 2;
   grid-column: 1 / -1;
+  display: block;
+  margin: 0;
+  border: none;
+  resize: none;
+  inline-size: 100%;
+  block-size: 100%;
 }
