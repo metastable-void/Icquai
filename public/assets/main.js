@@ -829,7 +829,7 @@ store.render(containerElement, async (state) => {
             EH.text('fingerprint'),
           ]),
           EH.div([EA.classes(['text'])], [
-            EH.text('fingerprint'),
+            EH.text('text'),
           ]),
         ]),
       ]);
