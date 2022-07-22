@@ -428,6 +428,7 @@ table.friends td.nickname::after {
 #talk-box-self {
   margin-inline-start: 10%;
   margin-block-start: 1rem;
+  border-color: var(--theme-accent-color);
 }
 
 .talk-box > .name {
