@@ -807,6 +807,9 @@ store.render(containerElement, async (state) => {
       }
       const name = friend ? friend.savedName : 'Talk';
       const isOnline = state.onlineFriends.includes(publicKey);
+      const publicKeyBytes = firstAid.decodeBase64(publicKey);
+      const fingerprint = await sha256(publicKeyBytes);
+      const hexFingerprint = firstAid.encodeHex(fingerprint);
       mainHeader = EH.div([EP.classes(['talk-toolbar'])], [
         EH.h2([EA.classes(['header-headding'])], [EH.text(name)]),
         EH.div([
@@ -827,9 +830,10 @@ store.render(containerElement, async (state) => {
           EH.input([
             EA.classes(['name']),
             EP.attribute('type', 'text'),
+            EP.attribute('value', friend.nickname),
           ]),
           EH.div([EA.classes(['fingerprint'])], [
-            EH.text('fingerprint'),
+            EH.text(hexFingerprint),
           ]),
           EH.div([EA.classes(['text'])], [
             EH.text('text'),
