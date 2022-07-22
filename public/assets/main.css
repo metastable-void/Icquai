@@ -418,6 +418,7 @@ table.friends td.nickname::after {
   border-radius: .5rem;
   background-color: var(--theme-input-background-color);
   align-items: center;
+  box-shadow: 0 0 .5rem var(--theme-shadow-color);
 }
 
 #talk-box-friend {
