@@ -147,6 +147,8 @@ input, button, textarea {
 button {
   border-radius: .5rem;
   border: solid .0625rem var(--theme-accent-color);
+  margin: 0;
+  padding: .5rem;
 }
 
 button:hover, button:active {
