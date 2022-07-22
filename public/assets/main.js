@@ -820,7 +820,18 @@ store.render(containerElement, async (state) => {
       mainContent = EH.div([
         EA.classes(['talk']),
       ], [
-        EH.text('Main content')
+        EH.div([EA.id('talk-box-friend')], [
+          EH.input([
+            EA.classes(['name']),
+            EP.attribute('type', 'text'),
+          ]),
+          EH.div([EA.classes(['fingerprint'])], [
+            EH.text('fingerprint'),
+          ]),
+          EH.div([EA.classes(['text'])], [
+            EH.text('fingerprint'),
+          ]),
+        ]),
       ]);
       break;
     }
