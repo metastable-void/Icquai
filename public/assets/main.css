@@ -277,6 +277,8 @@ body {
   margin: auto;
   max-inline-size: 45rem;
   padding: 1rem;
+  padding-inline-start: .5rem;
+  padding-inline-end: .5rem;
 }
 
 .talk {
