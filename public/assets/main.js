@@ -842,9 +842,17 @@ store.render(containerElement, async (state) => {
           EH.input([
             EA.classes(['name']),
             EP.attribute('type', 'text'),
+            EP.attribute('value', state.myName),
+            EP.eventListener('change', (ev) => {
+              const value = String(ev.target.value).trim();
+              if ('' == value) {
+                return;
+              }
+              myNameStore.setValue(value);
+            }),
           ]),
           EH.div([EA.classes(['fingerprint'])], [
-            EH.text('fingerprint'),
+            EH.text(state.myFingerprint),
           ]),
           EH.textarea([EA.classes(['text'])], [
             EH.text('text'),
