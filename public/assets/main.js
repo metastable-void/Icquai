@@ -182,6 +182,27 @@ globalThis.wsSendMessage = async (message) => {
   ws.send(signedJson);
 };
 
+const PING_TIMEOUT = 5000;
+const validPingNonces = new Set;
+const sendPing = async (base64PublicKey) => {
+  const nonceBytes = new Uint8Array(32);
+  crypto.getRandomValues(nonceBytes);
+  const nonce = firstAid.encodeBase64(nonceBytes);
+  validPingNonces.add(nonce);
+  const message = {
+  type: 'forward',
+  recipient: base64PublicKey,
+  payload: {
+    type: 'ping',
+    nonce,
+  },
+};
+await wsSendMessage(message);
+setTimeout(() => {
+  validPingNonces.delete(nonce);
+}, PING_TIMEOUT);
+};
+
 pageNavigate.addListener((newUrl) => {
   const url = new URL(newUrl, location.href);
   const path = url.pathname;
@@ -272,6 +293,7 @@ wsMessageReceived.addListener((json) => {
                   payload: {
                     type: 'pong',
                     name,
+                    nonce: message.nonce,
                   },
                 };
                 wsSendMessage(pongMsg).catch((e) => {
@@ -280,6 +302,11 @@ wsMessageReceived.addListener((json) => {
                 break;
               }
               case 'pong': {
+                if (!validPingNonces.has(message.nonce)) {
+                  console.warn('Invalid nonce in ping');
+                  break;
+                }
+                validPingNonces.delete(message.nonce);
                 console.log('Received pong. Name:', message.name);
                 friendBecomingOnline.dispatch(publicKey);
                 if (!message.name) {
@@ -455,14 +482,7 @@ store.observe((state) => {
   if ('/friends' == urlPath && lastUrlPath != urlPath) {
     const friends = friendsStore.getValue();
     for (const friend of friends) {
-      const message = {
-        type: 'forward',
-        recipient: friend.publicKey,
-        payload: {
-          type: 'ping',
-        },
-      };
-      wsSendMessage(message).catch((e) => {
+      sendPing(friend.publicKey).catch((e) => {
         console.error(e);
       });
     }
@@ -484,14 +504,7 @@ setInterval(() => {
   if (!publicKey) {
     return;
   }
-  const message = {
-    type: 'forward',
-    recipient: publicKey,
-    payload: {
-      type: 'ping',
-    },
-  };
-  wsSendMessage(message).catch((e) => {
+  sendPing(publicKey).catch((e) => {
     console.error(e);
   });
 }, 5000);
