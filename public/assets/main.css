@@ -407,15 +407,23 @@ table.friends td.nickname::after {
   color: #919191;
 }
 
-#talk-box-friend {
-  margin-inline-end: 10%;
+.talk-box {
   box-sizing: border-box;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: max-content 1fr;
+  margin-block: 1rem;
 }
 
-#talk-box-friend > input.name {
+#talk-box-friend {
+  margin-inline-end: 10%;
+}
+
+#talk-box-self {
+  margin-inline-start: 10%;
+}
+
+.talk-box > .name {
   grid-row: 1 / 1;
   grid-column: 1 / 1;
   inline-size: 100%;
@@ -423,12 +431,12 @@ table.friends td.nickname::after {
   box-sizing: border-box;
 }
 
-#talk-box-friend > .fingerprint {
+.talk-box > .fingerprint {
   grid-row: 1/ 1;
   grid-column: 2 / 2;
 }
 
-#talk-box-friend > .text {
+.talk-box > .text {
   grid-row: 2 / 2;
   grid-column: 1 / -1;
 }
