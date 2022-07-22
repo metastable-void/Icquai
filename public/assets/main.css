@@ -415,6 +415,7 @@ table.friends td.nickname::after {
   border: solid .0625rem var(--theme-border-color);
   border-radius: .5rem;
   background-color: var(--theme-input-background-color);
+  align-items: center;
 }
 
 #talk-box-friend {
@@ -441,6 +442,9 @@ table.friends td.nickname::after {
   grid-row: 1/ 1;
   grid-column: 2 / 2;
   display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .talk-box > .text {
