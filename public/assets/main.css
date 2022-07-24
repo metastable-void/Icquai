@@ -448,6 +448,7 @@ table.friends td.nickname::after {
 .talk-box > .talk-box-header {
   display: flex;
   flex-direction: row;
+  inline-size: 100%;
 }
 
 .talk-box .name {
