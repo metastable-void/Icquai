@@ -182,6 +182,15 @@ globalThis.wsSendMessage = async (message) => {
   ws.send(signedJson);
 };
 
+globalThis.wsForwardMessage = async (recipientBase64PublicKey, message) => {
+  const msg = {
+    type: 'forward',
+    recipient: recipientBase64PublicKey,
+    payload: message,
+  };
+  await wsSendMessage(msg);
+};
+
 const PING_TIMEOUT = 5000;
 const validPingNonces = new Set;
 const sendPing = async (base64PublicKey) => {
@@ -190,17 +199,13 @@ const sendPing = async (base64PublicKey) => {
   const nonce = firstAid.encodeBase64(nonceBytes);
   validPingNonces.add(nonce);
   const message = {
-  type: 'forward',
-  recipient: base64PublicKey,
-  payload: {
     type: 'ping',
     nonce,
-  },
-};
-await wsSendMessage(message);
-setTimeout(() => {
-  validPingNonces.delete(nonce);
-}, PING_TIMEOUT);
+  };
+  await wsForwardMessage(base64PublicKey, message);
+  setTimeout(() => {
+    validPingNonces.delete(nonce);
+  }, PING_TIMEOUT);
 };
 
 pageNavigate.addListener((newUrl) => {
@@ -288,15 +293,11 @@ wsMessageReceived.addListener((json) => {
                 console.log('Received ping; ponging.');
                 const name = myNameStore.getValue();
                 const pongMsg = {
-                  type: 'forward',
-                  recipient: publicKey,
-                  payload: {
-                    type: 'pong',
-                    name,
-                    nonce: message.nonce,
-                  },
+                  type: 'pong',
+                  name,
+                  nonce: message.nonce,
                 };
-                wsSendMessage(pongMsg).catch((e) => {
+                wsForwardMessage(publicKey, pongMsg).catch((e) => {
                   console.error(e);
                 });
                 break;
