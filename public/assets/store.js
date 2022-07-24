@@ -45,5 +45,6 @@ export const store = app.getStore("store", (state) => {
     friendsInviteNickname: '',
     friends: [],
     onlineFriends: [],
+    openChannels: [],
   };
 });

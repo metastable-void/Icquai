@@ -48,6 +48,8 @@ import {
   friendsInviteNicknameChange,
   friendBecomingOnline,
   friendBecomingOffline,
+  channelOpened,
+  channelClosed,
 } from "./topics.js";
 
 const ed = nobleEd25519;
@@ -368,6 +370,7 @@ wsMessageReceived.addListener((json) => {
                 });
                 const sharedSecret = await sha256(x25519.sharedKey(keyPair.privateKey, firstAid.decodeBase64(message.publicKey)));
                 sharedSecretMap.set(publicKey, sharedSecret);
+                channelOpened.dispatch(publicKey);
                 break;
               }
               case 'kex_pong': {
@@ -389,6 +392,7 @@ wsMessageReceived.addListener((json) => {
                 validKexNonces.delete(nonce);
                 const sharedSecret = await sha256(x25519.sharedKey(myKeyPair.privateKey, firstAid.decodeBase64(message.publicKey)));
                 sharedSecretMap.set(publicKey, sharedSecret);
+                channelOpened.dispatch(publicKey);
                 break;
               }
             }
@@ -502,6 +506,27 @@ store.subscribe(closeDrawer, (state, _action) => {
 
 store.observe((state) => {
   document.title = state.title;
+});
+
+store.subscribe(channelOpened, (state, publicKey) => {
+  const {openChannels} = state;
+  if (!openChannels.includes(publicKey)) {
+    openChannels.push(publicKey);
+  }
+  return {
+    ... state,
+    openChannels,
+  };
+});
+
+store.subscribe(channelClosed, (state, publicKey) => {
+  const {openChannels} = state;
+  const set = new Set(openChannels);
+  set.delete(publicKey);
+  return {
+    ... state,
+    openChannels: [... set],
+  };
 });
 
 store.subscribe(friendsInviteLinkChange, (state, link) => {
@@ -934,6 +959,36 @@ store.render(containerElement, async (state) => {
       const publicKeyBytes = firstAid.decodeBase64(publicKey);
       const fingerprint = await sha256(publicKeyBytes);
       const hexFingerprint = firstAid.encodeHex(fingerprint);
+      let channelStatus;
+      if (state.openChannels.includes(publicKey)) {
+        channelStatus = EH.div([
+          EA.id('channel-status'),
+        ], [
+          EH.p([], [EH.text('Chat is open.')]),
+          EH.p([], [
+            EH.button([
+              EP.eventListener('click', (ev) => {
+                //
+              }),
+            ], [EH.text('Close chat')]),
+          ]),
+        ]);
+      } else {
+        channelStatus = EH.div([
+          EA.id('channel-status'),
+        ], [
+          EH.p([], [EH.text('Chat is closed.')]),
+          EH.p([], [
+            EH.button([
+              EP.eventListener('click', (ev) => {
+                sendKexPing(publicKey).catch((e) => {
+                  console.error(e);
+                });
+              }),
+            ], [EH.text('Request chat')]),
+          ]),
+        ]);
+      }
       mainHeader = EH.div([EP.classes(['talk-toolbar'])], [
         EH.h2([EA.classes(['header-headding'])], [EH.text(name)]),
         EH.div([
@@ -947,20 +1002,7 @@ store.render(containerElement, async (state) => {
       mainContent = EH.div([
         EA.classes(['talk']),
       ], [
-        EH.div([
-          EA.id('channel-status'),
-        ], [
-          EH.p([], [EH.text('Chat is closed.')]),
-          EH.p([], [
-            EH.button([
-              EP.eventListener('click', (ev) => {
-                sendKexPing(publicKey).catch((e) => {
-                  console.error(e);
-                });
-              }),
-            ], [EH.text('Request chat')]),
-          ]),
-        ]),
+        channelStatus,
         EH.div([
           EA.id('talk-box-friend'),
           EA.classes(['talk-box']),
