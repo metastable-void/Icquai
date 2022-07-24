@@ -276,7 +276,7 @@ const sendKexPing = async (base64PublicKey) => {
   await wsForwardMessage(base64PublicKey, message);
 };
 
-const sendEncryptedMessage = async (base64PublicKey, message) => {
+globalThis.sendEncryptedMessage = async (base64PublicKey, message) => {
   const data = firstAid.encodeString(JSON.stringify(message));
   const keyBytes = sharedSecretMap.get(base64PublicKey);
   if (!keyBytes) {
