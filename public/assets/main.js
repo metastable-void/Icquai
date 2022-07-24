@@ -221,6 +221,42 @@ const x25519Generate = () => {
     };
 };
 
+const deriveKey = async (keyBytes) => {
+  const rawKey = await crypto.subtle.importKey('raw', keyBytes, 'HKDF', false, ['deriveKey']);
+  return await crypto.subtle.deriveKey({
+    name: 'HKDF',
+    hash: 'SHA-256',
+    info: new ArrayBuffer(0),
+    salt: new ArrayBuffer(0)
+  }, rawKey, {name: 'AES-GCM', length: 256}, false, ['encrypt', 'decrypt']);
+};
+
+const encrypt = async (dataBytes, keyBytes) => {
+  const key = await deriveKey(keyBytes);
+  const iv = firstAid.randomFill(new Uint8Array(12));
+  const ciphertext = await crypto.subtle.encrypt({name: 'AES-GCM', iv}, key, dataBytes);
+  return {
+    type: 'encrypted_envelope',
+    algo: 'AES-GCM',
+    ciphertext: firstAid.encodeBase64(ciphertext),
+    iv: firstAid.encodeBase64(iv),
+  };
+};
+
+const decrypt = async (dataObj, keyBytes) => {
+  if ('encrypted_envelope' != dataObj.type) {
+    throw new TypeError('Not an encrypted envelope');
+  }
+  if ('AES-GCM' != dataObj.algo) {
+    throw new TypeError('Unknown algorithm');
+  }
+  const key = await deriveKey(keyBytes);
+  const iv = firstAid.decodeBase64(dataObj.iv);
+  const ciphertext = firstAid.decodeBase64(dataObj.ciphertext);
+  const resultBuffer = await crypto.subtle.decrypt({name: 'AES-GCM', iv}, key, ciphertext);
+  return new Uint8Array(resultBuffer);
+};
+
 const validKexNonces = new Set;
 const kexKeyMap = new Map; // ed25519 public key -> x25519 key pair
 const sharedSecretMap = new Map; // ed25519 public key -> shared secret
@@ -238,6 +274,16 @@ const sendKexPing = async (base64PublicKey) => {
     publicKey: firstAid.encodeBase64(keyPair.publicKey),
   };
   await wsForwardMessage(base64PublicKey, message);
+};
+
+const sendEncryptedMessage = async (base64PublicKey, message) => {
+  const data = firstAid.encodeString(JSON.stringify(message));
+  const keyBytes = sharedSecretMap.get(base64PublicKey);
+  if (!keyBytes) {
+    throw new Error('Shared secret not found');
+  }
+  const encryptedMessage = await encrypt(data, keyBytes);
+  await wsForwardMessage(base64PublicKey, encryptedMessage);
 };
 
 pageNavigate.addListener((newUrl) => {
@@ -393,6 +439,17 @@ wsMessageReceived.addListener((json) => {
                 const sharedSecret = await sha256(x25519.sharedKey(myKeyPair.privateKey, firstAid.decodeBase64(message.publicKey)));
                 sharedSecretMap.set(publicKey, sharedSecret);
                 channelOpened.dispatch(publicKey);
+                break;
+              }
+              case 'encrypted_envelope': {
+                const sharedSecret = sharedSecretMap.get(publicKey);
+                if (!sharedSecret) {
+                  console.warn('Shared secret not found');
+                  break;
+                }
+                const data = await decrypt(message, sharedSecret);
+                const payload = JSON.parse(firstAid.decodeString(data));
+                console.log('encrypted message from %s:', publicKey, payload);
                 break;
               }
             }
