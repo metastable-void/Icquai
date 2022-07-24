@@ -382,6 +382,7 @@ table.friends td.nickname::after {
   display: flex;
   flex-direction: row;
   align-items: center;
+  inline-size: 100%;
 }
 
 .talk-toolbar button {
