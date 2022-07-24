@@ -68,9 +68,8 @@
 #drawer-main {
   grid-column: content-start / content-end;
   grid-row: content-start / content-end;
-  display: grid;
-  grid-template-rows: [header-start] max-content [header-end content-start] 1fr [content-end];
-  grid-template-columns: [content-start] 1fr [content-end];
+  display: flex;
+  flex-direction: column;
 }
 
 #drawer-main-header {
@@ -98,8 +97,7 @@
 }
 
 #drawer-main-content {
-  grid-row: content-start / content-end;
-  grid-column: content-start / content-end;
+  flex: 1;
 }
 
 #drawer-backdrop {
