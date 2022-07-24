@@ -28,11 +28,12 @@ export class IcquaiTextarea extends HTMLElement {
       <style>
         #textarea {
           width: 100%;
-          box-sizing: border-box;
           border: none;
           resize: none;
           padding: 0;
           outline: none !important;
+          font: inherit;
+          color: inherit;
         }
       </style>
       <textarea id="textarea"></textarea>
