@@ -420,9 +420,8 @@ table.friends td.nickname::after {
 
 .talk-box {
   box-sizing: border-box;
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  grid-template-rows: max-content 1fr;
+  display: flex;
+  flex-direction: column;
   border: solid .0625rem var(--theme-border-color);
   border-radius: .5rem;
   background-color: var(--theme-input-background-color);
@@ -441,9 +440,13 @@ table.friends td.nickname::after {
   box-shadow: 0 0 .5rem var(--theme-accent-color);
 }
 
+.talk-box > .talk-box-header {
+  display: flex;
+  flex-direction: row;
+}
+
 .talk-box > .name {
-  grid-row: 1 / 1;
-  grid-column: 1 / 1;
+  flex: 2;
   inline-size: 100%;
   block-size: 100%;
   box-sizing: border-box;
@@ -455,8 +458,6 @@ table.friends td.nickname::after {
 }
 
 .talk-box > .fingerprint {
-  grid-row: 1/ 1;
-  grid-column: 2 / 2;
   display: block;
   overflow: hidden;
   white-space: nowrap;
@@ -468,8 +469,7 @@ table.friends td.nickname::after {
 }
 
 .talk-box > .text {
-  grid-row: 2 / 2;
-  grid-column: 1 / -1;
+  flex: 1;
   display: block;
   margin: 0;
   border: none;

@@ -1065,20 +1065,22 @@ store.render(containerElement, async (state) => {
           EA.id('talk-box-friend'),
           EA.classes(['talk-box']),
         ], [
-          EH.input([
-            EA.classes(['name']),
-            EP.attribute('type', 'text'),
-            EP.attribute('value', friend.nickname),
-            EP.eventListener('change', (ev) => {
-              const value = String(ev.target.value).trim();
-              if ('' == value) {
-                return;
-              }
-              changeFriendNickname(publicKey, value);
-            }),
-          ]),
-          EH.div([EA.classes(['fingerprint'])], [
-            EH.text(hexFingerprint),
+          EH.div([EA.classes(['talk-box-header'])], [
+            EH.input([
+              EA.classes(['name']),
+              EP.attribute('type', 'text'),
+              EP.attribute('value', friend.nickname),
+              EP.eventListener('change', (ev) => {
+                const value = String(ev.target.value).trim();
+                if ('' == value) {
+                  return;
+                }
+                changeFriendNickname(publicKey, value);
+              }),
+            ]),
+            EH.div([EA.classes(['fingerprint'])], [
+              EH.text(hexFingerprint),
+            ]),
           ]),
           EH.div([EA.classes(['text'])], [
             EH.text('text'),
@@ -1088,20 +1090,22 @@ store.render(containerElement, async (state) => {
           EA.id('talk-box-self'),
           EA.classes(['talk-box']),
         ], [
-          EH.input([
-            EA.classes(['name']),
-            EP.attribute('type', 'text'),
-            EP.attribute('value', state.myName),
-            EP.eventListener('change', (ev) => {
-              const value = String(ev.target.value).trim();
-              if ('' == value) {
-                return;
-              }
-              myNameStore.setValue(value);
-            }),
-          ]),
-          EH.div([EA.classes(['fingerprint'])], [
-            EH.text(state.myFingerprint),
+          EH.div([EA.classes(['talk-box-header'])], [
+            EH.input([
+              EA.classes(['name']),
+              EP.attribute('type', 'text'),
+              EP.attribute('value', state.myName),
+              EP.eventListener('change', (ev) => {
+                const value = String(ev.target.value).trim();
+                if ('' == value) {
+                  return;
+                }
+                myNameStore.setValue(value);
+              }),
+            ]),
+            EH.div([EA.classes(['fingerprint'])], [
+              EH.text(state.myFingerprint),
+            ]),
           ]),
           EH.customTag('icquai-textarea', [EA.classes(['text'])], [EH.text('')]),
         ]),
