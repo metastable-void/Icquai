@@ -261,7 +261,9 @@ pageShow.addListener(() => {
 wsMessageReceived.addListener((json) => {
   try {
     const message = JSON.parse(json);
-    console.log('Message received:', message);
+    if (message.type != 'signed_envelope') {
+      console.log('Message received:', message);
+    }
     switch (message.type) {
       case 'server_hello': {
         const registerMsg = {
