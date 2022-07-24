@@ -1103,7 +1103,7 @@ store.render(containerElement, async (state) => {
           EH.div([EA.classes(['fingerprint'])], [
             EH.text(state.myFingerprint),
           ]),
-          EH.customTag('icquai-textarea', [EA.classes(['text'])], []),
+          EH.customTag('icquai-textarea', [EA.classes(['text'])], [EH.text('')]),
         ]),
       ]);
       break;
