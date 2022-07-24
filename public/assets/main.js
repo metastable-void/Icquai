@@ -235,6 +235,7 @@ const sendKexPing = async (base64PublicKey) => {
     peerSessionId: app.sessionId,
     publicKey: firstAid.encodeBase64(keyPair.publicKey),
   };
+  await wsForwardMessage(base64PublicKey, message);
 };
 
 pageNavigate.addListener((newUrl) => {
