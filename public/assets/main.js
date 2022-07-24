@@ -274,6 +274,7 @@ wsMessageReceived.addListener((json) => {
         break;
       }
       case 'registered': {
+        console.info('Registered to server');
         wsRegistered.dispatch(null);
         break;
       }
@@ -285,9 +286,9 @@ wsMessageReceived.addListener((json) => {
       case 'signed_envelope': {
         (async () => {
           const {publicKey, payload} = await verifyMessage(message);
-          console.log('Message from %s:', publicKey, payload);
           if ('forward' == payload.type) {
             const message = payload.payload;
+            console.log('Message from %s:', publicKey, message);
             switch (message.type) {
               case 'ping': {
                 console.log('Received ping; ponging.');
