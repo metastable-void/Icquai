@@ -32,6 +32,8 @@ export class IcquaiTextarea extends HTMLElement {
           box-sizing: border-box;
           border: none;
           resize: none;
+          padding: 0;
+          outline: none !important;
         }
       </style>
       <textarea id="textarea"></textarea>
