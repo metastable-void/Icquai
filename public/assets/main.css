@@ -289,8 +289,9 @@ body {
 }
 
 .talk {
-  display: grid;
-  align-content: end;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
   min-block-size: 100%;
   box-sizing: border-box;
 }

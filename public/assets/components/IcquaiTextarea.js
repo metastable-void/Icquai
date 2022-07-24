@@ -27,6 +27,7 @@ export class IcquaiTextarea extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style>
         #textarea {
+          display: block;
           width: 100%;
           border: none;
           resize: none;
