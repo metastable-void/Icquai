@@ -376,8 +376,9 @@ table.friends td.nickname::after {
 }
 
 .talk-toolbar {
-  display: grid;
-  grid-template-columns: 1fr max-content max-content;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   align-items: center;
 }
 
@@ -396,6 +397,10 @@ table.friends td.nickname::after {
   padding: 0;
   color: inherit;
   border-radius: 0;
+}
+
+.talk-toolbar > .header-headding {
+  flex: 1;
 }
 
 .talk-toolbar button:active, .talk-toolbar button:hover {

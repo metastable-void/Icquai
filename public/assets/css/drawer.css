@@ -76,8 +76,8 @@
 #drawer-main-header {
   grid-row: header-start / header-end;
   grid-column: content-start / content-end;
-  display: grid;
-  grid-template-columns: max-content 1fr;
+  display: flex;
+  flex-direction: column;
   background-color: var(--theme-input-background-color);
   color: var(--theme-secondary-text-color);
   position: -webkit-sticky;
@@ -91,7 +91,9 @@
 }
 
 #drawer-main-header-content {
-  display: grid;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   align-items: center;
 }
 
