@@ -363,7 +363,7 @@ wsMessageReceived.addListener((json) => {
                   peerSessionId: message.peerSessionId,
                   publicKey: firstAid.encodeBase64(keyPair.publicKey),
                 };
-                wsForwardMessage(pongMsg).catch((e) => {
+                wsForwardMessage(publicKey, pongMsg).catch((e) => {
                   console.error(e);
                 });
                 const sharedSecret = await sha256(x25519.sharedKey(keyPair.privateKey, firstAid.decodeBase64(message.publicKey)));
