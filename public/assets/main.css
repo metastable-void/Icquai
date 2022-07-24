@@ -286,6 +286,8 @@ body {
   padding: 1rem;
   padding-inline-start: .5rem;
   padding-inline-end: .5rem;
+  inline-size: 100%;
+  box-sizing: border-box;
 }
 
 .talk {

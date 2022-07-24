@@ -70,6 +70,7 @@
   grid-row: content-start / content-end;
   display: flex;
   flex-direction: column;
+  inline-size: 100%;
 }
 
 #drawer-main-header {
