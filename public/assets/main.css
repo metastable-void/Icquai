@@ -445,7 +445,7 @@ table.friends td.nickname::after {
   flex-direction: row;
 }
 
-.talk-box > .name {
+.talk-box .name {
   flex: 2;
   inline-size: 100%;
   block-size: 100%;
@@ -457,7 +457,8 @@ table.friends td.nickname::after {
   outline: none !important;
 }
 
-.talk-box > .fingerprint {
+.talk-box .fingerprint {
+  flex: 1;
   display: block;
   overflow: hidden;
   white-space: nowrap;
@@ -468,7 +469,7 @@ table.friends td.nickname::after {
   outline: none !important;
 }
 
-.talk-box > .text {
+.talk-box .text {
   flex: 1;
   display: block;
   margin: 0;
