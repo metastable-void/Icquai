@@ -26,6 +26,7 @@ import {LocalStorageData, Eternity, HtmlView as EH, ViewProperty as EP, ViewAttr
 import { sha256 } from "./lib/crypto.js";
 import { app } from './app.js';
 import { store } from "./store.js";
+import { IcquaiTextarea } from "./components/IcquaiTextarea.js";
 import {
   wsOpen,
   wsConnecting,
@@ -1102,9 +1103,7 @@ store.render(containerElement, async (state) => {
           EH.div([EA.classes(['fingerprint'])], [
             EH.text(state.myFingerprint),
           ]),
-          EH.textarea([EA.classes(['text'])], [
-            EH.text('text'),
-          ]),
+          EH.customTag('icquai-textarea', [EA.classes(['text'])], []),
         ]),
       ]);
       break;
