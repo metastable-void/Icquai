@@ -39,6 +39,7 @@ export class IcquaiTextarea extends HTMLElement {
     const textarea = this.shadowRoot.querySelector('#textarea');
     //textarea.style.height = textarea.scrollHeight + 'px';
     textarea.addEventListener('input', (ev) => {
+      textarea.style.height = 0;
       textarea.style.height = textarea.scrollHeight + 'px';
       this.dispatchEvent(new Event('input'));
     });
