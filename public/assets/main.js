@@ -21,6 +21,7 @@
 
 import "./lib/noble-ed25519.js";
 import "./lib/es-first-aid.js";
+import * as x25519 from "./lib/x25519.js";
 import {LocalStorageData, Eternity, HtmlView as EH, ViewProperty as EP, ViewAttribute as EA} from "./lib/Eternity.js";
 import { sha256 } from "./lib/crypto.js";
 import { app } from './app.js';
@@ -208,6 +209,34 @@ const sendPing = async (base64PublicKey) => {
   }, PING_TIMEOUT);
 };
 
+const x25519Generate = () => {
+    const seed = new Uint8Array(32);
+    firstAid.randomFill(seed);
+    const keyPair = x25519.generateKeyPair(seed);
+    return {
+        privateKey: new Uint8Array(keyPair.private.buffer, keyPair.private.byteOffset, keyPair.private.byteLength),
+        publicKey: new Uint8Array(keyPair.public.buffer, keyPair.public.byteOffset, keyPair.public.byteLength),
+    };
+};
+
+const validKexNonces = new Set;
+const kexKeyMap = new Map; // ed25519 public key -> x25519 key pair
+const sharedSecretMap = new Map; // ed25519 public key -> shared secret
+const sendKexPing = async (base64PublicKey) => {
+  const nonceBytes = new Uint8Array(32);
+  crypto.getRandomValues(nonceBytes);
+  const nonce = firstAid.encodeBase64(nonceBytes);
+  validKexNonces.add(nonce);
+  const keyPair = x25519Generate();
+  kexKeyMap.set(base64PublicKey, keyPair);
+  const message = {
+    type: 'kex_ping',
+    nonce,
+    peerSessionId: app.sessionId,
+    publicKey: firstAid.encodeBase64(keyPair.publicKey),
+  };
+};
+
 pageNavigate.addListener((newUrl) => {
   const url = new URL(newUrl, location.href);
   const path = url.pathname;
@@ -323,6 +352,42 @@ wsMessageReceived.addListener((json) => {
                   }
                 }
                 friendsStore.setValue(friends);
+                break;
+              }
+              case 'kex_ping': {
+                const keyPair = x25519Generate();
+                const pongMsg = {
+                  type: 'kex_pong',
+                  nonce: message.nonce,
+                  peerSessionId: message.peerSessionId,
+                  publicKey: firstAid.encodeBase64(keyPair.publicKey),
+                };
+                wsForwardMessage(pongMsg).catch((e) => {
+                  console.error(e);
+                });
+                const sharedSecret = await sha256(x25519.sharedKey(keyPair.privateKey, firstAid.decodeBase64(message.publicKey)));
+                sharedSecretMap.set(publicKey, sharedSecret);
+                break;
+              }
+              case 'kex_pong': {
+                const sessionId = message.peerSessionId;
+                if (app.sessionId != sessionId) {
+                  console.log('Unmatching session id, ignoring key exchange...');
+                  break;
+                }
+                const nonce = message.nonce;
+                if (!validKexNonces.has(nonce)) {
+                  console.warn('Invalid nonce in key exchange');
+                  break;
+                }
+                if (!kexKeyMap.has(publicKey)) {
+                  console.warn('Unknown key in key exchange');
+                  break;
+                }
+                const myKeyPair = kexKeyMap.get(publicKey);
+                validKexNonces.delete(nonce);
+                const sharedSecret = await sha256(x25519.sharedKey(myKeyPair.privateKey, firstAid.decodeBase64(message.publicKey)));
+                sharedSecretMap.set(publicKey, sharedSecret);
                 break;
               }
             }
@@ -886,7 +951,13 @@ store.render(containerElement, async (state) => {
         ], [
           EH.p([], [EH.text('Chat is closed.')]),
           EH.p([], [
-            EH.button([], [EH.text('Request chat')]),
+            EH.button([
+              EP.eventListener('click', (ev) => {
+                sendKexPing(publicKey).catch((e) => {
+                  console.error(e);
+                });
+              }),
+            ], [EH.text('Request chat')]),
           ]),
         ]),
         EH.div([
