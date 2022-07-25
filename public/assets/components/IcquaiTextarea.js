@@ -36,7 +36,7 @@ export class IcquaiTextarea extends HTMLElement {
           outline: none !important;
           font: inherit;
           color: inherit;
-          scroll: none;
+          overflow: hidden;
           background-color: transparent;
         }
       </style>

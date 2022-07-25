@@ -502,6 +502,8 @@ table.friends td.nickname::after {
   -moz-user-select: text;
   -webkit-user-select: text;
   user-select: text;
+  word-break: break-all;
+  overflow: hidden;
 }
 
 .talk-box .text > .cursor {
