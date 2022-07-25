@@ -1489,6 +1489,19 @@ store.render(containerElement, async (state) => {
       ]);
       break;
     }
+    case '/settings': {
+      mainContent = EH.div([
+        EA.classes(['profile']),
+      ], [
+        EH.p([], [
+          EH.button([
+            EP.eventListener('click', (ev) => {
+              location.reload();
+            }),
+          ], [EH.text('Reload app...')]),
+        ]),
+      ]);
+    }
     default: {
       // not found
       notFound();
