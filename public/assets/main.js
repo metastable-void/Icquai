@@ -1036,9 +1036,6 @@ const createCall = async (base64PublicKey, selfInitiated) => {
   globalThis.pc = pc;
 
   pc.onicecandidate = ({candidate}) => {
-    if (!candidate) {
-      return;
-    }
     sendEncryptedMessage(base64PublicKey, {
       type: 'rtc_ice_candidate',
       candidate,
@@ -1061,10 +1058,13 @@ const createCall = async (base64PublicKey, selfInitiated) => {
   };
 
   pc.ontrack = (event) => {
-    if (audioElement.srcObject) {
+    console.log('RTC: got remote stream');
+    if (audioElement.srcObject == event.streams[0]) {
       return;
     }
     audioElement.srcObject = event.streams[0];
+    console.log('Set srcObject:', event.streams[0]);
+    audioElement.play();
   };
 
   pc.onconnectionstatechange = (ev) => {
@@ -1072,9 +1072,6 @@ const createCall = async (base64PublicKey, selfInitiated) => {
   };
 
   rtcIceCandidate.addListener(async (candidate) => {
-    if (!candidate) {
-      return;
-    }
     await pc.addIceCandidate(candidate);
   });
 
