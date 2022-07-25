@@ -1476,10 +1476,9 @@ store.render(containerElement, async (state) => {
           }),
         ], [EH.text('call')]),
       ]);
-      mainContent = EH.div([
-        EA.classes(['talk']),
-      ], [
-        EH.div([
+      let muteStatus;
+      if (state.callOngoing) {
+        muteStatus = EH.div([
           EA.classes(['call-mute-status'])
         ], [
           EH.button([
@@ -1490,7 +1489,16 @@ store.render(containerElement, async (state) => {
             }),
             EA.classes(['material-icons']),
           ], [EH.text(state.callMuted ? 'mic_off' : 'mic')]),
-        ]),
+        ]);
+      } else {
+        muteStatus = EH.div([
+          EA.classes(['call-mute-status'])
+        ], []);
+      }
+      mainContent = EH.div([
+        EA.classes(['talk']),
+      ], [
+        muteStatus,
         channelStatus,
         EH.div([
           EA.id('talk-box-friend'),
