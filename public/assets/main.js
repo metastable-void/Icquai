@@ -1169,6 +1169,8 @@ store.render(containerElement, async (state) => {
             EH.button([
               EP.eventListener('click', (ev) => {
                 //
+                sharedSecretMap.delete(publicKey);
+                channelClosed.dispatch(publicKey);
               }),
             ], [EH.text('Close chat')]),
           ]),
