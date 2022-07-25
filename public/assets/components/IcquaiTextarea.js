@@ -63,7 +63,7 @@ export class IcquaiTextarea extends HTMLElement {
     const textarea = this.shadowRoot.querySelector('#textarea');
     const activeElement = document.activeElement;
     console.log('Active element:', activeElement);
-    if (activeElement != textarea) {
+    if (activeElement != this) {
       return -1;
     }
     if (textarea.selectionDirection == 'forward') {
