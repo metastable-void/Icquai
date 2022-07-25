@@ -338,6 +338,12 @@ becomingHidden.addListener(() => {
 becomingVisible.addListener(() => {
   console.log('Page is now visible!');
   openSocket();
+  const audioElement = document.querySelector('#rtc_audio');
+  try {
+    audioElement.play();
+  } catch (e) {
+    console.warn(e);
+  }
 });
 
 becomingOnline.addListener(() => {
@@ -1535,6 +1541,7 @@ store.render(containerElement, async (state) => {
     EH.audio([
       EA.id('rtc_audio'),
       EA.key('rtc_audio'),
+      EA.attribute('autoplay', ''),
     ]),
   ]);
   const drawerHeader = EH.h2([EP.classes(['drawer-logo'])], [
