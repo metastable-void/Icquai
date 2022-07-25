@@ -1062,6 +1062,10 @@ const createCall = async (base64PublicKey, selfInitiated) => {
     audioElement.srcObject = event.streams[0];
   };
 
+  pc.onconnectionstatechange = (ev) => {
+    console.log('RTC connection state:', pc.connectionState);
+  };
+
   rtcIceCandidate.addListener(async (candidate) => {
     await pc.addIceCandidate(candidate);
   });
@@ -1081,7 +1085,7 @@ const createCall = async (base64PublicKey, selfInitiated) => {
     } else {
       await pc.setRemoteDescription(description);
     }
-  })
+  });
 
   if (selfInitiated) {
     const stream = await getAudio();
