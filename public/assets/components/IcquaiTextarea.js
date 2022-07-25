@@ -36,6 +36,8 @@ export class IcquaiTextarea extends HTMLElement {
           outline: none !important;
           font: inherit;
           color: inherit;
+          scroll: none;
+          background-color: transparent;
         }
       </style>
       <textarea id="textarea" placeholder="Input text here"></textarea>
