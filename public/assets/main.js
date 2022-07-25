@@ -896,6 +896,7 @@ const commit = (textBox, base64PublicKey) => {
 const historyBack = (textBox, base64PublicKey) => {
   if (historyBuffer.length < 1) return;
   const text = historyBuffer.pop();
+  console.log('Hitory from buffer:', text);
   textBox.value = text;
   const offset = textBox.caretOffset;
   previousText = text;
