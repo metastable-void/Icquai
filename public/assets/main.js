@@ -1490,6 +1490,7 @@ store.render(containerElement, async (state) => {
       break;
     }
     case '/settings': {
+      mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('Settings')]);
       mainContent = EH.div([
         EA.classes(['profile']),
       ], [
