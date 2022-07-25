@@ -26,7 +26,7 @@
 
 :root {
   --theme-main-font: system-ui, -apple-system, sans-serif;
-  --theme-accent-color: #5eaf30;
+  --theme-accent-color: #3B9EA3;
   --theme-selection-background-color: rgba(94, 175, 48, .5);
   --theme-highlighted-text-color: #fff;
   --theme-highlighted-active-color: rgba(0, 0, 0, .25);
