@@ -1033,6 +1033,7 @@ const createCall = async (base64PublicKey, selfInitiated) => {
   }
 
   const pc = new RTCPeerConnection(configuration);
+  globalThis.pc = pc;
 
   pc.onicecandidate = ({candidate}) => {
     sendEncryptedMessage(base64PublicKey, {
@@ -1045,6 +1046,7 @@ const createCall = async (base64PublicKey, selfInitiated) => {
 
   pc.onnegotiationneeded = async () => {
     try {
+      console.log('onnegotiationneeded, creating offer');
       await pc.setLocalDescription(await pc.createOffer());
       await sendEncryptedMessage(base64PublicKey, {
         type: 'rtc_description',
@@ -1073,6 +1075,7 @@ const createCall = async (base64PublicKey, selfInitiated) => {
   rtcDescription.addListener(async (description) => {
     if (description.type == 'offer') {
       await pc.setRemoteDescription(description);
+      console.log('RTC: Set offer description');
       const stream = await getAudio();
       stream.getAudioTracks().forEach((track) => {
         pc.addTrack(track, stream);
@@ -1084,6 +1087,7 @@ const createCall = async (base64PublicKey, selfInitiated) => {
       });
     } else {
       await pc.setRemoteDescription(description);
+      console.log('RTC: Set answer description');
     }
   });
 
