@@ -280,6 +280,7 @@ const sendKexPing = async (base64PublicKey) => {
   const nonceBytes = new Uint8Array(32);
   crypto.getRandomValues(nonceBytes);
   const nonce = firstAid.encodeBase64(nonceBytes);
+  const name = myNameStore.getValue();
   validKexNonces.add(nonce);
   const keyPair = x25519Generate();
   kexKeyMap.set(base64PublicKey, keyPair);
@@ -288,6 +289,7 @@ const sendKexPing = async (base64PublicKey) => {
     nonce,
     peerSessionId: app.sessionId,
     publicKey: firstAid.encodeBase64(keyPair.publicKey),
+    name,
   };
   await wsForwardMessage(base64PublicKey, message);
 };
@@ -421,12 +423,14 @@ wsMessageReceived.addListener((json) => {
               }
               case 'kex_ping': {
                 const keyPair = x25519Generate();
+                const name = myNameStore.getValue();
                 const pongMsg = {
                   type: 'kex_pong',
                   nonce: message.nonce,
                   peerSessionId: message.peerSessionId,
                   sessionId: app.sessionId,
                   publicKey: firstAid.encodeBase64(keyPair.publicKey),
+                  name,
                 };
                 wsForwardMessage(publicKey, pongMsg).catch((e) => {
                   console.error(e);
@@ -435,6 +439,24 @@ wsMessageReceived.addListener((json) => {
                 sharedSecretMap.set(publicKey, sharedSecret);
                 sessionIdMap.set(publicKey, message.peerSessionId);
                 channelOpened.dispatch(publicKey);
+                const friends = friendsStore.getValue();
+                let found = false;
+                for (const friend of friends) {
+                  if (publicKey == friend.publicKey) {
+                    found = true;
+                    break;
+                  }
+                }
+                if (!found) {
+                  const friend = {
+                    nickname: message.name,
+                    savedName: message.name,
+                    publicKey,
+                  };
+                  friends.push(friend);
+                  friendsStore.setValue(friends);
+                }
+                pageNavigate.dispatch(`/talk?public_key=${encodeURIComponent(publicKey)}`);
                 break;
               }
               case 'kex_pong': {
