@@ -62,11 +62,19 @@ export class IcquaiTextarea extends HTMLElement {
   get caretOffset() {
     const textarea = this.shadowRoot.querySelector('#textarea');
     const activeElement = document.activeElement;
+    console.log('Active element:', activeElement);
     if (activeElement != textarea) {
       return -1;
     }
+    if (textarea.selectionDirection == 'forward') {
+      return textarea.selectionEnd;
+    } else {
+      return textarea.selectionStart;
+    }
+    /*
     const selection = document.getSelection();
     return selection.focusOffset;
+    */
   }
 }
 
