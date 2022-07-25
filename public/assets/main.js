@@ -1037,6 +1037,7 @@ const getAudio = async () => {
   });
 };
 
+let mediaStream;
 const createCall = async (base64PublicKey, selfInitiated) => {
   if (globalThis.pc) {
     throw new TypeError('There is already a call ongoing');
@@ -1105,6 +1106,7 @@ const createCall = async (base64PublicKey, selfInitiated) => {
       await pc.setRemoteDescription(description);
       console.log('RTC: Set offer description');
       const stream = await getAudio();
+      mediaStream = stream;
       stream.getAudioTracks().forEach((track) => {
         pc.addTrack(track, stream);
       });
@@ -1121,11 +1123,34 @@ const createCall = async (base64PublicKey, selfInitiated) => {
 
   if (selfInitiated) {
     const stream = await getAudio();
+    mediaStream = stream;
     stream.getAudioTracks().forEach((track) => {
       pc.addTrack(track, stream);
     });
   }
   return pc;
+};
+
+const toggleMute = async () => {
+  if (!mediaStream) {
+    return;
+  }
+  const audioTracks = mediaStream.getAudioTracks();
+  if (audioTracks[0].enabled) {
+    console.log('Muting the audio track');
+    audioTracks[0].enabled = false;
+  } else {
+    console.log('Unmuting the audio track');
+    audioTracks[0].enabled = true;
+  }
+};
+
+const getMuted = async () => {
+  if (!mediaStream) {
+    return false;
+  }
+  const audioTracks = mediaStream.getAudioTracks();
+  return !audioTracks[0].enabled;
 };
 
 const hangup = () => {
@@ -1439,6 +1464,17 @@ store.render(containerElement, async (state) => {
       mainContent = EH.div([
         EA.classes(['talk']),
       ], [
+        EH.div([
+          EA.classes(['call-mute-status'])
+        ], [
+          EH.button([
+            EA.eventListener('click', (ev) => {
+              toggleMute().catch((e) => {
+                console.log(e);
+              });
+            }),
+          ], [EH.text('mic_off')]),
+        ]),
         channelStatus,
         EH.div([
           EA.id('talk-box-friend'),
