@@ -494,11 +494,22 @@ table.friends td.nickname::after {
 
 .talk-box div.text {
   white-space: pre-wrap;
+  -moz-user-select: text;
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 .talk-box .text > .cursor {
   display: inline-block;
   inline-size: .125rem;
-  block-size: 1rem;
+  overflow: hidden;
   background-color: var(--theme-accent-color);
+  color: transparent;
+  vertical-align: text-top;
+  word-break: keep-all;
+  white-space: nowrap;
+}
+
+.talk-box .text > .cursor::before {
+  content: '\2060';
 }
