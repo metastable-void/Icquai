@@ -21,6 +21,7 @@
 
 import "./lib/noble-ed25519.js";
 import "./lib/es-first-aid.js";
+import "./sw-register.js";
 import * as x25519 from "./lib/x25519.js";
 import {LocalStorageData, Eternity, HtmlView as EH, ViewProperty as EP, ViewAttribute as EA} from "./lib/Eternity.js";
 import { sha256 } from "./lib/crypto.js";
