@@ -53,6 +53,8 @@ import {
   channelOpened,
   channelClosed,
   channelTextUpdate,
+  rtcIceCandidate,
+  rtcDescription,
 } from "./topics.js";
 
 const ed = nobleEd25519;
@@ -513,6 +515,23 @@ wsMessageReceived.addListener((json) => {
                       text: payload.text,
                       caretOffset: payload.caretOffset,
                     });
+                    break;
+                  }
+                  case 'rtc_init': {
+                    console.log('Received RTC init');
+                    createCall(publicKey, false).catch((e) => {
+                      console.error(e);
+                    });
+                    break;
+                  }
+                  case 'rtc_ice_candidate': {
+                    console.log('Received ice candidate:', payload.candidate);
+                    rtcIceCandidate.dispatch(payload.candidate);
+                    break;
+                  }
+                  case 'rtc_description': {
+                    console.log('Received RTC description:', payload.description);
+                    rtcDescription.dispatch(payload.description);
                     break;
                   }
                 }
@@ -989,6 +1008,89 @@ const historyBack = (textBox, base64PublicKey) => {
   });
 };
 
+const getAudio = async () => {
+  return await navigator.mediaDevices.getUserMedia({
+    audio: true,
+    video: false,
+  });
+};
+
+const createCall = async (base64PublicKey, selfInitiated) => {
+  //
+  const audioElement = document.querySelector('#rtc_audio');
+  const configuration = {
+    iceServers: [
+      {
+        urls: 'stun:stun.l.google.com:19302',
+      },
+    ],
+  };
+
+  if (selfInitiated) {
+    await sendEncryptedMessage(base64PublicKey, {
+      type: 'rtc_init',
+    });
+  }
+
+  const pc = new RTCPeerConnection(configuration);
+
+  pc.onicecandidate = ({candidate}) => {
+    sendEncryptedMessage(base64PublicKey, {
+      type: 'rtc_ice_candidate',
+      candidate,
+    }).catch((e) => {
+      console.error(e);
+    });
+  };
+
+  pc.onnegotiationneeded = async () => {
+    try {
+      await pc.setLocalDescription(await pc.createOffer());
+      await sendEncryptedMessage(base64PublicKey, {
+        type: 'rtc_description',
+        description: pc.localDescription,
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  pc.ontrack = (event) => {
+    if (audioElement.srcObject) {
+      return;
+    }
+    audioElement.srcObject = event.streams[0];
+  };
+
+  rtcIceCandidate.addListener(async (candidate) => {
+    await pc.addIceCandidate(candidate);
+  });
+
+  rtcDescription.addListener(async (description) => {
+    if (description.type == 'offer') {
+      await pc.setRemoteDescription(description);
+      const stream = await getAudio();
+      stream.getAudioTracks().forEach((track) => {
+        pc.addTrack(track, stream);
+      });
+      await pc.setLocalDescription(await pc.createAnswer());
+      await sendEncryptedMessage(base64PublicKey, {
+        type: 'rtc_description',
+        description: pc.localDescription,
+      });
+    } else {
+      await pc.setRemoteDescription(description);
+    }
+  })
+
+  if (selfInitiated) {
+    const stream = await getAudio();
+    stream.getAudioTracks().forEach((track) => {
+      pc.addTrack(track, stream);
+    });
+  }
+};
+
 const containerElement = document.querySelector('#container');
 store.render(containerElement, async (state) => {
   const query = new URLSearchParams(state.urlQuery);
@@ -1267,7 +1369,22 @@ store.render(containerElement, async (state) => {
         ], [
           EH.text('circle'),
         ]),
-        EH.button([EA.classes(['material-icons'])], [EH.text('call')]),
+        EH.button([
+          EA.classes(['material-icons']),
+          EP.eventListener('click', (ev) => {
+            //
+            if (state.openChannels.includes(publicKey)) {
+              // initiate call
+              createCall(publicKey, true).catch((e) => {
+                console.error(e);
+              });
+            } else {
+              sendKexPing(publicKey).catch((e) => {
+                console.error(e);
+              });
+            }
+          }),
+        ], [EH.text('call')]),
       ]);
       mainContent = EH.div([
         EA.classes(['talk']),
@@ -1370,6 +1487,10 @@ store.render(containerElement, async (state) => {
       createNavigationItem('/friends', 'Friends', 'people'),
       createNavigationItem('/settings', 'Settings', 'settings'),
       createNavigationItem('/help', 'Help', 'help'),
+    ]),
+    EH.audio([
+      EA.id('rtc_audio'),
+      EA.key('rtc_audio'),
     ]),
   ]);
   const drawerHeader = EH.h2([EP.classes(['drawer-logo'])], [
