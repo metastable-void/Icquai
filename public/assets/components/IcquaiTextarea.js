@@ -38,7 +38,7 @@ export class IcquaiTextarea extends HTMLElement {
           color: inherit;
         }
       </style>
-      <textarea id="textarea"></textarea>
+      <textarea id="textarea" placeholder="Input text here"></textarea>
     `;
     const textarea = this.shadowRoot.querySelector('#textarea');
     //textarea.style.height = textarea.scrollHeight + 'px';
