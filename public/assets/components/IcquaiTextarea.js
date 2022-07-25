@@ -46,6 +46,12 @@ export class IcquaiTextarea extends HTMLElement {
       textarea.style.height = textarea.scrollHeight + 'px';
       this.dispatchEvent(new Event('input'));
     });
+    textarea.addEventListener('keydown', (ev) => {
+      this.dispatchEvent(ev);
+    });
+    textarea.addEventListener('keyup', (ev) => {
+      this.dispatchEvent(ev);
+    });
   }
 
   connectedCallback() {
