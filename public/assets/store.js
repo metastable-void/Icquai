@@ -48,5 +48,6 @@ export const store = app.getStore("store", (state) => {
     openChannels: [],
     channelTexts: {},
     callOngoing: null,
+    callMuted: false,
   };
 });

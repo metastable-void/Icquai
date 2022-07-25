@@ -57,6 +57,7 @@ import {
   rtcDescription,
   callStart,
   callEnd,
+  updateCallMuted,
 } from "./topics.js";
 
 const ed = nobleEd25519;
@@ -756,6 +757,13 @@ store.subscribe(callEnd, (state, _action) => {
   };
 });
 
+store.subscribe(updateCallMuted, (state, muted) => {
+  return {
+    ... state,
+    callMuted: !!muted,
+  };
+});
+
 let lastUrlPath;
 store.observe((state) => {
   const urlPath = state.urlPath;
@@ -1153,6 +1161,11 @@ const getMuted = async () => {
   return !audioTracks[0].enabled;
 };
 
+setInterval(async () => {
+  const muted = await getMuted();
+  updateCallMuted.dispatch(muted);
+}, 1000);
+
 const hangup = () => {
   console.info('Closing connection:', globalThis.pc);
   globalThis.pc.close();
@@ -1474,7 +1487,7 @@ store.render(containerElement, async (state) => {
               });
             }),
             EA.classes(['material-icons']),
-          ], [EH.text('mic_off')]),
+          ], [EH.text(state.callMuted ? 'mic_off' : 'mic')]),
         ]),
         channelStatus,
         EH.div([

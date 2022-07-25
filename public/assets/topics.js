@@ -52,6 +52,7 @@ export const rtcIceCandidate = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'rtc.i
 export const rtcDescription = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'rtc.description');
 export const callStart = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'call.start');
 export const callEnd = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'call.end');
+export const updateCallMuted = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'call.muted.update');
 
 
 // global event listeners
