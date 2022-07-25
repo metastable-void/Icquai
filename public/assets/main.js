@@ -1502,6 +1502,7 @@ store.render(containerElement, async (state) => {
           ], [EH.text('Reload app...')]),
         ]),
       ]);
+      break;
     }
     default: {
       // not found
