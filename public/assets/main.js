@@ -1108,19 +1108,20 @@ store.render(containerElement, async (state) => {
         textarea = EH.customTag('icquai-textarea', [
           EA.classes(['text']),
           EP.eventListener('keydown', (ev) => {
+            const target = ev.currentTarget;
             if (ev.keyCode == 13) {
               // ENTER
               ev.preventDefault();
-              sendUpdate(ev.target, publicKey);
-              commit(ev.target, publicKey);
+              sendUpdate(target, publicKey);
+              commit(target, publicKey);
             } else if (ev.keyCode == 38) {
               // ARROW UP
               ev.preventDefault();
-              historyBack(ev.target, publicKey);
+              historyBack(target, publicKey);
             }
           }),
           EP.eventListener('input', (ev) => {
-            sendUpdate(ev.target, publicKey);
+            sendUpdate(ev.currentTarget, publicKey);
           }),
         ], [EH.text('')]);
       } else {
