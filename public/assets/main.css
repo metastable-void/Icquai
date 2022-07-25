@@ -418,6 +418,11 @@ table.friends td.nickname::after {
   inline-size: 2rem;
 }
 
+.talk-toolbar button.call-active {
+  background-color: #d64300;
+  color: #fff;
+}
+
 .talk-toolbar-status.online {
   color: #00a800;
 }

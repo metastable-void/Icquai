@@ -47,5 +47,6 @@ export const store = app.getStore("store", (state) => {
     onlineFriends: [],
     openChannels: [],
     channelTexts: {},
+    callOngoing: null,
   };
 });

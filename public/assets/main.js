@@ -55,6 +55,8 @@ import {
   channelTextUpdate,
   rtcIceCandidate,
   rtcDescription,
+  callStart,
+  callEnd,
 } from "./topics.js";
 
 const ed = nobleEd25519;
@@ -734,6 +736,20 @@ store.subscribe(friendBecomingOffline, (state, publicKey) => {
   };
 });
 
+store.subscribe(callStart, (state, base64PublicKey) => {
+  return {
+    ... state,
+    callOngoing: base64PublicKey,
+  };
+});
+
+store.subscribe(callEnd, (state, _action) => {
+  return {
+    ... state,
+    callOngoing: null,
+  };
+});
+
 let lastUrlPath;
 store.observe((state) => {
   const urlPath = state.urlPath;
@@ -1016,7 +1032,9 @@ const getAudio = async () => {
 };
 
 const createCall = async (base64PublicKey, selfInitiated) => {
-  //
+  if (globalThis.pc) {
+    throw new TypeError('There is already a call ongoing');
+  }
   const audioElement = document.querySelector('#rtc_audio');
   const configuration = {
     iceServers: [
@@ -1065,6 +1083,7 @@ const createCall = async (base64PublicKey, selfInitiated) => {
     audioElement.srcObject = event.streams[0];
     console.log('Set srcObject:', event.streams[0]);
     audioElement.play();
+    callStart.dispatch(base64PublicKey);
   };
 
   pc.onconnectionstatechange = (ev) => {
@@ -1100,6 +1119,14 @@ const createCall = async (base64PublicKey, selfInitiated) => {
       pc.addTrack(track, stream);
     });
   }
+  return pc;
+};
+
+const hangup = () => {
+  console.info('Closing connection:', globalThis.pc);
+  globalThis.pc.close();
+  globalThis.pc = null;
+  callEnd.dispatch(null);
 };
 
 const containerElement = document.querySelector('#container');
@@ -1381,14 +1408,20 @@ store.render(containerElement, async (state) => {
           EH.text('circle'),
         ]),
         EH.button([
-          EA.classes(['material-icons']),
+          EA.classes(['material-icons', state.callOngoing ? 'call-active' : 'call-inactive']),
           EP.eventListener('click', (ev) => {
             //
             if (state.openChannels.includes(publicKey)) {
               // initiate call
-              createCall(publicKey, true).catch((e) => {
-                console.error(e);
-              });
+              if (state.callOngoing) {
+                hangup();
+              } else if (globalThis.pc) {
+                console.log('Call connecting, do nothing on button press.');
+              } else {
+                createCall(publicKey, true).catch((e) => {
+                  console.error(e);
+                });
+              }
             } else {
               sendKexPing(publicKey).catch((e) => {
                 console.error(e);

@@ -50,6 +50,8 @@ export const channelClosed = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'channel
 export const channelTextUpdate = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'channel.text.update');
 export const rtcIceCandidate = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'rtc.ice.candidate');
 export const rtcDescription = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'rtc.description');
+export const callStart = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'call.start');
+export const callEnd = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'call.end');
 
 
 // global event listeners
