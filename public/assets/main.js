@@ -872,9 +872,11 @@ const sendUpdate = (textBox, base64PublicKey, force) => {
 };
 
 const commit = (textBox, base64PublicKey) => {
+  const text = textBox.value;
   textBox.value = '';
   const offset = textBox.caretOffset;
   if (previousText == '') return;
+  previousText = text;
   lastUpdate = getTime();
   historyBuffer.push(previousText);
   while (historyBuffer.length > HISTORY_BUFFER_LENGTH) {
