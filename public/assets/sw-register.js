@@ -29,6 +29,7 @@ let serviceWorkerRegistration;
 /** @type {ServiceWorker} */
 let activeServiceWorker;
 
+let swClientId;
 
 /** @param {ServiceWorker} sw */
 const newServiceWorkerCallback = (sw) => {
