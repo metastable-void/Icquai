@@ -1473,6 +1473,7 @@ store.render(containerElement, async (state) => {
                 console.log(e);
               });
             }),
+            EA.classes(['material-icons']),
           ], [EH.text('mic_off')]),
         ]),
         channelStatus,
