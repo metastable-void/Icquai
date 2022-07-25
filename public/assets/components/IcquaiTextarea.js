@@ -19,6 +19,7 @@
   @file
 */
 
+const cloneEvent = (ev) => new ev.constructor(ev.type, ev);
 
 export class IcquaiTextarea extends HTMLElement {
   constructor() {
@@ -44,13 +45,13 @@ export class IcquaiTextarea extends HTMLElement {
     textarea.addEventListener('input', (ev) => {
       textarea.style.height = 0;
       textarea.style.height = textarea.scrollHeight + 'px';
-      this.dispatchEvent(new Event('input'));
+      this.dispatchEvent(cloneEvent(ev));
     });
     textarea.addEventListener('keydown', (ev) => {
-      this.dispatchEvent(ev);
+      this.dispatchEvent(cloneEvent(ev));
     });
     textarea.addEventListener('keyup', (ev) => {
-      this.dispatchEvent(ev);
+      this.dispatchEvent(cloneEvent(ev));
     });
   }
 
