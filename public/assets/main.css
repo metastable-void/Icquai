@@ -495,3 +495,10 @@ table.friends td.nickname::after {
 .talk-box div.text {
   white-space: pre-wrap;
 }
+
+.talk-box .text > .cursor {
+  display: inline-block;
+  inline-size: .125rem;
+  block-size: 1rem;
+  background-color: var(--theme-accent-color);
+}

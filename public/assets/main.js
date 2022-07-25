@@ -52,6 +52,7 @@ import {
   friendBecomingOffline,
   channelOpened,
   channelClosed,
+  channelTextUpdate,
 } from "./topics.js";
 
 const ed = nobleEd25519;
@@ -475,6 +476,24 @@ wsMessageReceived.addListener((json) => {
                 const data = await decrypt(message, sharedSecret);
                 const payload = JSON.parse(firstAid.decodeString(data));
                 console.log('encrypted message from %s:', publicKey, payload);
+                switch (payload.type) {
+                  case 'text_cleared': {
+                    channelTextUpdate.dispatch({
+                      publicKey,
+                      text: payload.text,
+                      caretOffset: payload.caretOffset,
+                    });
+                    break;
+                  }
+                  case 'text_updated': {
+                    channelTextUpdate.dispatch({
+                      publicKey,
+                      text: payload.text,
+                      caretOffset: payload.caretOffset,
+                    });
+                    break;
+                  }
+                }
                 break;
               }
               case 'ch_rst': {
@@ -594,6 +613,16 @@ store.subscribe(closeDrawer, (state, _action) => {
   return {
     ... state,
     drawerIsOpen: false,
+  };
+});
+
+store.subscribe(channelTextUpdate, (state, action) => {
+  const {publicKey, text, caretOffset} = action;
+  const {channelTexts} = state;
+  channelTexts[publicKey] = {text, caretOffset};
+  return {
+    ... state,
+    channelTexts,
   };
 });
 
@@ -1123,7 +1152,15 @@ store.render(containerElement, async (state) => {
       const hexFingerprint = firstAid.encodeHex(fingerprint);
       let channelStatus;
       let textarea;
+      let peerText;
       if (state.openChannels.includes(publicKey)) {
+        let textStatus = {
+          text: '',
+          caretOffset: -1,
+        };
+        if (publicKey in state.channelTexts) {
+          textStatus = state.channelTexts[publicKey];
+        }
         channelStatus = EH.div([
           EA.id('channel-status'),
         ], [
@@ -1155,6 +1192,17 @@ store.render(containerElement, async (state) => {
             sendUpdate(ev.currentTarget, publicKey);
           }),
         ], [EH.text('')]);
+        if (textStatus.caretOffset < 0) {
+          peerText = EH.div([EA.classes(['text'])], [
+            EH.text(textStatus.text),
+          ]);
+        } else {
+          peerText = EH.div([EA.classes(['text'])], [
+            EH.text(textStatus.text.slice(0, textStatus.caretOffset)),
+            EH.span([EA.classes(['cursor'])], []),
+            EH.text(textStatus.text.slice(textStatus.caretOffset)),
+          ]);
+        }
       } else {
         channelStatus = EH.div([
           EA.id('channel-status'),
@@ -1174,6 +1222,9 @@ store.render(containerElement, async (state) => {
           EP.attribute('disabled', ''),
           EA.classes(['text']),
         ], []);
+        peerText = EH.div([EA.classes(['text'])], [
+          EH.text(''),
+        ]);
       }
       mainHeader = EH.div([EP.classes(['talk-toolbar'])], [
         EH.h2([EA.classes(['header-headding'])], [EH.text(name)]),
@@ -1210,9 +1261,7 @@ store.render(containerElement, async (state) => {
               EH.text(hexFingerprint),
             ]),
           ]),
-          EH.div([EA.classes(['text'])], [
-            EH.text('text'),
-          ]),
+          peerText,
         ]),
         EH.div([
           EA.id('talk-box-self'),

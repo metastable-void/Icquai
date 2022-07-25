@@ -74,7 +74,7 @@ export class IcquaiTextarea extends HTMLElement {
   get caretOffset() {
     const textarea = this.shadowRoot.querySelector('#textarea');
     const activeElement = document.activeElement;
-    console.log('Active element:', activeElement);
+    //console.log('Active element:', activeElement);
     if (activeElement != this) {
       return -1;
     }

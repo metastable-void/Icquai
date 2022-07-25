@@ -47,6 +47,7 @@ export const friendBecomingOnline = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, '
 export const friendBecomingOffline = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'friends.offline');
 export const channelOpened = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'channel.opened');
 export const channelClosed = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'channel.closed');
+export const channelTextUpdate = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'channel.text.update');
 
 
 // global event listeners
