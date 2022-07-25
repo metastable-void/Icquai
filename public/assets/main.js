@@ -1147,9 +1147,11 @@ const toggleMute = async () => {
   if (audioTracks[0].enabled) {
     console.log('Muting the audio track');
     audioTracks[0].enabled = false;
+    updateCallMuted.dispatch(true);
   } else {
     console.log('Unmuting the audio track');
     audioTracks[0].enabled = true;
+    updateCallMuted.dispatch(false);
   }
 };
 
