@@ -66,6 +66,11 @@ export class IcquaiTextarea extends HTMLElement {
     return textarea.value;
   }
 
+  set value(value) {
+    const textarea = this.shadowRoot.querySelector('#textarea');
+    textarea.value = value;
+  }
+
   get caretOffset() {
     const textarea = this.shadowRoot.querySelector('#textarea');
     const activeElement = document.activeElement;
