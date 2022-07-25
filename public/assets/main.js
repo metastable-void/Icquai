@@ -1010,6 +1010,15 @@ store.render(containerElement, async (state) => {
         fingerprint,
         name,
         inviteLink,
+        EH.p([], [
+          EH.button([
+            EP.eventListener('click', (ev) => {
+              navigator.clipboard.writeText(state.myInviteLink).catch((e) => {
+                console.error('Failed to copy string to clipboard:', e);
+              });
+            }),
+          ], [EH.text('Copy link')]),
+        ]),
       ]);
       break;
     }
