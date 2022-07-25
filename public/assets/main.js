@@ -55,6 +55,8 @@ import {
 
 const ed = nobleEd25519;
 
+const HISTORY_BUFFER_LENGTH = 10;
+
 const privateKeyStore = new LocalStorageData('icquai.private_key', () => firstAid.encodeBase64(ed.utils.randomPrivateKey()));
 const myNameStore = new LocalStorageData('icquai.my.name', () => '');
 const friendsStore = new LocalStorageData('icquai.friends', () => []);
@@ -76,6 +78,8 @@ const getMyKeys = async () => {
     sha256Fingerprint,
   };
 };
+
+const getTime = () => +new Date;
 
 
 globalThis.app = app;
@@ -834,6 +838,69 @@ const createInputField = (label, id, eventListeners, placeholder) => {
   return input;
 };
 
+const historyBuffer = [];
+let previousText = '';
+const sendUpdate = (textBox, base64PublicKey, force) => {
+  if (textBox.value.includes('\n')) {
+    textBox.value = textBox.value.split('\n').join('').split('\r').join('');
+  }
+  const text = textBox.value;
+  if (text == previousText && !force) return;
+  previousText = text;
+  lastUpdate = getTime();
+  const offset = textBox.caretOffset;
+
+  if (text.length < 1) {
+    sendEncryptedMessage(base64PublicKey, {
+      type: 'text_cleared',
+      text: '',
+      caretOffset: offset,
+    }).catch((e) => {
+      console.error(e):
+    });
+  } else {
+    sendEncryptedMessage(base64PublicKey, {
+      type: 'text_updated',
+      text,
+      caretOffset: offset,
+    }).catch((e) => {
+      console.error(e);
+    });
+  }
+};
+
+const commit = (textBox, base64PublicKey) => {
+  textBox.value = '';
+  const offset = textBox.caretOffset;
+  if (previousText == '') return;
+  lastUpdate = getTime();
+  historyBuffer.push(previousText);
+  while (historyBuffer.length > HISTORY_BUFFER_LENGTH) {
+    historyBuffer.shift();
+  }
+  previousText = '';
+  sendEncryptedMessage(base64PublicKey, {
+    type: 'text_cleared',
+    text: '',
+    caretOffset: offset,
+  }).catch((e) => {
+    console.error(e);
+  });
+}
+
+const historyBack = (textBox, base64PublicKey) => {
+  if (historyBuffer.length < 1) return;
+  const text = historyBuffer.pop();
+  textBox.value = text;
+  const offset = textBox.caretOffset;
+  previousText = text;
+  sendEncryptedMessage(base64PublicKey, {
+    type: 'text_updated',
+    text,
+    caretOffset: offset,
+  });
+};
+
 const containerElement = document.querySelector('#container');
 store.render(containerElement, async (state) => {
   const query = new URLSearchParams(state.urlQuery);
@@ -1107,7 +1174,23 @@ store.render(containerElement, async (state) => {
               EH.text(state.myFingerprint),
             ]),
           ]),
-          EH.customTag('icquai-textarea', [EA.classes(['text'])], [EH.text('')]),
+          EH.customTag('icquai-textarea', [
+            EA.classes(['text']),
+            EP.eventListener('keydown', (ev) => {
+              if (ev.keyCode == 13) {
+                // ENTER
+                ev.preventDefault();
+                commit(ev.target, publicKey);
+              } else if (ev.keyCode == 38) {
+                // ARROW UP
+                ev.preventDefault();
+                historyBack(ev.target, publicKey);
+              }
+            }),
+            EP.eventListener('input', (ev) => {
+              sendUpdate(ev.target, publicKey);
+            }),
+          ], [EH.text('')]),
         ]),
       ]);
       break;
