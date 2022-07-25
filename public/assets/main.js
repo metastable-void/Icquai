@@ -879,6 +879,7 @@ const commit = (textBox, base64PublicKey) => {
   previousText = text;
   lastUpdate = getTime();
   historyBuffer.push(previousText);
+  console.log('Added text to history: ', previousText);
   while (historyBuffer.length > HISTORY_BUFFER_LENGTH) {
     historyBuffer.shift();
   }
