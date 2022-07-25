@@ -57,6 +57,14 @@ const ed = nobleEd25519;
 
 const HISTORY_BUFFER_LENGTH = 10;
 
+// watchdog
+let scriptCompleted = false;
+window.addEventListener('error', ev => {
+    if (!scriptCompleted) {
+        setTimeout(() => location.reload(), 10000);
+    }
+});
+
 const privateKeyStore = new LocalStorageData('icquai.private_key', () => firstAid.encodeBase64(ed.utils.randomPrivateKey()));
 const myNameStore = new LocalStorageData('icquai.my.name', () => '');
 const friendsStore = new LocalStorageData('icquai.friends', () => []);
@@ -1318,3 +1326,5 @@ document.addEventListener ('click', ev => {
 });
 
 pageNavigate.dispatch(location.href);
+
+scriptCompleted = true;

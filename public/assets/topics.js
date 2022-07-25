@@ -78,3 +78,7 @@ window.addEventListener('online', ev => {
 window.addEventListener('offline', ev => {
   becomingOffline.dispatch(null);
 });
+
+window.addEventListener('unhandledrejection', ev => {
+  console.error('Unhandled Promise rejection: ', ev.reason);
+});
