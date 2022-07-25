@@ -1109,6 +1109,7 @@ store.render(containerElement, async (state) => {
             if (ev.keyCode == 13) {
               // ENTER
               ev.preventDefault();
+              sendUpdate(ev.target, publicKey);
               commit(ev.target, publicKey);
             } else if (ev.keyCode == 38) {
               // ARROW UP
