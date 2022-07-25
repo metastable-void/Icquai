@@ -856,7 +856,7 @@ const sendUpdate = (textBox, base64PublicKey, force) => {
       text: '',
       caretOffset: offset,
     }).catch((e) => {
-      console.error(e):
+      console.error(e);
     });
   } else {
     sendEncryptedMessage(base64PublicKey, {
@@ -1085,6 +1085,7 @@ store.render(containerElement, async (state) => {
       const fingerprint = await sha256(publicKeyBytes);
       const hexFingerprint = firstAid.encodeHex(fingerprint);
       let channelStatus;
+      let textarea;
       if (state.openChannels.includes(publicKey)) {
         channelStatus = EH.div([
           EA.id('channel-status'),
@@ -1098,6 +1099,23 @@ store.render(containerElement, async (state) => {
             ], [EH.text('Close chat')]),
           ]),
         ]);
+        textarea = EH.customTag('icquai-textarea', [
+          EA.classes(['text']),
+          EP.eventListener('keydown', (ev) => {
+            if (ev.keyCode == 13) {
+              // ENTER
+              ev.preventDefault();
+              commit(ev.target, publicKey);
+            } else if (ev.keyCode == 38) {
+              // ARROW UP
+              ev.preventDefault();
+              historyBack(ev.target, publicKey);
+            }
+          }),
+          EP.eventListener('input', (ev) => {
+            sendUpdate(ev.target, publicKey);
+          }),
+        ], [EH.text('')]);
       } else {
         channelStatus = EH.div([
           EA.id('channel-status'),
@@ -1113,6 +1131,10 @@ store.render(containerElement, async (state) => {
             ], [EH.text('Request chat')]),
           ]),
         ]);
+        textarea = EH.textarea([
+          EP.attribute('disabled', ''),
+          EA.classes(['text']),
+        ], []);
       }
       mainHeader = EH.div([EP.classes(['talk-toolbar'])], [
         EH.h2([EA.classes(['header-headding'])], [EH.text(name)]),
@@ -1174,23 +1196,7 @@ store.render(containerElement, async (state) => {
               EH.text(state.myFingerprint),
             ]),
           ]),
-          EH.customTag('icquai-textarea', [
-            EA.classes(['text']),
-            EP.eventListener('keydown', (ev) => {
-              if (ev.keyCode == 13) {
-                // ENTER
-                ev.preventDefault();
-                commit(ev.target, publicKey);
-              } else if (ev.keyCode == 38) {
-                // ARROW UP
-                ev.preventDefault();
-                historyBack(ev.target, publicKey);
-              }
-            }),
-            EP.eventListener('input', (ev) => {
-              sendUpdate(ev.target, publicKey);
-            }),
-          ], [EH.text('')]),
+          textarea,
         ]),
       ]);
       break;
