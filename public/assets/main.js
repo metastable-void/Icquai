@@ -265,6 +265,7 @@ const decrypt = async (dataObj, keyBytes) => {
 const validKexNonces = new Set;
 const kexKeyMap = new Map; // ed25519 public key -> x25519 key pair
 const sharedSecretMap = new Map; // ed25519 public key -> shared secret
+const sessionIdMap = new Map; // ed25519 public key -> peer session id
 const sendKexPing = async (base64PublicKey) => {
   const nonceBytes = new Uint8Array(32);
   crypto.getRandomValues(nonceBytes);
@@ -414,6 +415,7 @@ wsMessageReceived.addListener((json) => {
                   type: 'kex_pong',
                   nonce: message.nonce,
                   peerSessionId: message.peerSessionId,
+                  sessionId: app.sessionId,
                   publicKey: firstAid.encodeBase64(keyPair.publicKey),
                 };
                 wsForwardMessage(publicKey, pongMsg).catch((e) => {
@@ -421,6 +423,7 @@ wsMessageReceived.addListener((json) => {
                 });
                 const sharedSecret = await sha256(x25519.sharedKey(keyPair.privateKey, firstAid.decodeBase64(message.publicKey)));
                 sharedSecretMap.set(publicKey, sharedSecret);
+                sessionIdMap.set(publicKey, message.peerSessionId);
                 channelOpened.dispatch(publicKey);
                 break;
               }
@@ -443,6 +446,7 @@ wsMessageReceived.addListener((json) => {
                 validKexNonces.delete(nonce);
                 const sharedSecret = await sha256(x25519.sharedKey(myKeyPair.privateKey, firstAid.decodeBase64(message.publicKey)));
                 sharedSecretMap.set(publicKey, sharedSecret);
+                sessionIdMap.set(publicKey, message.sessionId);
                 channelOpened.dispatch(publicKey);
                 break;
               }
@@ -450,11 +454,29 @@ wsMessageReceived.addListener((json) => {
                 const sharedSecret = sharedSecretMap.get(publicKey);
                 if (!sharedSecret) {
                   console.warn('Shared secret not found');
+                  const rstMsg = {
+                    type: 'ch_rst',
+                    sessionId: app.sessionId,
+                  };
+                  wsForwardMessage(publicKey, rstMsg).catch((e) => {
+                    console.error(e);
+                  });
                   break;
                 }
                 const data = await decrypt(message, sharedSecret);
                 const payload = JSON.parse(firstAid.decodeString(data));
                 console.log('encrypted message from %s:', publicKey, payload);
+                break;
+              }
+              case 'ch_rst': {
+                const peerSessionId = sessionIdMap.get(publicKey);
+                if (!peerSessionId) {
+                  break;
+                }
+                if (message.sessionId == peerSessionId) {
+                  sharedSecretMap.delete(publicKey);
+                  channelClosed.dispatch(publicKey);
+                }
                 break;
               }
             }
