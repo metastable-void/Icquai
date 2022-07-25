@@ -838,6 +838,8 @@ const createInputField = (label, id, eventListeners, placeholder) => {
   return input;
 };
 
+
+let lastUpdate = 0;
 const historyBuffer = [];
 let previousText = '';
 const sendUpdate = (textBox, base64PublicKey, force) => {
