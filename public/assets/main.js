@@ -350,6 +350,7 @@ becomingVisible.addListener(() => {
   } catch (e) {
     console.warn(e);
   }*/
+  reconnectAudio();
 });
 
 becomingOnline.addListener(() => {
@@ -1204,7 +1205,11 @@ const createCall = async (base64PublicKey, selfInitiated) => {
 
 const reconnectAudio = async () => {
   if (!pc) {
-    consolg.warn('Not in call');
+    consolg.log('Not in call');
+    return;
+  }
+  if (pc.connectionState != 'connected') {
+    console.log('Call not connected');
     return;
   }
   const stream = await getAudio();
