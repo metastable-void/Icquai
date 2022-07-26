@@ -1630,6 +1630,10 @@ store.render(containerElement, async (state) => {
               EP.attribute('value', '#4a96d1'),
               EP.attribute(themeColor == '#4a96d1' ? 'selected' : 'data-not-selected', ''),
             ], [EH.text('blue')]),
+            EH.option([
+              EP.attribute('value', '#909090'),
+              EP.attribute(themeColor == '#909090' ? 'selected' : 'data-not-selected', ''),
+            ], [EH.text('grey')]),
           ]),
         ]),
       ]);
