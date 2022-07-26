@@ -1639,6 +1639,60 @@ store.render(containerElement, async (state) => {
       ]);
       break;
     }
+    case '/help': {
+      mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('Help')]);
+      mainContent = EH.div([
+        EA.classes(['profile']),
+      ], [
+        EH.h2([], [EH.text('License')]),
+        EH.p([], [
+          EH.text(`
+            Icquai: WebRTC peer-to-peer ephemeral chat in text and voice calls.
+          `)
+        ]),
+        EH.p([], [
+          EH.text(`
+            Copyright © 2022. metastable-void and Menhera.org developers.
+          `)
+        ]),
+        EH.p([], [
+          EH.text(`
+            This program is free software: you can redistribute it and/or modify
+            it under the terms of the GNU Affero General Public License as published
+            by the Free Software Foundation, either version 3 of the License, or
+            (at your option) any later version.
+          `)
+        ]),
+        EH.p([], [
+          EH.text(`
+            This program is distributed in the hope that it will be useful,
+            but WITHOUT ANY WARRANTY; without even the implied warranty of
+            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+            GNU Affero General Public License for more details.
+          `)
+        ]),
+        EH.p([], [
+          EH.text(`
+            You should have received a copy of the GNU Affero General Public License
+            along with this program.  If not, see <https://www.gnu.org/licenses/>.
+          `)
+        ]),
+        EH.h2([], [EH.text('Source code')]),
+        EH.p([], [
+          EH.text('Client: '),
+          EH.a([
+            EP.attribute('href', 'https://github.com/metastable-void/Icquai'),
+          ], [EH.text('https://github.com/metastable-void/Icquai')]),
+        ]),
+        EH.p([], [
+          EH.text('Server: '),
+          EH.a([
+            EP.attribute('href', 'https://github.com/metastable-void/icquai-server'),
+          ], [EH.text('https://github.com/metastable-void/icquai-server')]),
+        ]),
+      ]);
+      break;
+    }
     default: {
       // not found
       notFound();
