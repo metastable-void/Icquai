@@ -1523,7 +1523,8 @@ store.render(containerElement, async (state) => {
               if (state.callOngoing) {
                 hangup();
               } else if (globalThis.pc) {
-                console.log('RTC: Call connecting, do nothing on button press.');
+                console.log('RTC: Call connecting; hanging up.');
+                hangup();
               } else {
                 createCall(publicKey, true).catch((e) => {
                   console.error(e);
