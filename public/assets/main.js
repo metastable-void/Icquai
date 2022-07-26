@@ -1645,6 +1645,12 @@ store.render(containerElement, async (state) => {
       mainContent = EH.div([
         EA.classes(['profile']),
       ], [
+        EH.h2([], [EH.text('Terms of use')]),
+        EH.ol([], [
+          EH.li([], [EH.text(
+            `You agree to avoid any use of this service which make its continued development difficult, including but not limited to: illegal use and denial of service attacks.`
+          )]),
+        ]),
         EH.h2([], [EH.text('License')]),
         EH.p([], [
           EH.text(`
