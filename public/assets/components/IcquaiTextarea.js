@@ -73,21 +73,21 @@ export class IcquaiTextarea extends HTMLElement {
       }
       case 'readonly': {
         if (newValue !== null && newValue !== undefined) {
-          this.readonly = true;
+          this.readOnly = true;
         }
         break;
       }
     }
   }
 
-  get readonly() {
+  get readOnly() {
     const textarea = this.shadowRoot.querySelector('#textarea');
-    return textarea.readonly;
+    return textarea.readOnly;
   }
 
-  set readonly(value) {
+  set readOnly(value) {
     const textarea = this.shadowRoot.querySelector('#textarea');
-    textarea.readonly = !!value;
+    textarea.readOnly = !!value;
   }
 
   get value() {
