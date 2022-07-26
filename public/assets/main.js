@@ -1121,7 +1121,7 @@ const createCall = async (base64PublicKey, selfInitiated) => {
   pc.onnegotiationneeded = async () => {
     try {
       console.log('RTC: onnegotiationneeded, creating offer');
-      await pc.setLocalDescription(await pc.createOffer());
+      await pc.setLocalDescription(await pc.createOffer({offerToReceiveAudio: true, offerToReceiveVideo: false}));
       await sendEncryptedMessage(base64PublicKey, {
         type: 'rtc_description',
         description: pc.localDescription,
