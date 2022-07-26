@@ -1109,6 +1109,7 @@ const createCall = async (base64PublicKey, selfInitiated) => {
   globalThis.pc = pc;
 
   pc.onicecandidate = ({candidate}) => {
+    console.log('RTC: onicecandidate');
     sendEncryptedMessage(base64PublicKey, {
       type: 'rtc_ice_candidate',
       candidate,
@@ -1119,7 +1120,7 @@ const createCall = async (base64PublicKey, selfInitiated) => {
 
   pc.onnegotiationneeded = async () => {
     try {
-      console.log('onnegotiationneeded, creating offer');
+      console.log('RTC: onnegotiationneeded, creating offer');
       await pc.setLocalDescription(await pc.createOffer());
       await sendEncryptedMessage(base64PublicKey, {
         type: 'rtc_description',
@@ -1152,6 +1153,7 @@ const createCall = async (base64PublicKey, selfInitiated) => {
   };
 
   rtcIceCandidate.addListener(async (candidate) => {
+    console.log('RTC: Received ICE candidate');
     await pc.addIceCandidate(candidate);
   });
 
