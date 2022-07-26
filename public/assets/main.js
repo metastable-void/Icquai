@@ -1107,6 +1107,8 @@ const createCall = async (base64PublicKey, selfInitiated) => {
     if (pc.connectionState == 'disconnected' || pc.connectionState == 'failed') {
       console.log('Call is ended');
       callEnd.dispatch(null);
+      pc.close();
+      globalThis.pc = null;
     }
   };
 
