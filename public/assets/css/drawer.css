@@ -63,6 +63,8 @@
   max-inline-size: 15rem;
   grid-template-columns: [content-start] 1fr [content-end];
   grid-template-rows: [header-start] max-content [header-end content-start] 1fr [end];
+  position: fixed;
+  overflow: auto;
 }
 
 #drawer-main {
