@@ -1083,6 +1083,12 @@ let mediaStream;
  * @type {RTCPeerConnection?}
  */
 globalThis.pc = null;
+
+/**
+ * @type {RTCDataChannel?}
+ */
+globalThis.dataChannel = null;
+
 const createCall = async (base64PublicKey, selfInitiated) => {
   if (globalThis.pc) {
     throw new TypeError('There is already a call ongoing');
@@ -1152,6 +1158,10 @@ const createCall = async (base64PublicKey, selfInitiated) => {
     }
   };
 
+  pc.ondatachannel = (ev) => {
+    globalThis.dataChannel = ev.channel;
+  };
+
   rtcIceCandidate.addListener(async (candidate) => {
     console.log('RTC: Received ICE candidate');
     await pc.addIceCandidate(candidate);
@@ -1183,6 +1193,7 @@ const createCall = async (base64PublicKey, selfInitiated) => {
     stream.getAudioTracks().forEach((track) => {
       pc.addTrack(track, stream);
     });
+    globalThis.dataChannel = pc.createDataChannel('data_channel');
   }
   return pc;
 };
