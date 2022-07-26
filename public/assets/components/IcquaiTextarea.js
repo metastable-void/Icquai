@@ -71,6 +71,8 @@ export class IcquaiTextarea extends HTMLElement {
   set value(value) {
     const textarea = this.shadowRoot.querySelector('#textarea');
     textarea.value = value;
+    textarea.style.height = 0;
+    textarea.style.height = textarea.scrollHeight + 'px';
   }
 
   get caretOffset() {
