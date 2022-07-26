@@ -1237,6 +1237,7 @@ store.render(containerElement, async (state) => {
           }
           myNameStore.setValue(value);
         }),
+        EP.attribute('placeholder', 'Input your name'),
       ], 'name');
       const inviteLink = createInputField('Invite Link', 'my-invite-link', [
         EP.attribute('readonly', ''),
