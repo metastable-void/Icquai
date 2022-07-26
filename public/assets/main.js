@@ -1097,7 +1097,7 @@ const createCall = async (base64PublicKey, selfInitiated) => {
       return;
     }
     audioElement.srcObject = event.streams[0];
-    console.log('Set srcObject:', event.streams[0]);
+    console.log('RTC: Set srcObject:', event.streams[0]);
     audioElement.play();
     callStart.dispatch(base64PublicKey);
   };
@@ -1105,7 +1105,7 @@ const createCall = async (base64PublicKey, selfInitiated) => {
   pc.onconnectionstatechange = (ev) => {
     console.log('RTC connection state:', pc.connectionState);
     if (pc.connectionState == 'disconnected' || pc.connectionState == 'failed') {
-      console.log('Call is ended');
+      console.log('RTC: Call is ended');
       callEnd.dispatch(null);
       pc.close();
       globalThis.pc = null;
@@ -1152,11 +1152,11 @@ const toggleMute = async () => {
   }
   const audioTracks = mediaStream.getAudioTracks();
   if (audioTracks[0].enabled) {
-    console.log('Muting the audio track');
+    console.log('RTC: Muting the audio track');
     audioTracks[0].enabled = false;
     updateCallMuted.dispatch(true);
   } else {
-    console.log('Unmuting the audio track');
+    console.log('RTC: Unmuting the audio track');
     audioTracks[0].enabled = true;
     updateCallMuted.dispatch(false);
   }
@@ -1176,7 +1176,7 @@ setInterval(async () => {
 }, 1000);
 
 const hangup = () => {
-  console.info('Closing connection:', globalThis.pc);
+  console.info('RTC: Closing connection:', globalThis.pc);
   globalThis.pc.close();
   globalThis.pc = null;
   callEnd.dispatch(null);
@@ -1469,7 +1469,7 @@ store.render(containerElement, async (state) => {
               if (state.callOngoing) {
                 hangup();
               } else if (globalThis.pc) {
-                console.log('Call connecting, do nothing on button press.');
+                console.log('RTC: Call connecting, do nothing on button press.');
               } else {
                 createCall(publicKey, true).catch((e) => {
                   console.error(e);
