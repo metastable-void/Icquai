@@ -55,6 +55,12 @@ export class IcquaiTextarea extends HTMLElement {
     textarea.addEventListener('keyup', (ev) => {
       //this.dispatchEvent(cloneEvent(ev));
     });
+    textarea.addEventListener('click', (ev) => {
+      if (textarea.readOnly) {
+        textarea.focus();
+        textarea.select();
+      }
+    });
   }
 
   static observedAttributes = ["value", "readonly"];
