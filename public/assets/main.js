@@ -1606,6 +1606,14 @@ store.render(containerElement, async (state) => {
         EP.attribute('value', navigator.userAgent),
         EP.attribute('readonly', ''),
       ]);
+      const sessionIdField = createInputTextarea('Session ID', 'settings-session-id', [
+        EP.attribute('value', app.sessionId),
+        EP.attribute('readonly', ''),
+      ]);
+      const clientIdField = createInputTextarea('Client ID', 'settings-client-id', [
+        EP.attribute('value', app.clientId),
+        EP.attribute('readonly', ''),
+      ]);
       mainContent = EH.div([
         EA.classes(['profile']),
       ], [
@@ -1655,6 +1663,8 @@ store.render(containerElement, async (state) => {
         ]),
         EH.h2([], [EH.text('System information')]),
         uaField,
+        clientIdField,
+        sessionIdField,
       ]);
       break;
     }
