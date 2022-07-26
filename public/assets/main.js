@@ -975,6 +975,18 @@ const createInputField = (label, id, eventListeners, placeholder) => {
   return input;
 };
 
+const createInputTextarea = (label, id, eventListeners) => {
+  const input = EH.div([EA.classes(['input-field'])], [
+    EH.label([EP.attribute('for', id)], [EH.text(label)]),
+    EH.customTag('icquai-textarea', [
+      EA.id(id),
+      ... eventListeners,
+    ]),
+  ]);
+  //
+  return input;
+};
+
 
 let lastUpdate = 0;
 const historyBuffer = [];
@@ -1590,6 +1602,10 @@ store.render(containerElement, async (state) => {
     case '/settings': {
       mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('Settings')]);
       const themeColor = themeColorStore.getValue();
+      const uaField = createInputTextarea('User agent', 'settings-ua', [
+        EP.attribute('value', navigator.userAgent),
+        EP.attribute('readonly', ''),
+      ]);
       mainContent = EH.div([
         EA.classes(['profile']),
       ], [
@@ -1637,6 +1653,8 @@ store.render(containerElement, async (state) => {
             ], [EH.text('grey')]),
           ]),
         ]),
+        EH.h2([], [EH.text('System information')]),
+        uaField,
       ]);
       break;
     }

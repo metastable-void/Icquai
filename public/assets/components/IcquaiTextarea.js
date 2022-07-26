@@ -57,10 +57,37 @@ export class IcquaiTextarea extends HTMLElement {
     });
   }
 
+  static observedAttributes = ["value", "readonly"];
+
   connectedCallback() {
     const textarea = this.shadowRoot.querySelector('#textarea');
     textarea.style.height = 0;
     textarea.style.height = textarea.scrollHeight + 'px';
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    switch (name) {
+      case 'value': {
+        this.value = newValue;
+        break;
+      }
+      case 'readonly': {
+        if (newValue !== null && newValue !== undefined) {
+          this.readonly = true;
+        }
+        break;
+      }
+    }
+  }
+
+  get readonly() {
+    const textarea = this.shadowRoot.querySelector('#textarea');
+    return textarea.readonly;
+  }
+
+  set readonly(value) {
+    const textarea = this.shadowRoot.querySelector('#textarea');
+    textarea.readonly = !!value;
   }
 
   get value() {

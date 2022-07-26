@@ -155,7 +155,7 @@ button:hover, button:active {
   background-color: var(--theme-active-background-color);
 }
 
-input[type="text"] {
+input[type="text"], textarea {
   -moz-user-select: text;
   -webkit-user-select: text;
   user-select: text;
@@ -305,13 +305,13 @@ body {
   column-gap: 1rem;
 }
 
-.input-field > label {
+.input-field > label, .input-field > .label {
   display: grid;
   align-content: center;
   padding: .5rem;
 }
 
-.input-field > input {
+.input-field > input, .input-field > .input, .input-field > textarea, .input-field > icquai-textarea {
   display: grid;
   align-content: center;
   border: none;
