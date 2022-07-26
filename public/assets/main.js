@@ -350,7 +350,9 @@ becomingVisible.addListener(() => {
   } catch (e) {
     console.warn(e);
   }*/
-  reconnectAudio();
+  reconnectAudio().catch((e) => {
+    console.error(e);
+  });
 });
 
 becomingOnline.addListener(() => {
