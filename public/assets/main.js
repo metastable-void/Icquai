@@ -1573,7 +1573,7 @@ store.render(containerElement, async (state) => {
               });
             }
           }),
-        ], [EH.text('call')]),
+        ], [EH.text(state.callOngoing ? 'call_end' : 'call')]),
       ]);
       let muteStatus;
       if (state.callOngoing) {
