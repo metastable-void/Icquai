@@ -1651,6 +1651,15 @@ store.render(containerElement, async (state) => {
             `You agree to avoid any use of this service which make its continued development difficult, including but not limited to: illegal use and denial of service attacks.`
           )]),
         ]),
+        EH.h2([], [EH.text('Privacy policy')]),
+        EH.ol([], [
+          EH.li([], [EH.text(
+            `We do not store any of your private data. Your (handle) name and public key is transmitted to the server and used for allowing communication between users.`
+          )]),
+          EH.li([], [EH.text(
+            `Your communication is end-to-end encrypted where possible and we have no access to it.`
+          )]),
+        ]),
         EH.h2([], [EH.text('License')]),
         EH.p([], [
           EH.text(`
