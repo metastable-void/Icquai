@@ -341,12 +341,12 @@ becomingHidden.addListener(() => {
 becomingVisible.addListener(() => {
   console.log('Page is now visible!');
   openSocket();
-  const audioElement = document.querySelector('#rtc_audio');
-  try {
+  //const audioElement = document.querySelector('#rtc_audio');
+  /*try {
     audioElement.play();
   } catch (e) {
     console.warn(e);
-  }
+  }*/
 });
 
 becomingOnline.addListener(() => {
