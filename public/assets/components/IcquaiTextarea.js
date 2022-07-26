@@ -32,7 +32,7 @@ export class IcquaiTextarea extends HTMLElement {
           width: 100%;
           border: none;
           resize: none;
-          padding: 0;
+          padding: .25rem;
           outline: none !important;
           font: inherit;
           color: inherit;
