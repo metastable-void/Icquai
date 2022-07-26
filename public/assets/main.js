@@ -1104,6 +1104,10 @@ const createCall = async (base64PublicKey, selfInitiated) => {
 
   pc.onconnectionstatechange = (ev) => {
     console.log('RTC connection state:', pc.connectionState);
+    if (pc.connectionState == 'disconnected' || pc.connectionState == 'failed') {
+      console.log('Call is ended');
+      callEnd.dispatch(null);
+    }
   };
 
   rtcIceCandidate.addListener(async (candidate) => {
