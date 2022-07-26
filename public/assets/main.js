@@ -1263,6 +1263,7 @@ const isDataChannelOpen = () => {
   return dataChannel.readyState == 'open';
 };
 
+let callButtonPressed = false;
 const containerElement = document.querySelector('#container');
 store.render(containerElement, async (state) => {
   const query = new URLSearchParams(state.urlQuery);
@@ -1546,6 +1547,14 @@ store.render(containerElement, async (state) => {
           EA.classes(['material-icons', state.callOngoing ? 'call-active' : 'call-inactive']),
           EP.eventListener('click', (ev) => {
             //
+            if (callButtonPressed) {
+              console.log('Call button repeatedly pressed, ignoring.');
+              return;
+            }
+            callButtonPressed = true;
+            setTimeout(() => {
+              callButtonPressed = false;
+            }, 1000);
             if (state.openChannels.includes(publicKey)) {
               // initiate call
               if (state.callOngoing) {
