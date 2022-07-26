@@ -64,6 +64,8 @@ import {
 const ed = nobleEd25519;
 
 const HISTORY_BUFFER_LENGTH = 10;
+const CLIENT_SRC_REPOSITORY = 'https://github.com/metastable-void/Icquai';
+const SERVER_SRC_REPOSITORY = 'https://github.com/metastable-void/icquai-server';
 
 // watchdog
 let scriptCompleted = false;
@@ -1728,14 +1730,14 @@ store.render(containerElement, async (state) => {
         EH.p([], [
           EH.text('Client: '),
           EH.a([
-            EP.attribute('href', 'https://github.com/metastable-void/Icquai'),
-          ], [EH.text('https://github.com/metastable-void/Icquai')]),
+            EP.attribute('href', CLIENT_SRC_REPOSITORY),
+          ], [EH.text(CLIENT_SRC_REPOSITORY)]),
         ]),
         EH.p([], [
           EH.text('Server: '),
           EH.a([
-            EP.attribute('href', 'https://github.com/metastable-void/icquai-server'),
-          ], [EH.text('https://github.com/metastable-void/icquai-server')]),
+            EP.attribute('href', SERVER_SRC_REPOSITORY),
+          ], [EH.text(SERVER_SRC_REPOSITORY)]),
         ]),
       ]);
       break;
