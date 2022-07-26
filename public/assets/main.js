@@ -1152,14 +1152,15 @@ const createCall = async (base64PublicKey, selfInitiated) => {
     console.log('RTC connection state:', pc.connectionState);
     if (pc.connectionState == 'disconnected' || pc.connectionState == 'failed') {
       console.log('RTC: Call is ended');
-      callEnd.dispatch(null);
-      pc.close();
-      globalThis.pc = null;
+      hangup();
     }
   };
 
   pc.ondatachannel = (ev) => {
     globalThis.dataChannel = ev.channel;
+    dataChannel.onclose = (ev) => {
+      globalThis.dataChannel = null;
+    };
   };
 
   rtcIceCandidate.addListener(async (candidate) => {
@@ -1194,6 +1195,9 @@ const createCall = async (base64PublicKey, selfInitiated) => {
       pc.addTrack(track, stream);
     });
     globalThis.dataChannel = pc.createDataChannel('data_channel');
+    dataChannel.onclose = (ev) => {
+      globalThis.dataChannel = null;
+    };
   }
   return pc;
 };
@@ -1241,9 +1245,22 @@ setInterval(async () => {
 
 const hangup = () => {
   console.info('RTC: Closing connection:', globalThis.pc);
-  globalThis.pc.close();
+  if (globalThis.dataChannel) {
+    globalThis.dataChannel.close();
+  }
+  globalThis.dataChannel = null;
+  if (globalThis.pc) {
+    globalThis.pc.close();
+  }
   globalThis.pc = null;
   callEnd.dispatch(null);
+};
+
+const isDataChannelOpen = () => {
+  if (!dataChannel) {
+    return false;
+  }
+  return dataChannel.readyState == 'open';
 };
 
 const containerElement = document.querySelector('#container');
