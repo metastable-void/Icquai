@@ -504,6 +504,13 @@ wsMessageReceived.addListener((json) => {
               }
               case 'encrypted_envelope': {
                 const sharedSecret = sharedSecretMap.get(publicKey);
+                if (message.sessionId) {
+                  const savedSessionId = sessionIdMap.get(publicKey);
+                  if (savedSessionId != message.sessionId) {
+                    console.log('Unmatching peer session id, ignoring signed message...');
+                    break;
+                  }
+                }
                 if (!sharedSecret) {
                   console.warn('Shared secret not found');
                   const rstMsg = {
