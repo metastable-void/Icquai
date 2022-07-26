@@ -1047,6 +1047,11 @@ const getAudio = async () => {
 };
 
 let mediaStream;
+
+/**
+ * @type {RTCPeerConnection?}
+ */
+globalThis.pc = null;
 const createCall = async (base64PublicKey, selfInitiated) => {
   if (globalThis.pc) {
     throw new TypeError('There is already a call ongoing');
@@ -1144,6 +1149,18 @@ const createCall = async (base64PublicKey, selfInitiated) => {
     });
   }
   return pc;
+};
+
+const reconnectAudio = async () => {
+  if (!pc) {
+    consolg.warn('Not in call');
+    return;
+  }
+  const stream = await getAudio();
+  mediaStream = stream;
+  stream.getAudioTracks().forEach((track) => {
+    pc.addTrack(track, stream);
+  });
 };
 
 const toggleMute = async () => {
@@ -1496,6 +1513,14 @@ store.render(containerElement, async (state) => {
             }),
             EA.classes(['material-icons']),
           ], [EH.text(state.callMuted ? 'mic_off' : 'mic')]),
+          EH.button([
+            EA.eventListener('click', (ev) => {
+              reconnectAudio().catch((e) => {
+                console.log(e);
+              });
+            }),
+            EA.classes(['material-icons']),
+          ], [EH.text('refresh')]),
         ]);
       } else {
         muteStatus = EH.div([
