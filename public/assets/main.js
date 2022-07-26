@@ -264,6 +264,7 @@ const encrypt = async (dataBytes, keyBytes) => {
     algo: 'AES-GCM',
     ciphertext: firstAid.encodeBase64(ciphertext),
     iv: firstAid.encodeBase64(iv),
+    sessionId: app.sessionId,
   };
 };
 
@@ -476,6 +477,10 @@ wsMessageReceived.addListener((json) => {
               }
               case 'kex_pong': {
                 const sessionId = message.peerSessionId;
+                const savedSessionId = sessionIdMap.get(publicKey);
+                if (savedSessionId && savedSessionId != message.sessionId) {
+                  console.log('Unmatching peer session id, ignoring key exchange...');
+                }
                 if (app.sessionId != sessionId) {
                   console.log('Unmatching session id, ignoring key exchange...');
                   break;
