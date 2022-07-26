@@ -1650,6 +1650,9 @@ store.render(containerElement, async (state) => {
           EH.li([], [EH.text(
             `You agree to avoid any use of this service which make its continued development difficult, including but not limited to: illegal use and denial of service attacks.`
           )]),
+          EH.li([], [EH.text(
+            `This service is provided as-is and no warranty of service quality is provided.`
+          )]),
         ]),
         EH.h2([], [EH.text('Privacy policy')]),
         EH.ol([], [
