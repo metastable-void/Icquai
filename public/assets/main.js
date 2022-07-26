@@ -76,6 +76,7 @@ window.addEventListener('error', ev => {
 const privateKeyStore = new LocalStorageData('icquai.private_key', () => firstAid.encodeBase64(ed.utils.randomPrivateKey()));
 const myNameStore = new LocalStorageData('icquai.my.name', () => '');
 const friendsStore = new LocalStorageData('icquai.friends', () => []);
+const themeColorStore = new LocalStorageData('icquai.theme.accent_color', () => '#3B9EA3');
 
 const getMyKeys = async () => {
   const base64PrivateKey = privateKeyStore.getValue();
@@ -838,6 +839,10 @@ friendsStore.observe((friends) => {
   friendsChange.dispatch(friends);
 });
 
+themeColorStore.observe((color) => {
+  document.documentElement.style.setProperty('--theme-accent-color', color);
+});
+
 const renderDrawer = (isOpen, mainContent, drawerContent, mainHeader, drawerHeader) => {
   return EH.div([
     EA.id('drawer-wrapper'),
@@ -1583,6 +1588,7 @@ store.render(containerElement, async (state) => {
     }
     case '/settings': {
       mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('Settings')]);
+      const themeColor = themeColorStore.getValue();
       mainContent = EH.div([
         EA.classes(['profile']),
       ], [
@@ -1592,6 +1598,39 @@ store.render(containerElement, async (state) => {
               location.reload();
             }),
           ], [EH.text('Reload app...')]),
+        ]),
+        EH.p([], [
+          EH.text('Color theme: '),
+          EH.select([
+            EP.eventListener('change', (ev) => {
+              themeColorStore.setValue(ev.target.value);
+            }),
+          ], [
+            EH.option([
+              EP.attribute('value', '#3b9ea3'),
+              EP.attribute(themeColor == '#3b9ea3' ? 'selected' : 'data-not-selected', ''),
+            ], [EH.text('cyan')]),
+            EH.option([
+              EP.attribute('value', '#5eaf30'),
+              EP.attribute(themeColor == '#5eaf30' ? 'selected' : 'data-not-selected', ''),
+            ], [EH.text('green')]),
+            EH.option([
+              EP.attribute('value', '#b777d5'),
+              EP.attribute(themeColor == '#b777d5' ? 'selected' : 'data-not-selected', ''),
+            ], [EH.text('violet')]),
+            EH.option([
+              EP.attribute('value', '#e460b3'),
+              EP.attribute(themeColor == '#e460b3' ? 'selected' : 'data-not-selected', ''),
+            ], [EH.text('pink')]),
+            EH.option([
+              EP.attribute('value', '#d87551'),
+              EP.attribute(themeColor == '#d87551' ? 'selected' : 'data-not-selected', ''),
+            ], [EH.text('orange')]),
+            EH.option([
+              EP.attribute('value', '#4a96d1'),
+              EP.attribute(themeColor == '#4a96d1' ? 'selected' : 'data-not-selected', ''),
+            ], [EH.text('blue')]),
+          ]),
         ]),
       ]);
       break;
