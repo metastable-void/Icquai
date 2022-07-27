@@ -1161,6 +1161,7 @@ const createCall = async (base64PublicKey, selfInitiated) => {
 
   pc.ondatachannel = (ev) => {
     globalThis.dataChannel = ev.channel;
+    dataChannel.binaryType = 'arraybuffer';
     dataChannel.onclose = (ev) => {
       globalThis.dataChannel = null;
     };
@@ -1198,6 +1199,7 @@ const createCall = async (base64PublicKey, selfInitiated) => {
       pc.addTrack(track, stream);
     });
     globalThis.dataChannel = pc.createDataChannel('data_channel');
+    dataChannel.binaryType = 'arraybuffer';
     dataChannel.onclose = (ev) => {
       globalThis.dataChannel = null;
     };
