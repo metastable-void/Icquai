@@ -103,10 +103,10 @@ self.addEventListener('activate', ev => {
 self.addEventListener('fetch', ev => {
   ev.respondWith((async (request) => {
     const cache = await caches.open(ASSETS_CACHE);
-    const match = await cache.match(request);
+    let match = await cache.match(request);
     const freshRequest = createFreshRequest(request);
     if (!match) {
-      return await fetch(freshRequest);
+      console.warn('Not cached:', request.url);
     }
     try {
       const freshResponse = await fetch(freshRequest);
@@ -116,8 +116,9 @@ self.addEventListener('fetch', ev => {
       await cache.put(freshRequest, freshResponse.clone());
       return freshResponse;
     } catch (e) {
-      if (!match.ok) {
+      if (!match || !match.ok) {
         console.error('sw: Request failed, but we do not have a valid cached response:', request.url, e);
+        match = await cache.match('/');
       } else {
         console.warn('sw: fetch error:', request.url, e);
       }
