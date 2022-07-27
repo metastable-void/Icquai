@@ -1209,7 +1209,7 @@ const createCall = async (base64PublicKey, selfInitiated) => {
 
 const reconnectAudio = async () => {
   if (!pc) {
-    consolg.log('Not in call');
+    console.log('Not in call');
     return;
   }
   if (pc.connectionState != 'connected') {
