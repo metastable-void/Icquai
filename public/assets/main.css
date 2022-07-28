@@ -183,6 +183,9 @@ table {
 table td, table th {
   border: solid .0625rem var(--theme-border-color);
   padding: .5rem;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  overflow: hidden;
 }
 
 ::selection {
