@@ -1759,7 +1759,7 @@ store.render(containerElement, async (state) => {
               EH.td([], [EH.text('Icquai')]),
               EH.td([], [EH.text('一会 (いっかい) /ˈiQkai/')]),
               EH.td([], [
-                EH.text('/iQkwai/'),
+                EH.text('/iQkwai/ '),
                 EH.sup([], [
                   EH.text('[citation needed]')
                 ])
