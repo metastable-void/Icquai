@@ -1756,7 +1756,12 @@ store.render(containerElement, async (state) => {
               EH.th([], [EH.text('Late Middle Japanese')]),
             ]),
             EH.tr([], [
-              EH.td([], [EH.text('Icquai')]),
+              EH.td([], [
+                EH.text('Icquai '),
+                EH.sup([], [
+                  EH.text('[1]')
+                ])
+              ]),
               EH.td([], [EH.text('一会 (いっかい) /ˈiQkai/')]),
               EH.td([], [
                 EH.text('/iQkwai/ '),
@@ -1768,7 +1773,7 @@ store.render(containerElement, async (state) => {
           ]),
         ]),
         EH.p([], [EH.text(`
-          Source: Hōyaku Nippo jisho (1980), p.330.
+          Source: [1] Hōyaku Nippo jisho (1980), p.330.
         `)]),
         EH.table([], [
           EH.tbody([], [
