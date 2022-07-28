@@ -1744,6 +1744,55 @@ store.render(containerElement, async (state) => {
       mainContent = EH.div([
         EA.classes(['profile']),
       ], [
+        EH.h2([], [EH.text('Icquai')]),
+        EH.p([], [EH.text(`
+          Future of realtime communication realized.
+        `)]),
+        EH.table([], [
+          EH.tbody([], [
+            EH.tr([], [
+              EH.th([], [EH.text('Codename')]),
+              EH.th([], [EH.text('(Modern) Japanese')]),
+              EH.th([], [EH.text('Late Middle Japanese')]),
+            ]),
+            EH.tr([], [
+              EH.td([], [EH.text('Icquai')]),
+              EH.td([], [EH.text('一会 (いっかい) /ˈiQkai/')]),
+              EH.td([], [
+                EH.text('/iQkwai/'),
+                EH.sup([], [
+                  EH.text('[citation needed]')
+                ])
+              ]),
+            ]),
+          ]),
+        ]),
+        EH.p([], [EH.text(`
+          Source: Hōyaku Nippo jisho (1980), p.330.
+        `)]),
+        EH.table([], [
+          EH.tbody([], [
+            EH.tr([], [
+              EH.th([], [EH.text('Language')]),
+              EH.th([], [EH.text('(Original) Meaning(s)')]),
+            ]),
+            EH.tr([], [
+              EH.td([], [EH.text('English')]),
+              EH.td([], [EH.text('Meeting just once / a moment')]),
+            ]),
+            EH.tr([], [
+              EH.td([], [EH.text('Japanese')]),
+              EH.td([], [EH.text('「一度だけ会うこと。ただ一度の対面」「しばらく。わずかな時間」')]),
+            ]),
+          ]),
+        ]),
+        EH.p([], [
+          EH.text('Naming is done by '),
+          EH.a([
+            EP.attribute('href', 'https://github.com/MAJUKYI'),
+          ], [EH.text('@MAJUKYI')]),
+          EH.text('.'),
+        ]),
         EH.h2([], [EH.text('Terms of use')]),
         EH.ol([], [
           EH.li([], [EH.text(
