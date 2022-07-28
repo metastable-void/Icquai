@@ -845,7 +845,7 @@ const inviteLinkObserver = async () => {
   };
   const signedJson = JSON.stringify(signedMessage);
   const bytes = firstAid.encodeString(signedJson);
-  const link = new URL(`/invite#${firstAid.encodeBase64(bytes)}`, location.href).href;
+  const link = new URL(`/invite?s=${encodeURIComponent(firstAid.encodeBase64(bytes))}`, location.href).href;
   myInviteLinkChange.dispatch(link);
 };
 
@@ -1333,6 +1333,11 @@ store.render(containerElement, async (state) => {
       // invite link
       mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('Add Friend')]);
       try {
+        let hashContent = String(hash).slice(1);
+        const query = new URLSearchParams(state.urlQuery);
+        if (!hashContent) {
+          hashContent = query.get('s');
+        }
         const bytes = firstAid.decodeBase64(hash.slice(1));
         const signedJson = firstAid.decodeString(bytes);
         const signedData = JSON.parse(signedJson);
