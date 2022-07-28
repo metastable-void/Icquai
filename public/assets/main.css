@@ -180,8 +180,9 @@ table {
   max-inline-size: 100%;
 }
 
-table td, table tr {
+table td, table th {
   border: solid .0625rem var(--theme-border-color);
+  padding: .5rem;
 }
 
 ::selection {
