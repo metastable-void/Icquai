@@ -1429,7 +1429,7 @@ store.render(containerElement, async (state) => {
                 if ('/invite' != url.pathname) {
                   return;
                 }
-                pageNavigate.dispatch(`/invite${url.hash}`);
+                pageNavigate.dispatch(`/invite${url.search}${url.hash}`);
               }),
             ], [EH.text('Add friend')]),
           ]),
