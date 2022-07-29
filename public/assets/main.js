@@ -147,6 +147,16 @@ const requestNotificationPermission = async () => {
   }
 };
 
+const notificationAllowed = () => {
+  if (!window.Notification) {
+    console.warn('Notification not supported');
+    return false;
+  } else if (Notification.permission == 'granted') {
+    return true;
+  }
+  return false;
+};
+
 
 /**
  * @type {WebSocket?}
@@ -1236,16 +1246,16 @@ const createCall = async (base64PublicKey, selfInitiated) => {
   });
 
   if (selfInitiated) {
-    const stream = await getAudio();
-    mediaStream = stream;
-    stream.getAudioTracks().forEach((track) => {
-      pc.addTrack(track, stream);
-    });
     globalThis.dataChannel = pc.createDataChannel('data_channel');
     dataChannel.binaryType = 'arraybuffer';
     dataChannel.onclose = (ev) => {
       globalThis.dataChannel = null;
     };
+    const stream = await getAudio();
+    mediaStream = stream;
+    stream.getAudioTracks().forEach((track) => {
+      pc.addTrack(track, stream);
+    });
   }
   return pc;
 };
