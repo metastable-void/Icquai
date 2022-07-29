@@ -235,6 +235,40 @@ const sendPing = async (base64PublicKey) => {
   }, PING_TIMEOUT);
 };
 
+let ac;
+let osc;
+let oscMod;
+let gn;
+let master;
+let ringInterval;
+globalThis.ringStart = () => {
+  ac = new AudioContext;
+  gn = ac.createGain();
+  master = ac.createGain();
+  osc = ac.createOscillator();
+  osc.frequency.value = 400;
+  oscMod = ac.createOscillator();
+  oscMod.frequency.value = 15;
+  oscMod.connect(gn.gain);
+  osc.connect(gn);
+  gn.connect(master);
+  master.connect(ac.destination);
+  osc.start();
+  oscMod.start();
+  master.gain.setValueAtTime(0, ac.currentTime + 1);
+  ringInterval = setInterval(() => {
+    master.gain.value = 1;
+    master.gain.setValueAtTime(0, ac.currentTime + 1);
+  }, 3000);
+};
+
+globalThis.ringEnd = () => {
+  osc.stop();
+  oscMod.stop();
+  master.gain.value = 0;
+  clearInterval(ringInterval);
+};
+
 const x25519Generate = () => {
     const seed = new Uint8Array(32);
     firstAid.randomFill(seed);
