@@ -600,6 +600,11 @@ wsMessageReceived.addListener((json) => {
                     rtcDescription.dispatch(payload.description);
                     break;
                   }
+                  case 'rtc_hangup': {
+                    console.log('Received hangup message');
+                    hangup();
+                    break;
+                  }
                 }
                 break;
               }
@@ -1300,6 +1305,15 @@ const hangup = () => {
     globalThis.pc.close();
   }
   globalThis.pc = null;
+  const state = store.state;
+  const {callOngoing} = state;
+  if (callOngoing) {
+    sendEncryptedMessage(callOngoing, {
+      type: 'rtc_hangup',
+    }).catch((e) => {
+      console.error(e);
+    });
+  }
   callEnd.dispatch(null);
 };
 
