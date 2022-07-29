@@ -1281,7 +1281,10 @@ store.render(containerElement, async (state) => {
   let mainContent;
   const notFound = () => {
     mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('Not Found')]);
-    mainContent = EH.div([EA.classes(['profile'])], [
+    mainContent = EH.div([
+      EA.classes(['profile']),
+      EP.key('view-404'),
+    ], [
       EH.meta([
         EP.attribute('name', 'robot'),
         EP.attribute('content', 'noindex'),
@@ -1312,7 +1315,10 @@ store.render(containerElement, async (state) => {
         EP.attribute('readonly', ''),
         EP.attribute('value', state.myInviteLink),
       ], '');
-      mainContent = EH.div([EA.classes(['profile'])], [
+      mainContent = EH.div([
+        EA.classes(['profile']),
+        EP.key('view-my-profile'),
+      ], [
         EH.p([], [EH.text('Please set your name.')]),
         fingerprint,
         name,
@@ -1377,7 +1383,10 @@ store.render(containerElement, async (state) => {
         ], [
           EH.text('Add friend'),
         ]);
-        mainContent = EH.div([EA.classes(['profile'])], [
+        mainContent = EH.div([
+          EA.classes(['profile']),
+          EP.key('view-invite'),
+        ], [
           publicKeyField,
           name,
           nickName,
@@ -1415,7 +1424,10 @@ store.render(containerElement, async (state) => {
         friendsList.push(tr);
       }
       mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('Friends')]);
-      mainContent = EH.div([EA.classes(['profile'])], [
+      mainContent = EH.div([
+        EA.classes(['profile']),
+        EP.key('view-friends'),
+      ], [
         EH.div([], [
           createInputField('Invite link', 'friends-invite-link', [
             EP.eventListener('change', (ev) => {
@@ -1618,6 +1630,7 @@ store.render(containerElement, async (state) => {
       }
       mainContent = EH.div([
         EA.classes(['talk']),
+        EP.key('view-talk'),
       ], [
         muteStatus,
         channelStatus,
@@ -1687,6 +1700,7 @@ store.render(containerElement, async (state) => {
       ]);
       mainContent = EH.div([
         EA.classes(['profile']),
+        EP.key('view-settings'),
       ], [
         EH.p([], [
           EH.button([
@@ -1743,6 +1757,7 @@ store.render(containerElement, async (state) => {
       mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('Help')]);
       mainContent = EH.div([
         EA.classes(['profile']),
+        EP.key('view-help'),
       ], [
         EH.h2([], [EH.text('Icquai')]),
         EH.p([], [EH.text(`
