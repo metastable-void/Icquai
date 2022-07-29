@@ -124,6 +124,29 @@ const verifyMessage = async (message) => {
   };
 };
 
+/**
+ * Call this only on user click.
+ */
+const requestNotificationPermission = () => {
+  if (!window.Notification) {
+    console.warn('Notification not supported');
+  } else if (Notification.permission == 'granted') {
+    console.log('Notification already granted');
+  } else if (Notification.permission == 'denied') {
+    console.log('Notification already denied by user');
+  } else {
+    const permission = await Notification.requestPermission();
+    if (permission == 'granted') {
+      const notification = new Notification('Notification enabled!', {
+        body: 'You are in full control of which notification is shown.',
+        requireInteraction: false,
+      });
+    } else if (permission == 'denied') {
+      console.log('Notification just denied by user');
+    }
+  }
+};
+
 
 /**
  * @type {WebSocket?}
@@ -1287,6 +1310,19 @@ const isDataChannelOpen = () => {
   return dataChannel.readyState == 'open';
 };
 
+const createToast = (text, actionText, actionEventListeners) => {
+  return EH.div([
+    EA.classes(['toast']),
+  ], [
+    EH.button([
+      ... actionEventListeners,
+    ], [EH.text(actionText)]),
+    EH.div([
+      EA.classes(['toast-text']),
+    ], [EH.text(text)]),
+  ]);
+};
+
 let callButtonPressed = false;
 const containerElement = document.querySelector('#container');
 store.render(containerElement, async (state) => {
@@ -1616,6 +1652,15 @@ store.render(containerElement, async (state) => {
           }),
         ], [EH.text(state.callOngoing ? 'call_end' : 'call')]),
       ]);
+      const toasts = [];
+      if ("Notification" in window && Notification.permission == 'default') {
+        const toast = createToast('Allow notifications to get notified about new messages.', 'Allow', [
+          EP.eventListener('click', (ev) => {
+            requestNotificationPermission();
+          }),
+        ]);
+      }
+
       let muteStatus;
       if (state.callOngoing) {
         muteStatus = EH.div([
@@ -1647,6 +1692,7 @@ store.render(containerElement, async (state) => {
         EA.classes(['talk']),
         EP.key('view-talk'),
       ], [
+        ... toasts,
         muteStatus,
         channelStatus,
         EH.div([
