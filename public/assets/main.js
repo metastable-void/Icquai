@@ -1725,7 +1725,7 @@ store.render(containerElement, async (state) => {
                 console.log('RTC: Call connecting; hanging up.');
                 hangup();
               } else if (state.ringing) {
-                ringAccept(publicKey).catch((e) => {
+                ringAccept(state.ringing).catch((e) => {
                   console.error(e);
                 });
               } else {
