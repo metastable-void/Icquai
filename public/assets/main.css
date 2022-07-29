@@ -535,3 +535,43 @@ table.friends td.nickname::after {
 .talk-box .text > .cursor::before {
   content: '\2060';
 }
+
+.toast {
+  display: grid;
+  border: solid .125rem var(--theme-border-color);
+  background-color: var(--theme-input-background-color);
+  box-shadow: 0 0 .25rem var(--theme-shadow-color);
+  color: var(--theme-main-text-color);
+  grid-template-columns: 1fr max-content;
+}
+
+.toast > button {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: end;
+  display: block;
+  box-sizing: border-box;
+  inline-size: min-content;
+  border: none;
+  border-radius: 0;
+  background-color: transparent;
+  color: var(--theme-accent-color);
+  font: inherit;
+  box-shadow: none;
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  margin: 1rem;
+  padding: 0;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.toast > .toast-text {
+  grid-column: 1;
+  grid-row: 1;
+  display: grid;
+  align-content: center;
+  justify-content: start;
+  padding: 1rem;
+}
