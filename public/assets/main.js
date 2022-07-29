@@ -472,7 +472,9 @@ wsMessageReceived.addListener((json) => {
             console.error('Bounced message not signed by my key');
             return;
           }
-        })();
+        })().catch((e) => {
+          console.error(e);
+        });
         break;
       }
       case 'signed_envelope': {
