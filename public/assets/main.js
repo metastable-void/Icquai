@@ -1204,8 +1204,10 @@ const createCall = async (base64PublicKey, selfInitiated) => {
     callStart.dispatch(base64PublicKey);
   };
 
+  let connectionState = pc.connectionState;
   pc.onconnectionstatechange = (ev) => {
-    console.log('RTC connection state:', pc.connectionState);
+    console.log('RTC connection state change: %s => %s', connectionState, pc.connectionState);
+    connectionState = pc.connectionState;
     if (pc.connectionState == 'disconnected' || pc.connectionState == 'failed') {
       console.log('RTC: Call is ended');
       hangup();
