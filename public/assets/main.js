@@ -90,6 +90,11 @@ const myNumberStore = new LocalStorageData('icquai.my.number', () => {
   return number;
 });
 
+const getMyNumber = () => {
+  const rawNumber = myNumberStore.getValue();
+  return rawNumber.slice(0, 4) + '-' + rawNumber.slice(4);
+};
+
 const getMyKeys = async () => {
   const base64PrivateKey = privateKeyStore.getValue();
   const privateKey = firstAid.decodeBase64(base64PrivateKey);
@@ -1480,7 +1485,7 @@ store.render(containerElement, async (state) => {
       ], '');
       const myNumber = createInputField('My number', 'my-number', [
         EP.attribute('readonly', ''),
-        EP.attribute('value', myNumberStore.getValue()),
+        EP.attribute('value', getMyNumber()),
       ], '');
       mainContent = EH.div([
         EA.classes(['profile']),
