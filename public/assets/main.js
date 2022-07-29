@@ -238,20 +238,27 @@ const sendPing = async (base64PublicKey) => {
 let ac;
 let osc;
 let oscMod;
+
+/**
+ * @type {GainNode}
+ */
 let gn;
+
+/**
+ * @type {GainNode}
+ */
 let master;
 let ringInterval;
 globalThis.ringStart = () => {
   ac = new AudioContext;
-  gn = ac.createGain();
   master = ac.createGain();
+  globalThis.ringMaster = master;
   osc = ac.createOscillator();
   osc.frequency.value = 400;
   oscMod = ac.createOscillator();
-  oscMod.frequency.value = 15;
-  oscMod.connect(gn.gain);
-  osc.connect(gn);
-  gn.connect(master);
+  oscMod.frequency.value = 415;
+  oscMod.connect(master);
+  osc.connect(master);
   master.connect(ac.destination);
   osc.start();
   oscMod.start();
