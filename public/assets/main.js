@@ -82,6 +82,13 @@ const privateKeyStore = new LocalStorageData('icquai.private_key', () => firstAi
 const myNameStore = new LocalStorageData('icquai.my.name', () => '');
 const friendsStore = new LocalStorageData('icquai.friends', () => []);
 const themeColorStore = new LocalStorageData('icquai.theme.accent_color', () => '#3B9EA3');
+const myNumberStore = new LocalStorageData('icquai.my.number', () => {
+  let number = '';
+  for (let i = 0; i < 8; i++) {
+    number += Math.min(9, Math.floor(firstAid.random()*10));
+  }
+  return number;
+});
 
 const getMyKeys = async () => {
   const base64PrivateKey = privateKeyStore.getValue();
@@ -1471,6 +1478,10 @@ store.render(containerElement, async (state) => {
         EP.attribute('readonly', ''),
         EP.attribute('value', state.myInviteLink),
       ], '');
+      const myNumber = createInputField('My number', 'my-number', [
+        EP.attribute('readonly', ''),
+        EP.attribute('value', myNumberStore.getValue()),
+      ], '');
       mainContent = EH.div([
         EA.classes(['profile']),
         EP.key('view-my-profile'),
@@ -1478,6 +1489,7 @@ store.render(containerElement, async (state) => {
         EH.p([], [EH.text('Please set your name.')]),
         fingerprint,
         name,
+        myNumber,
         inviteLink,
         EH.p([], [
           EH.button([
