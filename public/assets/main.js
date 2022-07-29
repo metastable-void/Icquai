@@ -462,6 +462,7 @@ wsMessageReceived.addListener((json) => {
       }
       case 'bounce': {
         console.warn('Message sent to %s bounced:', message.recipient, message.message);
+        const recipient = message.recipient;
         friendBecomingOffline.dispatch(message.recipient);
         (async () => {
           const {publicKey, payload} = await verifyMessage(message.message);
@@ -473,7 +474,7 @@ wsMessageReceived.addListener((json) => {
           }
           if ('forward' == payload.type) {
             const message = payload.payload;
-            console.log('Bounced message:', message);
+            console.log('Bounced message to %s:', recipient, message);
           }
         })().catch((e) => {
           console.error(e);
