@@ -273,12 +273,14 @@ const sendPing = async (base64PublicKey) => {
  */
 let ringAudio;
 globalThis.ringStart = () => {
+  console.log('ringing start');
   ringAudio = new Audio('/assets/sounds/ring_jp.wav');
   ringAudio.loop = true;
   ringAudio.play();
 };
 
 globalThis.ringEnd = () => {
+  console.log('ringing end');
   ringAudio.pause();
   ringAudio.currentTime = 0;
 };
@@ -596,7 +598,7 @@ wsMessageReceived.addListener((json) => {
                   case 'rtc_init': {
                     console.log('Received RTC init');
                     ringStart();
-                    setTimeout(() => ringEnd(), 90000);
+                    setTimeout(() => ringEnd(), 9000);
                     createCall(publicKey, false).catch((e) => {
                       console.error(e);
                     });
