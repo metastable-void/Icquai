@@ -665,6 +665,25 @@ wsMessageReceived.addListener((json) => {
   }
 });
 
+ringingBegin.addListener((base64PublicKey) => {
+  const friends = friendsStore.getValue();
+  let callingFriend;
+  for (const value of friends) {
+    if (value.publicKey == state.ringing) {
+      callingFriend = value;
+      break;
+    }
+  }
+  const callingFriendName = callingFriend ? callingFriend.savedName : 'Unknown friend';
+  if (notificationAllowed()) {
+    new Notification('Call incoming', {
+      body: callingFriendName,
+      requireInteraction: true,
+      renotify: true,
+    });
+  }
+});
+
 
 store.subscribe(ringingBegin, (state, publicKey) => {
   return {
@@ -1761,13 +1780,6 @@ store.render(containerElement, async (state) => {
           }
         }
         const callingFriendName = callingFriend ? callingFriend.savedName : 'Unknown friend';
-        if (notificationAllowed()) {
-          new Notification('Call incoming', {
-            body: callingFriendName,
-            requireInteraction: true,
-            renotify: true,
-          });
-        }
         const toast = createToast('Incoming call from ' + callingFriendName, 'Accept', [
           EP.eventListener('click', (ev) => {
             ringAccept(state.ringing).catch((e) => {
