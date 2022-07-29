@@ -595,6 +595,8 @@ wsMessageReceived.addListener((json) => {
                   }
                   case 'rtc_init': {
                     console.log('Received RTC init');
+                    ringStart();
+                    setTimeout(() => ringEnd(), 90000);
                     createCall(publicKey, false).catch((e) => {
                       console.error(e);
                     });
