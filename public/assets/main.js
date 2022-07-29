@@ -461,8 +461,18 @@ wsMessageReceived.addListener((json) => {
         break;
       }
       case 'bounce': {
-        console.warn('Message sent to %s bounced', message.recipient);
+        console.warn('Message sent to %s bounced:', message.recipient, message.message);
         friendBecomingOffline.dispatch(message.recipient);
+        (async () => {
+          const {publicKey, payload} = await verifyMessage(message);
+          console.log('Bounced message:', payload);
+          const myKeys = await getMyKeys();
+          const myPublicKey = firstAid.encodeBase64(myKeys.publicKey);
+          if (myPublicKey != publicKey) {
+            console.error('Bounced message not signed by my key');
+            return;
+          }
+        })();
         break;
       }
       case 'signed_envelope': {
