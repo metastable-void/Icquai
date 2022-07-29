@@ -127,7 +127,7 @@ const verifyMessage = async (message) => {
 /**
  * Call this only on user click.
  */
-const requestNotificationPermission = () => {
+const requestNotificationPermission = async () => {
   if (!window.Notification) {
     console.warn('Notification not supported');
   } else if (Notification.permission == 'granted') {
@@ -1656,7 +1656,9 @@ store.render(containerElement, async (state) => {
       if ("Notification" in window && Notification.permission == 'default') {
         const toast = createToast('Allow notifications to get notified about new messages.', 'Allow', [
           EP.eventListener('click', (ev) => {
-            requestNotificationPermission();
+            requestNotificationPermission().catch((e) => {
+              console.error(e);
+            });
           }),
         ]);
       }
