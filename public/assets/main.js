@@ -1760,7 +1760,7 @@ store.render(containerElement, async (state) => {
             break;
           }
         }
-        const callingFriendName = callingFriend ? callingFriend.name : 'Unknown friend';
+        const callingFriendName = callingFriend ? callingFriend.savedName : 'Unknown friend';
         if (notificationAllowed()) {
           new Notification('Call incoming', {
             body: callingFriendName,
