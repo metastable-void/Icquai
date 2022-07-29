@@ -59,6 +59,8 @@ import {
   callStart,
   callEnd,
   updateCallMuted,
+  ringingBegin,
+  ringingEnd,
 } from "./topics.js";
 
 const ed = nobleEd25519;
@@ -66,6 +68,7 @@ const ed = nobleEd25519;
 const HISTORY_BUFFER_LENGTH = 10;
 const CLIENT_SRC_REPOSITORY = 'https://github.com/metastable-void/Icquai';
 const SERVER_SRC_REPOSITORY = 'https://github.com/metastable-void/icquai-server';
+const RING_TIMEOUT = 30000;
 
 // watchdog
 let scriptCompleted = false;
@@ -595,10 +598,27 @@ wsMessageReceived.addListener((json) => {
                     });
                     break;
                   }
+                  case 'ring': {
+                    console.log('Received call');
+                    ringStart();
+                    ringingBegin.dispatch(publicKey);
+                    setTimeout(() => {
+                      ringEnd();
+                      ringingEnd.dispatch(null);
+                    }, RING_TIMEOUT);
+                    break;
+                  }
+                  case 'ring_accept': {
+                    ringEnd();
+                    ringingEnd.dispatch(null);
+                    createCall(publicKey, true).catch((e) => {
+                      console.error(e);
+                    });
+                    break;
+                  }
                   case 'rtc_init': {
                     console.log('Received RTC init');
-                    ringStart();
-                    setTimeout(() => ringEnd(), 9000);
+                    ringingEnd.dispatch(null);
                     createCall(publicKey, false).catch((e) => {
                       console.error(e);
                     });
@@ -645,6 +665,20 @@ wsMessageReceived.addListener((json) => {
   }
 });
 
+
+store.subscribe(ringingBegin, (state, publicKey) => {
+  return {
+    ... state,
+    ringing: publicKey,
+  };
+});
+
+store.subscribe(ringingEnd, (state, _action) => {
+  return {
+    ... state,
+    ringing: null,
+  };
+});
 
 store.subscribe(myNameChange, (state, newName) => {
   return {
@@ -1336,6 +1370,24 @@ const hangup = () => {
   globalThis.pc = null;
 };
 
+const callRing = async (base64PublicKey) => {
+  ringStart();
+  setTimeout(() => {
+    ringEnd();
+  }, RING_TIMEOUT);
+  await sendEncryptedMessage(base64PublicKey, {
+    type: 'ring',
+    name: myNameStore.getValue(),
+  });
+};
+
+const ringAccept = async (base64PublicKey) => {
+  await sendEncryptedMessage(base64PublicKey, {
+    type: 'ring_accept',
+    name: myNameStore.getValue(),
+  });
+};
+
 const isDataChannelOpen = () => {
   if (!dataChannel) {
     return false;
@@ -1672,8 +1724,12 @@ store.render(containerElement, async (state) => {
               } else if (globalThis.pc) {
                 console.log('RTC: Call connecting; hanging up.');
                 hangup();
+              } else if (state.ringing) {
+                ringAccept(publicKey).catch((e) => {
+                  console.error(e);
+                });
               } else {
-                createCall(publicKey, true).catch((e) => {
+                callRing(publicKey).catch((e) => {
                   console.error(e);
                 });
               }
@@ -1693,6 +1749,31 @@ store.render(containerElement, async (state) => {
               console.error(e);
             });
           }),
+        ]);
+        toasts.push(toast);
+      }
+      if (state.ringing) {
+        let callingFriend;
+        for (const value of state.friends) {
+          if (value.publicKey == state.ringing) {
+            callingFriend = value;
+            break;
+          }
+        }
+        const callingFriendName = callingFriend ? callingFriend.name : 'Unknown friend';
+        if (notificationAllowed()) {
+          new Notification('Call incoming', {
+            body: callingFriendName,
+            requireInteraction: true,
+            renotify: true,
+          });
+        }
+        const toast = createToast('Incoming call from ' + callingFriendName, 'Accept', [
+          EP.eventListener('click', (ev) => {
+            ringAccept().catch((e) => {
+              console.error(e);
+            });
+          })
         ]);
         toasts.push(toast);
       }

@@ -53,6 +53,8 @@ export const rtcDescription = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'rtc.de
 export const callStart = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'call.start');
 export const callEnd = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'call.end');
 export const updateCallMuted = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'call.muted.update');
+export const ringingBegin = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ring.start'); // <base64 public key>
+export const ringingEnd = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ring.end'); // <void>
 
 
 // global event listeners
