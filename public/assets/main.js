@@ -465,12 +465,15 @@ wsMessageReceived.addListener((json) => {
         friendBecomingOffline.dispatch(message.recipient);
         (async () => {
           const {publicKey, payload} = await verifyMessage(message.message);
-          console.log('Bounced message:', payload);
           const myKeys = await getMyKeys();
           const myPublicKey = firstAid.encodeBase64(myKeys.publicKey);
           if (myPublicKey != publicKey) {
             console.error('Bounced message not signed by my key');
             return;
+          }
+          if ('forward' == payload.type) {
+            const message = payload.payload;
+            console.log('Bounced message:', message);
           }
         })().catch((e) => {
           console.error(e);
