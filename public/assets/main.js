@@ -464,7 +464,7 @@ wsMessageReceived.addListener((json) => {
         console.warn('Message sent to %s bounced:', message.recipient, message.message);
         friendBecomingOffline.dispatch(message.recipient);
         (async () => {
-          const {publicKey, payload} = await verifyMessage(message);
+          const {publicKey, payload} = await verifyMessage(message.message);
           console.log('Bounced message:', payload);
           const myKeys = await getMyKeys();
           const myPublicKey = firstAid.encodeBase64(myKeys.publicKey);
