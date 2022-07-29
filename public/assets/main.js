@@ -1500,7 +1500,7 @@ store.render(containerElement, async (state) => {
         if (!hashContent) {
           hashContent = query.get('s');
         }
-        const bytes = firstAid.decodeBase64(hash.slice(1));
+        const bytes = firstAid.decodeBase64(hashContent);
         const signedJson = firstAid.decodeString(bytes);
         const signedData = JSON.parse(signedJson);
         // TODO: This is not how pure functions work
