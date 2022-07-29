@@ -619,6 +619,7 @@ wsMessageReceived.addListener((json) => {
                   case 'rtc_init': {
                     console.log('Received RTC init');
                     ringingEnd.dispatch(null);
+                    ringEnd();
                     createCall(publicKey, false).catch((e) => {
                       console.error(e);
                     });
@@ -669,7 +670,7 @@ ringingBegin.addListener((base64PublicKey) => {
   const friends = friendsStore.getValue();
   let callingFriend;
   for (const value of friends) {
-    if (value.publicKey == state.ringing) {
+    if (value.publicKey == base64PublicKey) {
       callingFriend = value;
       break;
     }
