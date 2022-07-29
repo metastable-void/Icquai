@@ -1770,7 +1770,7 @@ store.render(containerElement, async (state) => {
         }
         const toast = createToast('Incoming call from ' + callingFriendName, 'Accept', [
           EP.eventListener('click', (ev) => {
-            ringAccept().catch((e) => {
+            ringAccept(state.ringing).catch((e) => {
               console.error(e);
             });
           })
