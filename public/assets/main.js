@@ -1312,15 +1312,6 @@ setInterval(async () => {
 }, 1000);
 
 const hangup = () => {
-  console.info('RTC: Closing connection:', globalThis.pc);
-  if (globalThis.dataChannel) {
-    globalThis.dataChannel.close();
-  }
-  globalThis.dataChannel = null;
-  if (globalThis.pc) {
-    globalThis.pc.close();
-  }
-  globalThis.pc = null;
   const state = store.state;
   const {callOngoing} = state;
   if (callOngoing) {
@@ -1331,6 +1322,18 @@ const hangup = () => {
     });
   }
   callEnd.dispatch(null);
+  if (!globalThis.dataChannel && !globalThis.pc) {
+    return;
+  }
+  console.info('RTC: Closing connection:', globalThis.pc);
+  if (globalThis.dataChannel) {
+    globalThis.dataChannel.close();
+  }
+  globalThis.dataChannel = null;
+  if (globalThis.pc) {
+    globalThis.pc.close();
+  }
+  globalThis.pc = null;
 };
 
 const isDataChannelOpen = () => {
