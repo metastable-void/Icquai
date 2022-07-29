@@ -1661,6 +1661,7 @@ store.render(containerElement, async (state) => {
             });
           }),
         ]);
+        toasts.push(toast);
       }
 
       let muteStatus;
