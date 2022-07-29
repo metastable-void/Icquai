@@ -29,6 +29,7 @@ const ASSETS = new URLSet([
   '/assets/store.js',
   '/assets/sw-register.js',
   '/assets/main.css',
+  '/assets/sounds/ring_jp.wav',
   '/assets/img/logo.svg',
   '/assets/img/app-icon-512px.png',
   '/assets/img/app-icon-256px.png',
