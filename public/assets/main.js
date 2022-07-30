@@ -1928,7 +1928,9 @@ store.render(containerElement, async (state) => {
               EP.attribute('multiple', ''),
               EP.style('display', 'none'),
               EP.eventListener('change', (ev) => {
-                sendFiles(publicKey, ev.target.files);
+                sendFiles(publicKey, ev.target.files).catch((e) => {
+                  console.error(e);
+                });
               }),
             ]),
             EH.button([
@@ -2133,7 +2135,9 @@ store.render(containerElement, async (state) => {
             return;
           }
           console.log('File dropped');
-          sendFiles(publicKey, files);
+          sendFiles(publicKey, files).catch((e) => {
+            console.error(e);
+          });
         }),
       ], [
         ... toasts,
