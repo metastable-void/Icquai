@@ -1457,6 +1457,7 @@ const hangup = () => {
   }
   callEnd.dispatch(null);
   if (mediaStream) {
+    console.log('Closing MediaStream');
     mediaStream.getTracks().forEach((track) => {
       track.stop();
     });
