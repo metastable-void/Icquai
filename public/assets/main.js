@@ -1628,6 +1628,7 @@ const sendFiles = async (base64PublicKey, files) => {
       images: imageUrls,
     });
   }
+  const startTime = getTime();
   let fileIndex = 0;
   for (const file of files) {
     console.log('Sending file:', file);
@@ -1658,7 +1659,8 @@ const sendFiles = async (base64PublicKey, files) => {
     }
     fileIndex++;
   }
-  console.log('%d file(s) sent', files.length);
+  const endTime = getTime();
+  console.log('%d file(s) sent in %.2f s', files.length, (endTime - startTime) / 1000);
 };
 
 let callButtonPressed = false;
