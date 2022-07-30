@@ -1894,6 +1894,7 @@ store.render(containerElement, async (state) => {
         const callingFriendName = callingFriend ? callingFriend.savedName : 'Unknown friend';
         const toast = createToast('Incoming call from ' + callingFriendName, 'Accept', [
           EP.eventListener('click', (ev) => {
+            pageNavigate.dispatch(`/talk?public_key=${encodeURIComponent(state.ringing)}`);
             ringAccept(state.ringing).catch((e) => {
               console.error(e);
             });
