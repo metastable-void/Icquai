@@ -1256,9 +1256,7 @@ const getAudio = async () => {
 let mediaStream = null;
 
 const createCall = async (base64PublicKey, selfInitiated) => {
-  if (globalThis.pc) {
-    throw new TypeError('There is already a call ongoing');
-  }
+  hangup();
   const audioElement = document.querySelector('#rtc_audio');
   const configuration = {
     iceServers: [
