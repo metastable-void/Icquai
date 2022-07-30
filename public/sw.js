@@ -76,6 +76,9 @@ self.addEventListener('install', ev => {
       if (!cachedUrls.has(url)) {
         const req = createFreshRequest(url);
         promises.push(rawFetch(req).then((res) => {
+          if (!res.ok) {
+            throw res;
+          }
           return cache.put(req, res);
         }));
       }
