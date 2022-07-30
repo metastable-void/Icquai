@@ -530,6 +530,18 @@ wsMessageReceived.addListener((json) => {
                 wsForwardMessage(publicKey, pongMsg).catch((e) => {
                   console.error(e);
                 });
+                const friends = friendsStore.getValue();
+                let friendFound = false;
+                for (const friend of friends) {
+                  if (publicKey == friend.publicKey) {
+                    friendFound = true;
+                    if (friend.savedName != message.name) {
+                      console.log('Received ping from %s, name: %s => %s', friend.savedName, message.name);
+                      friend.savedName = message.name;
+                    }
+                  }
+                }
+                friendsStore.setValue(friends);
                 break;
               }
               case 'pong': {
@@ -538,17 +550,33 @@ wsMessageReceived.addListener((json) => {
                   break;
                 }
                 validPingNonces.delete(message.nonce);
-                console.log('Received pong. Name:', message.name);
                 friendBecomingOnline.dispatch(publicKey);
                 if (!message.name) {
                   break;
                 }
                 const friends = friendsStore.getValue();
+                let friendFound = false;
                 for (const friend of friends) {
                   if (publicKey == friend.publicKey) {
-                    friend.savedName = message.name;
+                    friendFound = true;
+                    if (friend.savedName != message.name) {
+                      console.log('Received pong from %s, name: %s => %s', friend.savedName, message.name);
+                      friend.savedName = message.name;
+                    }
                   }
                 }
+                /*
+                // commented out because at this state friends need not be added and confusing (name not set yet, etc.)
+                if (!friendFound) {
+                  console.log('Received pong and learned friend: %s, name: %s', publicKey, message.name);
+                  const friend = {
+                    nickname: message.name,
+                    savedName: message.name,
+                    publicKey,
+                  };
+                  friends.push(friend);
+                }
+                */
                 friendsStore.setValue(friends);
                 break;
               }
