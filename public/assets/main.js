@@ -1819,6 +1819,21 @@ store.render(containerElement, async (state) => {
         ], [
           EH.p([], [EH.text('Chat is open.')]),
           EH.p([], [
+            EH.button([
+              EP.eventListener('click', (ev) => {
+                //
+                sharedSecretMap.delete(publicKey);
+                channelClosed.dispatch(publicKey);
+                wsForwardMessage(publicKey, {
+                  type: 'ch_rst',
+                  sessionId: app.sessionId,
+                }).catch((e) => {
+                  console.error(e);
+                });
+              }),
+            ], [EH.text('Close chat')]),
+          ]),
+          EH.p([], [
             EH.input([
               EA.id('talk-input-file'),
               EP.attribute('type', 'file'),
@@ -1835,19 +1850,6 @@ store.render(containerElement, async (state) => {
                 fileInput.click();
               }),
             ], [EH.text('upload_file')]),
-            EH.button([
-              EP.eventListener('click', (ev) => {
-                //
-                sharedSecretMap.delete(publicKey);
-                channelClosed.dispatch(publicKey);
-                wsForwardMessage(publicKey, {
-                  type: 'ch_rst',
-                  sessionId: app.sessionId,
-                }).catch((e) => {
-                  console.error(e);
-                });
-              }),
-            ], [EH.text('Close chat')]),
           ]),
         ]);
         textarea = EH.customTag('icquai-textarea', [
