@@ -515,7 +515,9 @@ wsMessageReceived.addListener((json) => {
           const {publicKey, payload} = await verifyMessage(message);
           if ('forward' == payload.type) {
             const message = payload.payload;
-            console.log('Message from %s:', publicKey, message);
+            if (verboseMessageLogging) {
+              console.log('Message from %s:', publicKey, message);
+            }
             switch (message.type) {
               case 'ping': {
                 console.log('Received ping; ponging.');
@@ -551,6 +553,7 @@ wsMessageReceived.addListener((json) => {
                 break;
               }
               case 'kex_ping': {
+                console.log('Received kex ping, ponging.');
                 const keyPair = x25519Generate();
                 const name = myNameStore.getValue();
                 const pongMsg = {
@@ -589,6 +592,7 @@ wsMessageReceived.addListener((json) => {
                 break;
               }
               case 'kex_pong': {
+                console.log('Received kex pong.');
                 const sessionId = message.peerSessionId;
                 const savedSessionId = sessionIdMap.get(publicKey);
                 if (savedSessionId && savedSessionId != message.sessionId) {
@@ -637,7 +641,9 @@ wsMessageReceived.addListener((json) => {
                 }
                 const data = await decrypt(message, sharedSecret);
                 const payload = JSON.parse(firstAid.decodeString(data));
-                console.log('encrypted message from %s:', publicKey, payload);
+                if (verboseMessageLogging) {
+                  console.log('encrypted message from %s:', publicKey, payload);
+                }
                 encryptedMessageReceived.dispatch({
                   publicKey,
                   message: payload,
@@ -645,6 +651,7 @@ wsMessageReceived.addListener((json) => {
                 break;
               }
               case 'ch_rst': {
+                console.log('Received encrypted channel reset');
                 const peerSessionId = sessionIdMap.get(publicKey);
                 if (!peerSessionId) {
                   break;
@@ -697,6 +704,7 @@ encryptedMessageReceived.addListener(async ({publicKey, message}) => {
       break;
     }
     case 'ring_accept': {
+      console.log('Ringing call accepted');
       ringEnd();
       ringingEnd.dispatch(null);
       createCall(publicKey, true).catch((e) => {
