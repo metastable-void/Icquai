@@ -1798,7 +1798,11 @@ store.render(containerElement, async (state) => {
                 });
               }
             } else {
-              const channelOpenedCallback = () => {
+              const channelOpenedCallback = (openedChannelPublicKey) => {
+                if (openedChannelPublicKey != publicKey) {
+                  console.log('Ignoring unrelated channel open');
+                  return;
+                }
                 channelOpened.removeListener(channelOpenedCallback);
                 console.log('Automatically calling after reconnection');
                 callRing(publicKey).catch((e) => {
@@ -1806,6 +1810,9 @@ store.render(containerElement, async (state) => {
                 });
               };
               channelOpened.addListener(channelOpenedCallback);
+              setTimeout(() => {
+                channelOpened.removeListener(channelOpenedCallback);
+              }, 5000);
               sendKexPing(publicKey).catch((e) => {
                 console.error(e);
               });
