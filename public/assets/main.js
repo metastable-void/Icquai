@@ -942,11 +942,22 @@ store.subscribe(channelOpened, (state, publicKey) => {
 
 store.subscribe(channelClosed, (state, publicKey) => {
   const {openChannels} = state;
+  const {imagesShown} = state;
   const set = new Set(openChannels);
   set.delete(publicKey);
+  const imageUrls = imagesShown[publicKey];
+  if (imageUrls) {
+    for (const url of imageUrls) {
+      try {
+        URL.revokeObjectURL(url);
+      } catch (e) {}
+    }
+  }
+  delete imagesShown[publicKey];
   return {
     ... state,
     openChannels: [... set],
+    imagesShown,
   };
 });
 
