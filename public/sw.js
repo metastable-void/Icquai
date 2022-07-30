@@ -46,6 +46,7 @@ const ASSETS = new URLSet([
   '/assets/lib/x25519.js',
   '/assets/lib/crypto.js',
   '/assets/lib/fetch-utils.js',
+  '/assets/lib/adapter.js',
   '/assets/topics.js',
   '/assets/fonts/MaterialIcons-Regular.woff2',
   '/assets/app.js',
