@@ -100,6 +100,16 @@ const myNumberStore = new LocalStorageData('icquai.my.number', () => {
   * @type {RTCDataChannel?}
   */
  globalThis.dataChannel = null;
+
+ let verboseMessageLogging = false;
+
+ globalThis.enableMessageLogging = () => {
+  verboseMessageLogging = true;
+ };
+
+ globalThis.disableMessageLogging = () => {
+  verboseMessageLogging = false;
+ };
  
 const getMyNumber = () => {
   const rawNumber = myNumberStore.getValue();
@@ -460,7 +470,7 @@ pageShow.addListener(() => {
 wsMessageReceived.addListener((json) => {
   try {
     const message = JSON.parse(json);
-    if (message.type != 'signed_envelope') {
+    if (message.type != 'signed_envelope' && verboseMessageLogging) {
       console.log('Message received:', message);
     }
     switch (message.type) {
