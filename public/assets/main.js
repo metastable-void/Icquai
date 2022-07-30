@@ -407,6 +407,7 @@ pageNavigate.addListener((newUrl) => {
       pageNavigate.dispatch('/me');
     }, 0);
   } else if (url.href != location.href) {
+    console.info(`Navigate: '%s' => '%s'`, location.href, url.href);
     history.replaceState({}, '', url.href);
   }
 });
