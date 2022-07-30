@@ -61,6 +61,7 @@ import {
   updateCallMuted,
   ringingBegin,
   ringingEnd,
+  encryptedMessageReceived,
 } from "./topics.js";
 
 const ed = nobleEd25519;
@@ -609,66 +610,10 @@ wsMessageReceived.addListener((json) => {
                 const data = await decrypt(message, sharedSecret);
                 const payload = JSON.parse(firstAid.decodeString(data));
                 console.log('encrypted message from %s:', publicKey, payload);
-                switch (payload.type) {
-                  case 'text_cleared': {
-                    channelTextUpdate.dispatch({
-                      publicKey,
-                      text: payload.text,
-                      caretOffset: payload.caretOffset,
-                    });
-                    break;
-                  }
-                  case 'text_updated': {
-                    channelTextUpdate.dispatch({
-                      publicKey,
-                      text: payload.text,
-                      caretOffset: payload.caretOffset,
-                    });
-                    break;
-                  }
-                  case 'ring': {
-                    console.log('Received call');
-                    ringStart();
-                    ringingBegin.dispatch(publicKey);
-                    setTimeout(() => {
-                      ringEnd();
-                      ringingEnd.dispatch(null);
-                    }, RING_TIMEOUT);
-                    break;
-                  }
-                  case 'ring_accept': {
-                    ringEnd();
-                    ringingEnd.dispatch(null);
-                    createCall(publicKey, true).catch((e) => {
-                      console.error(e);
-                    });
-                    break;
-                  }
-                  case 'rtc_init': {
-                    console.log('Received RTC init');
-                    ringingEnd.dispatch(null);
-                    ringEnd();
-                    createCall(publicKey, false).catch((e) => {
-                      console.error(e);
-                    });
-                    break;
-                  }
-                  case 'rtc_ice_candidate': {
-                    console.log('Received ice candidate:', payload.candidate);
-                    rtcIceCandidate.dispatch(payload.candidate);
-                    break;
-                  }
-                  case 'rtc_description': {
-                    console.log('Received RTC description:', payload.description);
-                    rtcDescription.dispatch(payload.description);
-                    break;
-                  }
-                  case 'rtc_hangup': {
-                    console.log('Received hangup message');
-                    hangup();
-                    break;
-                  }
-                }
+                encryptedMessageReceived.dispatch({
+                  publicKey,
+                  message: payload,
+                });
                 break;
               }
               case 'ch_rst': {
@@ -691,6 +636,70 @@ wsMessageReceived.addListener((json) => {
     }
   } catch (e) {
     console.error(e);
+  }
+});
+
+encryptedMessageReceived.addListener(async ({publicKey, message}) => {
+  const payload = message;
+  switch (payload.type) {
+    case 'text_cleared': {
+      channelTextUpdate.dispatch({
+        publicKey,
+        text: payload.text,
+        caretOffset: payload.caretOffset,
+      });
+      break;
+    }
+    case 'text_updated': {
+      channelTextUpdate.dispatch({
+        publicKey,
+        text: payload.text,
+        caretOffset: payload.caretOffset,
+      });
+      break;
+    }
+    case 'ring': {
+      console.log('Received call');
+      ringStart();
+      ringingBegin.dispatch(publicKey);
+      setTimeout(() => {
+        ringEnd();
+        ringingEnd.dispatch(null);
+      }, RING_TIMEOUT);
+      break;
+    }
+    case 'ring_accept': {
+      ringEnd();
+      ringingEnd.dispatch(null);
+      createCall(publicKey, true).catch((e) => {
+        console.error(e);
+      });
+      break;
+    }
+    case 'rtc_init': {
+      console.log('Received RTC init');
+      ringingEnd.dispatch(null);
+      ringEnd();
+      createCall(publicKey, false).catch((e) => {
+        console.error(e);
+      });
+      break;
+    }
+    case 'rtc_ice_candidate': {
+      console.log('Received ice candidate:', payload.candidate);
+      rtcIceCandidate.dispatch(payload.candidate);
+      break;
+    }
+    case 'rtc_description': {
+      console.log('Received RTC description:', payload.description);
+      rtcDescription.dispatch(payload.description);
+      break;
+    }
+    case 'rtc_hangup': {
+      console.log('Received hangup message');
+      hangup();
+      break;
+    }
   }
 });
 
