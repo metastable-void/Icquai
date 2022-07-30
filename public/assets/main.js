@@ -91,6 +91,16 @@ const myNumberStore = new LocalStorageData('icquai.my.number', () => {
   return number;
 });
 
+/**
+ * @type {RTCPeerConnection?}
+ */
+ globalThis.pc = null;
+
+ /**
+  * @type {RTCDataChannel?}
+  */
+ globalThis.dataChannel = null;
+ 
 const getMyNumber = () => {
   const rawNumber = myNumberStore.getValue();
   return rawNumber.slice(0, 4) + '-' + rawNumber.slice(4);
@@ -142,6 +152,7 @@ const verifyMessage = async (message) => {
 
 /**
  * Call this only on user click.
+ * TODO: subscribe push as well
  */
 const requestNotificationPermission = async () => {
   if (!window.Notification) {
@@ -371,7 +382,13 @@ const sendKexPing = async (base64PublicKey) => {
 };
 
 globalThis.sendEncryptedMessage = async (base64PublicKey, message) => {
-  const data = firstAid.encodeString(JSON.stringify(message));
+  const json = JSON.stringify(message);
+  const state = store.state;
+  if (state.callOngoing == base64PublicKey && dataChannel && dataChannel.readyState == 'open') {
+    dataChannel.send(json);
+    return;
+  }
+  const data = firstAid.encodeString(json);
   const keyBytes = sharedSecretMap.get(base64PublicKey);
   if (!keyBytes) {
     throw new Error('Shared secret not found');
@@ -1235,16 +1252,6 @@ const getAudio = async () => {
 
 let mediaStream;
 
-/**
- * @type {RTCPeerConnection?}
- */
-globalThis.pc = null;
-
-/**
- * @type {RTCDataChannel?}
- */
-globalThis.dataChannel = null;
-
 const createCall = async (base64PublicKey, selfInitiated) => {
   if (globalThis.pc) {
     throw new TypeError('There is already a call ongoing');
@@ -1320,6 +1327,20 @@ const createCall = async (base64PublicKey, selfInitiated) => {
     dataChannel.onclose = (ev) => {
       globalThis.dataChannel = null;
     };
+    dataChannel.addEventListener('message', (ev) => {
+      if ('string' == typeof ev.data) {
+        try {
+          const message = JSON.parse(ev.data);
+          console.log('RTC: DataChannel: Message received:', message);
+          encryptedMessageReceived.dispatch({
+            publicKey: base64PublicKey,
+            message: message,
+          });
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    });
   };
 
   rtcIceCandidate.addListener(async (candidate) => {
@@ -1353,6 +1374,20 @@ const createCall = async (base64PublicKey, selfInitiated) => {
     dataChannel.onclose = (ev) => {
       globalThis.dataChannel = null;
     };
+    dataChannel.addEventListener('message', (ev) => {
+      if ('string' == typeof ev.data) {
+        try {
+          const message = JSON.parse(ev.data);
+          console.log('RTC: DataChannel: Message received:', message);
+          encryptedMessageReceived.dispatch({
+            publicKey: base64PublicKey,
+            message: message,
+          });
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    });
     const stream = await getAudio();
     mediaStream = stream;
     stream.getAudioTracks().forEach((track) => {
