@@ -1658,6 +1658,7 @@ const sendFiles = async (base64PublicKey, files) => {
     }
     fileIndex++;
   }
+  console.log('%d file(s) sent', files.length);
 };
 
 let callButtonPressed = false;
