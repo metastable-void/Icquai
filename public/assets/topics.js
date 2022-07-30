@@ -56,6 +56,7 @@ export const updateCallMuted = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'call.
 export const ringingBegin = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ring.start'); // <base64 public key>
 export const ringingEnd = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ring.end'); // <void>
 export const encryptedMessageReceived = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'encrypted_message.received');
+export const displayImages = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'images.display'); // {publicKey: string, images: string[]}
 
 
 // global event listeners

@@ -62,6 +62,7 @@ import {
   ringingBegin,
   ringingEnd,
   encryptedMessageReceived,
+  displayImages,
 } from "./topics.js";
 
 const ed = nobleEd25519;
@@ -1012,6 +1013,16 @@ store.subscribe(updateCallMuted, (state, muted) => {
   };
 });
 
+store.subscribe(displayImages, (state, {publicKey, images: aImages}) => {
+  const images = [... aImages].map((str) => String(str));
+  const {imagesShown} = state;
+  imagesShown[publicKey] = images;
+  return {
+    ... state,
+    imagesShown,
+  };
+});
+
 let lastUrlPath;
 store.observe((state) => {
   const urlPath = state.urlPath;
@@ -1585,6 +1596,21 @@ const createToast = (text, actionText, actionEventListeners) => {
 const sendFiles = async (base64PublicKey, files) => {
   //
   console.info('Sending files to %s:', base64PublicKey, files);
+  
+  // preview images
+  const imageUrls = [];
+  for (const file of files) {
+    if (file.type == 'image/png' || file.type == 'image/jpeg') {
+      const url = URL.createObjectURL(file);
+      imageUrls.push(url);
+    }
+  }
+  if (imageUrls.length > 0) {
+    displayImages.dispatch({
+      publicKey: base64PublicKey,
+      images: imageUrls,
+    });
+  }
 };
 
 let callButtonPressed = false;
@@ -1814,9 +1840,24 @@ store.render(containerElement, async (state) => {
         if (publicKey in state.channelTexts) {
           textStatus = state.channelTexts[publicKey];
         }
+        let imageElements = [];
+        if (publicKey in state.imagesShown) {
+          const images = state.imagesShown[publicKey];
+          for (const imageUrl of images) {
+            imageElements.push(EH.img([
+              EP.attribute('src', imageUrl),
+              EA.classes(['talk-image']),
+            ]));
+          }
+        }
         channelStatus = EH.div([
           EA.id('channel-status'),
         ], [
+          EH.div([
+            EA.id('talk-images'),
+          ], [
+            ... imageElements,
+          ]),
           EH.p([], [EH.text('Chat is open.')]),
           EH.p([], [
             EH.button([

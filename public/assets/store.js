@@ -50,5 +50,6 @@ export const store = app.getStore("store", (state) => {
     callOngoing: null,
     callMuted: false,
     ringing: null,
+    imagesShown: {},
   };
 });

@@ -575,3 +575,9 @@ table.friends td.nickname::after {
   justify-content: start;
   padding: 1rem;
 }
+
+.talk-image {
+  display: block;
+  margin-block-end: .5rem;
+  max-inline-size: 100%;
+}
