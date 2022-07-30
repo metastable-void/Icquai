@@ -71,6 +71,8 @@ const HISTORY_BUFFER_LENGTH = 10;
 const CLIENT_SRC_REPOSITORY = 'https://github.com/metastable-void/Icquai';
 const SERVER_SRC_REPOSITORY = 'https://github.com/metastable-void/icquai-server';
 const RING_TIMEOUT = 30000;
+const FILE_CHUNK_SIZE = 8192; // in bytes
+const FILE_CHUNK_COUNT = 128;
 
 // watchdog
 let scriptCompleted = false;
@@ -1614,7 +1616,7 @@ const sendFiles = async (base64PublicKey, files) => {
   // preview images
   const imageUrls = [];
   for (const file of files) {
-    if (file.type == 'image/png' || file.type == 'image/jpeg') {
+    if ((file.type == 'image/png' || file.type == 'image/jpeg') && file.size < 10000000) {
       const url = URL.createObjectURL(file);
       imageUrls.push(url);
     }
@@ -1624,6 +1626,36 @@ const sendFiles = async (base64PublicKey, files) => {
       publicKey: base64PublicKey,
       images: imageUrls,
     });
+  }
+  let fileIndex = 0;
+  for (const file of files) {
+    console.log('Sending file:', file);
+    const chunkCount = Math.ceil(file.size / FILE_CHUNK_SIZE);
+    let sentChunks = 0;
+    for (let i = 0, chunkIndex = 0; i < file.size; i += FILE_CHUNK_SIZE, chunkIndex++) {
+      const slice = file.slice(i, i + FILE_CHUNK_SIZE);
+      const buffer = await slice.arrayBuffer();
+      await sendEncryptedMessage(base64PublicKey, {
+        type: 'file_chunk',
+        file_name: file.name,
+        file_type: file.type,
+        file_count: files.length,
+        file_index: fileIndex,
+        total_size: file.size,
+        total_chunks: chunkCount,
+        chunk_index: chunkIndex,
+        data: firstAid.encodeBase64(buffer),
+      });
+      sentChunks++;
+      if (sentChunks < FILE_CHUNK_COUNT) {
+        continue;
+      }
+      sentChunks = 0;
+      while (!isBufferLow(base64PublicKey)) {
+        await new Promise((res) => setTimeout(res, 10));
+      }
+    }
+    fileIndex++;
   }
 };
 
