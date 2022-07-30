@@ -1798,6 +1798,13 @@ store.render(containerElement, async (state) => {
                 });
               }
             } else {
+              const channelOpenedCallback = () => {
+                channelOpened.removeListener(channelOpenedCallback);
+                callRing(publicKey).catch((e) => {
+                  console.error(e);
+                });
+              };
+              channelOpened.addListener(channelOpenedCallback);
               sendKexPing(publicKey).catch((e) => {
                 console.error(e);
               });
