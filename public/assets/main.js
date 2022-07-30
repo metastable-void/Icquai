@@ -1250,7 +1250,10 @@ const getAudio = async () => {
   });
 };
 
-let mediaStream;
+/**
+ * @type {MediaStream?}
+ */
+let mediaStream = null;
 
 const createCall = async (base64PublicKey, selfInitiated) => {
   if (globalThis.pc) {
@@ -1453,6 +1456,12 @@ const hangup = () => {
     });
   }
   callEnd.dispatch(null);
+  if (mediaStream) {
+    mediaStream.getTracks().forEach((track) => {
+      track.stop();
+    });
+    mediaStream = null;
+  }
   if (!globalThis.dataChannel && !globalThis.pc) {
     return;
   }
