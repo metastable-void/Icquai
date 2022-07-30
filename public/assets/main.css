@@ -580,4 +580,5 @@ table.friends td.nickname::after {
   display: block;
   margin-block-end: .5rem;
   max-inline-size: 100%;
+  box-shadow: 0 0 .5rem var(--theme-shadow-color);
 }
