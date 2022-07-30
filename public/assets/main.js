@@ -418,6 +418,7 @@ globalThis.sendEncryptedMessage = async (base64PublicKey, message) => {
  * @returns {boolean}
  */
 globalThis.isBufferLow = (base64PublicKey) => {
+  const state = store.state;
   if (state.callOngoing == base64PublicKey && dataChannel && dataChannel.readyState == 'open') {
     return dataChannel.bufferedAmount < 1;
   } else if (ws) {
