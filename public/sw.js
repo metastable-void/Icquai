@@ -114,7 +114,7 @@ self.addEventListener('fetch', ev => {
       if (!freshResponse.ok) {
         throw 'Non-2xx response';
       }
-      if (match) {
+      if (match && freshResponse.ok) {
         await cache.put(freshRequest, freshResponse.clone());
       }
       return freshResponse;

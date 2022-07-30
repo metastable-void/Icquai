@@ -1693,6 +1693,12 @@ store.render(containerElement, async (state) => {
                 //
                 sharedSecretMap.delete(publicKey);
                 channelClosed.dispatch(publicKey);
+                wsForwardMessage(publicKey, {
+                  type: 'ch_rst',
+                  sessionId: app.sessionId,
+                }).catch((e) => {
+                  console.error(e);
+                });
               }),
             ], [EH.text('Close chat')]),
           ]),
