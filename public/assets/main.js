@@ -1800,6 +1800,7 @@ store.render(containerElement, async (state) => {
             } else {
               const channelOpenedCallback = () => {
                 channelOpened.removeListener(channelOpenedCallback);
+                console.log('Automatically calling after reconnection');
                 callRing(publicKey).catch((e) => {
                   console.error(e);
                 });
