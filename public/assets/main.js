@@ -1212,6 +1212,11 @@ const historyBack = (textBox, base64PublicKey) => {
   });
 };
 
+const reloadPage = () => {
+  console.info('Reloading page');
+  location.reload();
+};
+
 const getAudio = async () => {
   return await navigator.mediaDevices.getUserMedia({
     audio: true,
@@ -1935,7 +1940,7 @@ store.render(containerElement, async (state) => {
         EH.p([], [
           EH.button([
             EP.eventListener('click', (ev) => {
-              location.reload();
+              reloadPage();
             }),
           ], [EH.text('Reload app...')]),
         ]),
