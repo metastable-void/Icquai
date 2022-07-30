@@ -800,6 +800,9 @@ ringingBegin.addListener((base64PublicKey) => {
       body: callingFriendName,
       requireInteraction: true,
       renotify: true,
+      data: {
+        url: location.href,
+      },
     });
   }
 });
