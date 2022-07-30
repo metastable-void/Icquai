@@ -294,10 +294,12 @@ const sendPing = async (base64PublicKey) => {
   const nonceBytes = new Uint8Array(32);
   crypto.getRandomValues(nonceBytes);
   const nonce = firstAid.encodeBase64(nonceBytes);
+  const myName = myNameStore.getValue();
   validPingNonces.add(nonce);
   const message = {
     type: 'ping',
     nonce,
+    name: myName,
   };
   await wsForwardMessage(base64PublicKey, message);
   setTimeout(() => {
@@ -535,8 +537,8 @@ wsMessageReceived.addListener((json) => {
                 for (const friend of friends) {
                   if (publicKey == friend.publicKey) {
                     friendFound = true;
-                    if (friend.savedName != message.name) {
-                      console.log('Received ping from %s, name: %s => %s', friend.savedName, message.name);
+                    if (friend.savedName != message.name && message.name) {
+                      console.log('Received ping from %s, name: %s => %s', publicKey, friend.savedName, message.name);
                       friend.savedName = message.name;
                     }
                   }
@@ -559,8 +561,8 @@ wsMessageReceived.addListener((json) => {
                 for (const friend of friends) {
                   if (publicKey == friend.publicKey) {
                     friendFound = true;
-                    if (friend.savedName != message.name) {
-                      console.log('Received pong from %s, name: %s => %s', friend.savedName, message.name);
+                    if (friend.savedName != message.name && message.name) {
+                      console.log('Received pong from %s, name: %s => %s', publicKey, friend.savedName, message.name);
                       friend.savedName = message.name;
                     }
                   }
