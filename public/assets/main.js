@@ -409,6 +409,21 @@ globalThis.sendEncryptedMessage = async (base64PublicKey, message) => {
   await wsForwardMessage(base64PublicKey, encryptedMessage);
 };
 
+/**
+ * For file transfer.
+ * @param {string} base64PublicKey 
+ * @returns {boolean}
+ */
+globalThis.isBufferLow = (base64PublicKey) => {
+  if (state.callOngoing == base64PublicKey && dataChannel && dataChannel.readyState == 'open') {
+    return dataChannel.bufferedAmount < 1;
+  } else if (ws) {
+    return ws.bufferedAmount < 1;
+  } else {
+    return false;
+  }
+};
+
 pageNavigate.addListener((newUrl) => {
   const url = new URL(newUrl, location.href);
   const path = url.pathname;
@@ -1562,6 +1577,16 @@ const createToast = (text, actionText, actionEventListeners) => {
   ]);
 };
 
+/**
+ * Send file(s) to the specified user.
+ * @param {string} base64PublicKey 
+ * @param {FileList} files 
+ */
+const sendFiles = async (base64PublicKey, files) => {
+  //
+  console.info('Sending files to %s:', base64PublicKey, files);
+};
+
 let callButtonPressed = false;
 const containerElement = document.querySelector('#container');
 store.render(containerElement, async (state) => {
@@ -1794,6 +1819,22 @@ store.render(containerElement, async (state) => {
         ], [
           EH.p([], [EH.text('Chat is open.')]),
           EH.p([], [
+            EH.input([
+              EA.id('talk-input-file'),
+              EP.attribute('type', 'file'),
+              EP.attribute('multiple', ''),
+              EP.style('display', 'none'),
+              EP.eventListener('change', (ev) => {
+                sendFiles(publicKey, ev.target.files);
+              }),
+            ]),
+            EH.button([
+              EA.classes(['material-icons']),
+              EP.eventListener('click', (ev) => {
+                const fileInput = document.querySelector('#talk-input-file');
+                fileInput.click();
+              }),
+            ], [EH.text('upload_file')]),
             EH.button([
               EP.eventListener('click', (ev) => {
                 //
@@ -1982,6 +2023,28 @@ store.render(containerElement, async (state) => {
       mainContent = EH.div([
         EA.classes(['talk']),
         EP.key('view-talk'),
+        EP.eventListener('dragenter', (ev) => {
+          ev.stopPropagation();
+          ev.preventDefault();
+        }),
+        EP.eventListener('dragover', (ev) => {
+          ev.stopPropagation();
+          ev.preventDefault();
+        }),
+        EP.eventListener('drop', (ev) => {
+          ev.stopPropagation();
+          ev.preventDefault();
+          const dt = ev.dataTransfer;
+          if (!dt) {
+            return;
+          }
+          const files = dt.files;
+          if (!files) {
+            return;
+          }
+          console.log('File dropped');
+          sendFiles(publicKey, files);
+        }),
       ], [
         ... toasts,
         muteStatus,
