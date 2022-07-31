@@ -1592,6 +1592,7 @@ const reconnectAudio = async () => {
   }
   const stream = await getAudio();
   mediaStream = stream;
+  console.log('RTC: reconnecting audio');
   stream.getAudioTracks().forEach((track) => {
     track.enabled = enabled;
     pc.addTrack(track, stream);
