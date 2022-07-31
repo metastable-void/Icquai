@@ -1521,6 +1521,9 @@ const createCall = async (base64PublicKey, selfInitiated) => {
 
   rtcIceCandidate.addListener(async (candidate) => {
     console.log('RTC: Received ICE candidate');
+    if (pc.connectionState == 'closed') {
+      return;
+    }
     await pc.addIceCandidate(candidate);
   });
 
