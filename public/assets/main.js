@@ -856,7 +856,7 @@ ringingBegin.addListener((base64PublicKey) => {
   }
   const callingFriendName = callingFriend ? callingFriend.savedName : 'Unknown friend';
   if (notificationAllowed()) {
-    new Notification('Call incoming', {
+    const notification = new Notification('Call incoming', {
       body: callingFriendName,
       requireInteraction: true,
       renotify: true,
@@ -864,6 +864,12 @@ ringingBegin.addListener((base64PublicKey) => {
       data: {
         url: location.href,
       },
+    });
+    notification.addEventListener('click', (ev) => {
+      window.focus();
+      ringAccept().catch((e) => {
+        console.error(e);
+      });
     });
   }
 });
