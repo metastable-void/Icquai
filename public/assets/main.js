@@ -1068,6 +1068,14 @@ store.subscribe(channelClosed, (state, publicKey) => {
       } catch (e) {}
     }
   }
+  const files = filesReceived[publicKey];
+  if (files) {
+    for (const file of files) {
+      try {
+        URL.revokeObjectURL(file.url);
+      } catch (e) {}
+    }
+  }
   delete imagesShown[publicKey];
   delete filesReceived[publicKey];
   return {
