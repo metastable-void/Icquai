@@ -74,3 +74,7 @@ if ('serviceWorker' in navigator) {
     }
   });
 }
+
+export const getClientId = () => {
+  return swClientId;
+};

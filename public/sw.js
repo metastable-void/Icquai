@@ -144,12 +144,13 @@ self.addEventListener('notificationclick', ev => {
     });
     const data = notification.data || {};
     const url = data.url || '';
+    const clientId = data.clientId || null;
     const windowClients = await clients.matchAll({
       includeUncontrolled: true,
       type: 'window',
     });
     for (const client of windowClients) {
-      if ((!url || url == client.url) && 'function' == typeof client.focus) {
+      if ((!url || url == client.url) && (!clientId || client.id == clientId) && 'function' == typeof client.focus) {
         await client.focus();
         notification.close();
         break;

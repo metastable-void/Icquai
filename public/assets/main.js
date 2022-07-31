@@ -21,7 +21,7 @@
 
 import "./lib/noble-ed25519.js";
 import "./lib/es-first-aid.js";
-import "./sw-register.js";
+import * as sw from "./sw-register.js";
 import "./lib/adapter.js";
 import * as x25519 from "./lib/x25519.js";
 import {LocalStorageData, Eternity, HtmlView as EH, ViewProperty as EP, ViewAttribute as EA} from "./lib/Eternity.js";
@@ -863,6 +863,7 @@ ringingBegin.addListener((base64PublicKey) => {
       tag: 'notification-call-incoming',
       data: {
         url: location.href,
+        clientId: sw.getClientId(),
       },
     });
     notification.addEventListener('click', (ev) => {
