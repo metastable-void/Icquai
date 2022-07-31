@@ -725,7 +725,11 @@ wsMessageReceived.addListener((json) => {
 });
 
 /**
- * @type {Map<string, Map<string, {publicKey: string, transaction_id: string, file_id: string, file_name: string, file_type: string, total_size: number, total_chunks: number, chunks: Uint8Array[], blob: Blob?, url: string}>>}
+ * @typedef {{publicKey: string, transaction_id: string, file_id: string, file_name: string, file_type: string, total_size: number, total_chunks: number, chunks: Uint8Array[], blob: Blob?, url: string}} FileTransfer
+ */
+
+/**
+ * @type {Map<string, Map<string, FileTransfer>>}
  */
 const receivingFileTransfers = new Map;
 encryptedMessageReceived.addListener(async ({publicKey, message}) => {
@@ -889,6 +893,27 @@ store.subscribe(myFingerprintChange, (state, newFingerprint) => {
   return {
     ... state,
     myFingerprint: newFingerprint,
+  };
+});
+
+store.subscribe(fileReceived, (state, aTransfer) => {
+  /**
+   * @type {FileTransfer}
+   */
+  const transfer = aTransfer;
+  // preview images
+  if ((transfer.file_type == 'image/png' || transfer.file_type == 'image/jpeg') && transfer.total_size < 10000000) {
+    const imageUrls = [];
+    const url = transfer.url;
+    imageUrls.push(url);
+    displayImages.dispatch({
+      publicKey: base64PublicKey,
+      images: imageUrls,
+    });
+    return state;
+  }
+  return {
+    ... state,
   };
 });
 
