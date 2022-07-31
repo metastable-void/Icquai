@@ -1682,6 +1682,7 @@ const callRing = async (base64PublicKey) => {
 };
 
 const ringAccept = async (base64PublicKey) => {
+  await new Promise((res) => setTimeout(res, 100));
   await sendEncryptedMessage(base64PublicKey, {
     type: 'ring_accept',
     name: myNameStore.getValue(),
