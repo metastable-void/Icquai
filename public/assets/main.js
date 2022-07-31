@@ -860,6 +860,7 @@ ringingBegin.addListener((base64PublicKey) => {
       body: callingFriendName,
       requireInteraction: true,
       renotify: true,
+      tag: 'notification-call-incoming',
       data: {
         url: location.href,
       },
