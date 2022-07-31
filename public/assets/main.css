@@ -235,7 +235,7 @@ body {
 
 #connection-status {
   display: grid;
-  grid-template-columns: max-content 1fr;
+  grid-template-columns: max-content 1fr max-content;
 }
 
 #connection-status > div:nth-of-type(1) {

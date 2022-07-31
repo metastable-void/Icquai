@@ -2598,26 +2598,36 @@ store.render(containerElement, async (state) => {
     }
   }
   //
+  const reconnectButton = EH.button([
+    EA.classes(['material-icons']),
+    EP.eventListener('click', (ev) => {
+      openSocket(true);
+    }),
+  ], [EH.text('refresh')]);
   let connectionStatus;
   if (!state.online) {
     connectionStatus = EH.div([EA.id('connection-status'), EP.classes(['connection-offline'])], [
       EH.div([EP.classes(['material-icons'])], [EH.text('circle')]),
       EH.div([], [EH.text('Offline')]),
+      reconnectButton,
     ]);
   } else if ('CLOSED' == state.webSocketStatus) {
     connectionStatus = EH.div([EA.id('connection-status'), EP.classes(['connection-closed'])], [
       EH.div([EP.classes(['material-icons'])], [EH.text('circle')]),
       EH.div([], [EH.text('Connection closed')]),
+      reconnectButton,
     ]);
   } else if ('OPEN' == state.webSocketStatus && state.wsRegistered) {
     connectionStatus = EH.div([EA.id('connection-status'), EP.classes(['connection-connected'])], [
       EH.div([EP.classes(['material-icons'])], [EH.text('circle')]),
       EH.div([], [EH.text('Connected')]),
+      reconnectButton,
     ]);
   } else {
     connectionStatus = EH.div([EA.id('connection-status'), EP.classes(['connection-connecting'])], [
       EH.div([EP.classes(['material-icons'])], [EH.text('circle')]),
       EH.div([], [EH.text('Connecting')]),
+      reconnectButton,
     ]);
   }
   const createNavigationItem = (url, label, icon) => EH.ul([], [
