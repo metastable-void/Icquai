@@ -929,6 +929,17 @@ store.subscribe(fileReceived, (state, aTransfer) => {
       imagesShown,
     };
   }
+  const {filesReceived} = state;
+  const {publicKey} = transfer;
+  if (!(publicKey in filesReceived)) {
+    filesReceived[publicKey] = [];
+  }
+  filesReceived[publicKey].push({
+    fileName: transfer.file_name,
+    fileType: transfer.file_type,
+    fileSize: transfer.total_size,
+    url: transfer.url,
+  });
   return {
     ... state,
   };
@@ -1044,6 +1055,7 @@ store.subscribe(channelOpened, (state, publicKey) => {
 store.subscribe(channelClosed, (state, publicKey) => {
   const {openChannels} = state;
   const {imagesShown} = state;
+  const {filesReceived} = state;
   const set = new Set(openChannels);
   set.delete(publicKey);
   const imageUrls = imagesShown[publicKey];
@@ -1055,10 +1067,12 @@ store.subscribe(channelClosed, (state, publicKey) => {
     }
   }
   delete imagesShown[publicKey];
+  delete filesReceived[publicKey];
   return {
     ... state,
     openChannels: [... set],
     imagesShown,
+    filesReceived,
   };
 });
 
@@ -2006,6 +2020,7 @@ store.render(containerElement, async (state) => {
           textStatus = state.channelTexts[publicKey];
         }
         let imageElements = [];
+        let downloadElements = [];
         if (publicKey in state.imagesShown) {
           const images = state.imagesShown[publicKey];
           for (const imageUrl of images) {
@@ -2015,6 +2030,22 @@ store.render(containerElement, async (state) => {
             ]));
           }
         }
+        if (publicKey in state.filesReceived) {
+          const downloads = state.filesReceived[publicKey];
+          for (const download of downloads) {
+            const downloadElement = EH.a([
+              EA.classes(['talk-download']),
+              EP.attribute('download', download.fileName),
+              EP.attribute('href', download.url),
+            ], [
+              EH.span([
+                EA.classes(['material-icons']),
+              ], [EH.text('file_download')]),
+              EH.span([], [EH.text(`${download.fileName} (${download.fileSize}B, ${download.fileType})`)]),
+            ]);
+            downloadElements.push(downloadElement);
+          }
+        }
         channelStatus = EH.div([
           EA.id('channel-status'),
         ], [
@@ -2022,6 +2053,11 @@ store.render(containerElement, async (state) => {
             EA.id('talk-images'),
           ], [
             ... imageElements,
+          ]),
+          EH.div([
+            EA.id('talk-downloads'),
+          ], [
+            ... downloadElements,
           ]),
           EH.p([], [EH.text('Chat is open.')]),
           EH.p([], [
