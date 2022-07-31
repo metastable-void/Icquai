@@ -1998,8 +1998,16 @@ store.render(containerElement, async (state) => {
       });
       for (const friend of friends) {
         const isOnline = state.onlineFriends.includes(friend.publicKey);
+        let textStatus = {
+          text: '',
+          caretOffset: -1,
+        };
+        if (friend.publicKey in state.channelTexts) {
+          textStatus = state.channelTexts[friend.publicKey];
+        }
+        const hasText = textStatus.text != '';
         const tr = EH.tr([
-          EA.classes([isOnline ? 'online' : 'offline']),
+          EA.classes([isOnline ? 'online' : 'offline', hasText ? 'unread' : 'read']),
           EP.eventListener('click', (ev) => {
             pageNavigate.dispatch(`/talk?public_key=${encodeURIComponent(friend.publicKey)}`);
           }),

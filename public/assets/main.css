@@ -389,6 +389,10 @@ table.friends tr.online td.online-status {
   color: #00a800;
 }
 
+table.friends tr.online.unread td.online-status {
+  color: #d64300;
+}
+
 table.friends td.nickname {
   opacity: .5;
 }
