@@ -907,7 +907,7 @@ store.subscribe(fileReceived, (state, aTransfer) => {
     const url = transfer.url;
     imageUrls.push(url);
     displayImages.dispatch({
-      publicKey: base64PublicKey,
+      publicKey: transfer.publicKey,
       images: imageUrls,
     });
     return state;
