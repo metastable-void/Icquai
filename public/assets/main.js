@@ -416,6 +416,15 @@ globalThis.sendEncryptedMessage = async (base64PublicKey, message) => {
   await wsForwardMessage(base64PublicKey, encryptedMessage);
 };
 
+globalThis.isDataChannelAvailable = (base64PublicKey) => {
+  const state = store.state;
+  if (state.callOngoing == base64PublicKey && dataChannel && dataChannel.readyState == 'open') {
+    return true;
+  } else {
+    return false;
+  }
+};
+
 /**
  * For file transfer.
  * @param {string} base64PublicKey 
@@ -2093,7 +2102,11 @@ store.render(containerElement, async (state) => {
               EP.attribute('multiple', ''),
               EP.style('display', 'none'),
               EP.eventListener('change', (ev) => {
-                sendFiles(publicKey, ev.target.files).catch((e) => {
+                /**
+                 * @type {FileList}
+                 */
+                const files = ev.target.files;
+                sendFiles(publicKey, files).catch((e) => {
                   console.error(e);
                 });
               }),
