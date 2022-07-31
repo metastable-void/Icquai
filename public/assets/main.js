@@ -1504,7 +1504,9 @@ const createCall = async (base64PublicKey, selfInitiated) => {
       if ('string' == typeof ev.data) {
         try {
           const message = JSON.parse(ev.data);
-          console.log('RTC: DataChannel: Message received:', message);
+          if (verboseMessageLogging) {
+            console.log('RTC: DataChannel: Message received:', message);
+          }
           encryptedMessageReceived.dispatch({
             publicKey: base64PublicKey,
             message: message,
@@ -1551,7 +1553,9 @@ const createCall = async (base64PublicKey, selfInitiated) => {
       if ('string' == typeof ev.data) {
         try {
           const message = JSON.parse(ev.data);
-          console.log('RTC: DataChannel: Message received:', message);
+          if (verboseMessageLogging) {
+            console.log('RTC: DataChannel: Message received:', message);
+          }
           encryptedMessageReceived.dispatch({
             publicKey: base64PublicKey,
             message: message,
