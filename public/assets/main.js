@@ -827,9 +827,9 @@ encryptedMessageReceived.addListener(async ({publicKey, message}) => {
         });
         transfer.chunks.length = 0;
         transfer.blob = blob;
-        console.info('File received:', transfer);
         transfers.delete(payload.file_id);
         transfer.url = URL.createObjectURL(transfer.blob);
+        console.info('File received:', transfer);
         fileReceived.dispatch(transfer);
       }
       break;
