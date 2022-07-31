@@ -822,6 +822,8 @@ encryptedMessageReceived.addListener(async ({publicKey, message}) => {
           blob: null,
           url: '',
         });
+        const transfer = transfers.get(payload.file_id);
+        console.info('File receiving:', transfer);
       }
       const transfer = transfers.get(payload.file_id);
       const data = firstAid.decodeBase64(payload.data);
@@ -1789,7 +1791,7 @@ const sendFiles = async (base64PublicKey, files) => {
     fileIndex++;
   }
   const endTime = getTime();
-  console.log('%d file(s) sent in %.2f s', files.length, (endTime - startTime) / 1000);
+  console.log('%d file(s) sent in %f s', files.length, (endTime - startTime) / 1000);
 };
 
 let callButtonPressed = false;
