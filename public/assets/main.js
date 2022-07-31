@@ -908,7 +908,7 @@ store.subscribe(fileReceived, (state, aTransfer) => {
     imageUrls.push(url);
 
     const {imagesShown} = state;
-    imagesShown[publicKey] = imageUrls;
+    imagesShown[transfer.publicKey] = imageUrls;
     return {
       ... state,
       imagesShown,
