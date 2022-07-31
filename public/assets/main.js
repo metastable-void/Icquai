@@ -1070,8 +1070,44 @@ store.subscribe(closeDrawer, (state, _action) => {
 
 store.subscribe(channelTextUpdate, (state, action) => {
   const {publicKey, text, caretOffset} = action;
-  const {channelTexts} = state;
+  const {friends, channelTexts} = state;
+  const previousText = channelTexts[publicKey];
   channelTexts[publicKey] = {text, caretOffset};
+
+  let friendName = 'Unknown friend';
+  for (const friend of friends) {
+    if (friend.publicKey == publicKey) {
+      friendName = friend.savedName;
+    }
+  }
+  const targetUrl = `/talk?public_key=${encodeURIComponent(publicKey)}`;
+
+  const {urlPath, urlQuery, urlHash} = state;
+  const query = new URLSearchParams(urlQuery);
+  if (urlPath != '/talk' || query.get('public_key') != publicKey) {
+    // chat not open, send notification
+    if (!previousText || previousText.text == '' && text != '') {
+      //
+      if (notificationAllowed()) {
+        const notification = new Notification('New message', {
+          body: friendName,
+          requireInteraction: false,
+          renotify: false,
+          tag: 'notification-new-message',
+          data: {
+            url: location.href,
+            clientId: sw.getClientId(),
+            targetUrl: new URL(targetUrl, location.href).href,
+          },
+        });
+        notification.addEventListener('click', (ev) => {
+          window.focus();
+          notification.close();
+          pageNavigate.dispatch(targetUrl);
+        });
+      }
+    }
+  }
   return {
     ... state,
     channelTexts,
