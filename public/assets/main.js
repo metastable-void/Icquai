@@ -2129,7 +2129,7 @@ store.render(containerElement, async (state) => {
                 sendFiles(publicKey, [... files]).catch((e) => {
                   console.error(e);
                 });
-                ev.target.reset();
+                ev.target.value = '';
               }),
             ]),
             EH.button([
