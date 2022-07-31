@@ -1584,7 +1584,7 @@ const reconnectAudio = async () => {
     console.log('Call not connected');
     return;
   }
-  const enabled = true;
+  let enabled = true;
   if (mediaStream) {
     mediaStream.getAudioTracks().forEach((track) => {
       enabled = track.enabled;
