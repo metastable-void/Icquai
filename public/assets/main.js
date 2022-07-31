@@ -806,12 +806,16 @@ encryptedMessageReceived.addListener(async ({publicKey, message}) => {
       break;
     }
     case 'rtc_ice_candidate': {
-      console.log('Received ice candidate:', payload.candidate);
+      if (verboseMessageLogging) {
+        console.log('RTC: Received ice candidate:', payload.candidate);
+      }
       rtcIceCandidate.dispatch(payload.candidate);
       break;
     }
     case 'rtc_description': {
-      console.log('Received RTC description:', payload.description);
+      if (verboseMessageLogging) {
+        console.log('RTC: Received RTC description:', payload.description);
+      }
       rtcDescription.dispatch(payload.description);
       break;
     }
