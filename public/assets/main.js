@@ -872,7 +872,7 @@ ringingBegin.addListener((base64PublicKey) => {
     notification.addEventListener('click', (ev) => {
       window.focus();
       notification.close();
-      ringAccept().catch((e) => {
+      ringAccept(base64PublicKey).catch((e) => {
         console.error(e);
       });
     });
