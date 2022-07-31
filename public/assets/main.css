@@ -582,3 +582,10 @@ table.friends td.nickname::after {
   max-inline-size: 100%;
   box-shadow: 0 0 .5rem var(--theme-shadow-color);
 }
+
+.talk-download {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  align-content: center;
+  align-items: center;
+}
