@@ -63,6 +63,7 @@ import {
   ringingEnd,
   encryptedMessageReceived,
   displayImages,
+  fileReceived,
 } from "./topics.js";
 
 const ed = nobleEd25519;
@@ -723,6 +724,10 @@ wsMessageReceived.addListener((json) => {
   }
 });
 
+/**
+ * @type {Map<string, Map<string, {publicKey: string, transaction_id: string, file_id: string, file_name: string, file_type: string, total_size: number, total_chunks: number, chunks: Uint8Array[], blob: Blob?, url: string}>>}
+ */
+const receivingFileTransfers = new Map;
 encryptedMessageReceived.addListener(async ({publicKey, message}) => {
   const payload = message;
   switch (payload.type) {
@@ -783,6 +788,54 @@ encryptedMessageReceived.addListener(async ({publicKey, message}) => {
     case 'rtc_hangup': {
       console.log('Received hangup message');
       hangup();
+      break;
+    }
+    case 'file_chunk': {
+      if (!receivingFileTransfers.has(publicKey)) {
+        receivingFileTransfers.set(publicKey, new Map);
+      }
+      const transfers = receivingFileTransfers.get(publicKey);
+      if (!transfers.has(payload.file_id)) {
+        if (payload.chunk_index != 0) {
+          console.error('Chunk not starting at 0');
+          break;
+        }
+        transfers.set(payload.file_id, {
+          publicKey: publicKey,
+          transaction_id: payload.transaction_id,
+          file_id: payload.file_id,
+          file_name: payload.file_name,
+          file_type: payload.file_type,
+          total_size: payload.total_size,
+          total_chunks: payload.total_chunks,
+          chunks: [],
+          blob: null,
+          url: '',
+        });
+      }
+      const transfer = transfers.get(payload.file_id);
+      const data = firstAid.decodeBase64(payload.data);
+      transfer.chunks.push(data);
+      if (payload.chunk_index == (payload.total_chunks - 1)) {
+        if (transfer.chunks.length != transfer.total_chunks) {
+          console.error('missing or duplicate chunks, not recoverable at now');
+          transfers.delete(payload.file_id);
+          break;
+        }
+        const blob = new Blob(transfer.chunks, {
+          type: transfer.file_type,
+        });
+        transfer.chunks.length = 0;
+        transfer.blob = blob;
+        console.info('File received:', transfer);
+        transfers.delete(payload.file_id);
+        transfer.url = URL.createObjectURL(transfer.blob);
+        fileReceived.dispatch(transfer);
+      }
+      break;
+    }
+    default: {
+      console.warn('Unknown message from %s:', publicKey, payload);
       break;
     }
   }
@@ -1630,15 +1683,19 @@ const sendFiles = async (base64PublicKey, files) => {
   }
   const startTime = getTime();
   let fileIndex = 0;
+  const transactionId = firstAid.getRandomUuid();
   for (const file of files) {
     console.log('Sending file:', file);
     const chunkCount = Math.ceil(file.size / FILE_CHUNK_SIZE);
     let sentChunks = 0;
+    const fileId = firstAid.getRandomUuid();
     for (let i = 0, chunkIndex = 0; i < file.size; i += FILE_CHUNK_SIZE, chunkIndex++) {
       const slice = file.slice(i, i + FILE_CHUNK_SIZE);
       const buffer = await slice.arrayBuffer();
       await sendEncryptedMessage(base64PublicKey, {
         type: 'file_chunk',
+        transaction_id: transactionId,
+        file_id: fileId,
         file_name: file.name,
         file_type: file.type,
         file_count: files.length,
