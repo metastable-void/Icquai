@@ -398,6 +398,9 @@ const sendKexPing = async (base64PublicKey) => {
 };
 
 globalThis.sendEncryptedMessage = async (base64PublicKey, message) => {
+  if (!base64PublicKey) {
+    throw new Error('Public key must be specified');
+  }
   const json = JSON.stringify(message);
   const state = store.state;
   if (state.callOngoing == base64PublicKey && dataChannel && dataChannel.readyState == 'open') {
