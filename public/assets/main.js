@@ -1084,7 +1084,7 @@ store.subscribe(channelTextUpdate, (state, action) => {
 
   const {urlPath, urlQuery, urlHash} = state;
   const query = new URLSearchParams(urlQuery);
-  if (urlPath != '/talk' || query.get('public_key') != publicKey) {
+  if (urlPath != '/talk' || query.get('public_key') != publicKey || document.visibilityState == 'hidden') {
     // chat not open, send notification
     if (!previousText || previousText.text == '' && text != '') {
       //
