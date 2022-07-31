@@ -906,11 +906,13 @@ store.subscribe(fileReceived, (state, aTransfer) => {
     const imageUrls = [];
     const url = transfer.url;
     imageUrls.push(url);
-    displayImages.dispatch({
-      publicKey: transfer.publicKey,
-      images: imageUrls,
-    });
-    return state;
+
+    const {imagesShown} = state;
+    imagesShown[publicKey] = imageUrls;
+    return {
+      ... state,
+      imagesShown,
+    };
   }
   return {
     ... state,
