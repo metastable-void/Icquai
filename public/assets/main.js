@@ -740,7 +740,7 @@ wsMessageReceived.addListener((json) => {
 });
 
 /**
- * @typedef {{publicKey: string, transaction_id: string, file_id: string, file_name: string, file_type: string, total_size: number, total_chunks: number, chunks: Uint8Array[], blob: Blob?, url: string}} FileTransfer
+ * @typedef {{startTime: number, publicKey: string, transaction_id: string, file_id: string, file_name: string, file_type: string, total_size: number, total_chunks: number, chunks: Uint8Array[], blob: Blob?, url: string}} FileTransfer
  */
 
 /**
@@ -835,6 +835,7 @@ encryptedMessageReceived.addListener(async ({publicKey, message}) => {
           break;
         }
         transfers.set(payload.file_id, {
+          startTime: getTime(),
           publicKey: publicKey,
           transaction_id: payload.transaction_id,
           file_id: payload.file_id,
@@ -865,7 +866,9 @@ encryptedMessageReceived.addListener(async ({publicKey, message}) => {
         transfer.blob = blob;
         transfers.delete(payload.file_id);
         transfer.url = URL.createObjectURL(transfer.blob);
-        console.info('File received:', transfer);
+        const endTime = getTime();
+        const duration = endTime - transfer.startTime;
+        console.info('File received in %f s:', duration / 1000, transfer);
         fileReceived.dispatch(transfer);
       }
       break;
