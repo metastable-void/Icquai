@@ -747,6 +747,9 @@ wsMessageReceived.addListener((json) => {
  * @type {Map<string, Map<string, FileTransfer>>}
  */
 const receivingFileTransfers = new Map;
+
+const callAcceptanceTokens = new Map; // <public key> => <token>
+
 encryptedMessageReceived.addListener(async ({publicKey, message}) => {
   const payload = message;
   switch (payload.type) {
@@ -780,13 +783,21 @@ encryptedMessageReceived.addListener(async ({publicKey, message}) => {
       console.log('Ringing call accepted');
       ringEnd();
       ringingEnd.dispatch(null);
-      createCall(publicKey, true).catch((e) => {
+      const acceptanceToken = payload.acceptance_token;
+      createCall(publicKey, true, acceptanceToken).catch((e) => {
         console.error(e);
       });
       break;
     }
     case 'rtc_init': {
       console.log('Received RTC init');
+      const acceptanceToken = payload.acceptance_token;
+      const savedToken = callAcceptanceTokens.get(publicKey);
+      if (!savedToken || acceptanceToken != savedToken) {
+        console.error('Call acceptance token mismatch, denying');
+        break;
+      }
+      callAcceptanceTokens.delete(publicKey);
       ringingEnd.dispatch(null);
       ringEnd();
       createCall(publicKey, false).catch((e) => {
@@ -1475,7 +1486,7 @@ const getAudio = async () => {
  */
 let mediaStream = null;
 
-const createCall = async (base64PublicKey, selfInitiated) => {
+const createCall = async (base64PublicKey, selfInitiated, acceptanceToken) => {
   hangup();
   const audioElement = document.querySelector('#rtc_audio');
   const configuration = {
@@ -1492,6 +1503,7 @@ const createCall = async (base64PublicKey, selfInitiated) => {
   if (selfInitiated) {
     await sendEncryptedMessage(base64PublicKey, {
       type: 'rtc_init',
+      acceptance_token: acceptanceToken,
     });
   }
 
@@ -1722,10 +1734,14 @@ const callRing = async (base64PublicKey) => {
 };
 
 const ringAccept = async (base64PublicKey) => {
-  await new Promise((res) => setTimeout(res, 100));
+  const tokenBytes = new Uint8Array(32);
+  crypto.getRandomValues(tokenBytes);
+  const acceptanceToken = firstAid.encodeBase64(tokenBytes);
+  callAcceptanceTokens.set(base64PublicKey, acceptanceToken);
   await sendEncryptedMessage(base64PublicKey, {
     type: 'ring_accept',
     name: myNameStore.getValue(),
+    acceptance_token: acceptanceToken,
   });
 };
 
