@@ -58,6 +58,7 @@ export const ringingEnd = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'ring.end')
 export const encryptedMessageReceived = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'encrypted_message.received');
 export const displayImages = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'images.display'); // {publicKey: string, images: string[]}
 export const fileReceived = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'file.received'); // <file transfer object>
+export const flashScreen = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'screen.flash'); // <void>
 
 
 // global event listeners

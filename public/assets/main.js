@@ -64,6 +64,7 @@ import {
   encryptedMessageReceived,
   displayImages,
   fileReceived,
+  flashScreen,
 } from "./topics.js";
 
 const ed = nobleEd25519;
@@ -1107,6 +1108,11 @@ store.subscribe(channelTextUpdate, (state, action) => {
         });
       }
     }
+  } else if (urlPath == '/talk' && query.get('public_key') == publicKey) {
+    // talk visible, so flash screen
+    if (!previousText || previousText.text == '' && text != '') {
+      flashScreen.dispatch(null);
+    }
   }
   return {
     ... state,
@@ -1232,6 +1238,18 @@ store.subscribe(displayImages, (state, {publicKey, images: aImages}) => {
     ... state,
     imagesShown,
   };
+});
+
+let lastFlash = 0;
+flashScreen.addListener((_action) => {
+  const time = getTime();
+  if (time - lastFlash < 5000) return;
+  lastFlash = time;
+  console.log('flashing the screen...');
+  document.body.classList.add('flash');
+  setTimeout(() => {
+    document.body.classList.remove('flash');
+  }, 100);
 });
 
 let lastUrlPath;
@@ -1634,14 +1652,17 @@ const createCall = async (base64PublicKey, selfInitiated, acceptanceToken) => {
   };
 
   rtcIceCandidate.addListener(async (candidate) => {
-    console.log('RTC: Received ICE candidate');
     if (pc.connectionState == 'closed') {
       return;
     }
+    console.log('RTC: Received ICE candidate');
     await pc.addIceCandidate(candidate);
   });
 
   rtcDescription.addListener(async (description) => {
+    if (pc.connectionState == 'closed') {
+      return;
+    }
     if (description.type == 'offer') {
       await pc.setRemoteDescription(description);
       console.log('RTC: Set offer description');

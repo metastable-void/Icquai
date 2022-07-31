@@ -203,6 +203,12 @@ table td, table th {
 body {
   margin: 0;
   display: grid;
+  transition: opacity linear .5s;
+}
+
+body.flash {
+  opacity: .25;
+  transition: none;
 }
 
 #container {
