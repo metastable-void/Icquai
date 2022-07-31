@@ -2126,9 +2126,10 @@ store.render(containerElement, async (state) => {
                  * @type {FileList}
                  */
                 const files = ev.target.files;
-                sendFiles(publicKey, files).catch((e) => {
+                sendFiles(publicKey, [... files]).catch((e) => {
                   console.error(e);
                 });
+                ev.target.reset();
               }),
             ]),
             EH.button([
