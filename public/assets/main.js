@@ -639,6 +639,7 @@ wsMessageReceived.addListener((json) => {
                 for (const friend of friends) {
                   if (publicKey == friend.publicKey) {
                     found = true;
+                    friend.lastSeen = getTime();
                     break;
                   }
                 }
@@ -647,10 +648,11 @@ wsMessageReceived.addListener((json) => {
                     nickname: message.name,
                     savedName: message.name,
                     publicKey,
+                    lastSeen: getTime(),
                   };
                   friends.push(friend);
-                  friendsStore.setValue(friends);
                 }
+                friendsStore.setValue(friends);
                 pageNavigate.dispatch(`/talk?public_key=${encodeURIComponent(publicKey)}`);
                 break;
               }
@@ -681,6 +683,16 @@ wsMessageReceived.addListener((json) => {
                 console.log('Shared secret set for %s', publicKey);
                 sessionIdMap.set(publicKey, message.sessionId);
                 channelOpened.dispatch(publicKey);
+                const friends = friendsStore.getValue();
+                let found = false;
+                for (const friend of friends) {
+                  if (publicKey == friend.publicKey) {
+                    found = true;
+                    friend.lastSeen = getTime();
+                    break;
+                  }
+                }
+                friendsStore.setValue(friends);
                 break;
               }
               case 'encrypted_envelope': {
@@ -1971,7 +1983,20 @@ store.render(containerElement, async (state) => {
     case '/friends': {
       // friends
       const friendsList = [];
-      for (const friend of state.friends) {
+      const friends = [... state.friends].sort((friendA, friendB) => {
+        const a = friendA.lastSeen;
+        const b = friendB.lastSeen;
+        if (a === undefined || a === null || a === '') {
+          if (b === undefined || b === null || b === '') {
+            return 0;
+          }
+          return 1;
+        } else if (b === undefined || b === null || b === '') {
+          return -1;
+        }
+        return b - a;
+      });
+      for (const friend of friends) {
         const isOnline = state.onlineFriends.includes(friend.publicKey);
         const tr = EH.tr([
           EA.classes([isOnline ? 'online' : 'offline']),
