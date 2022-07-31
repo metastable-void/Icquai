@@ -236,6 +236,16 @@ body {
 #connection-status {
   display: grid;
   grid-template-columns: max-content 1fr max-content;
+  align-content: center;
+  align-items: center;
+}
+
+#reconnect-server-button {
+  border: none;
+  font-size: 1.5rem;
+  margin: 0;
+  padding: .25rem;
+  border-radius: 1rem;
 }
 
 #connection-status > div:nth-of-type(1) {

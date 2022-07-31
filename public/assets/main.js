@@ -2599,6 +2599,7 @@ store.render(containerElement, async (state) => {
   }
   //
   const reconnectButton = EH.button([
+    EA.id('reconnect-server-button'),
     EA.classes(['material-icons']),
     EP.eventListener('click', (ev) => {
       openSocket(true);
