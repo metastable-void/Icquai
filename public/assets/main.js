@@ -444,6 +444,19 @@ globalThis.isBufferLow = (base64PublicKey) => {
   }
 };
 
+const updateLastSeen = (publicKey) => {
+  const friends = friendsStore.getValue();
+  let found = false;
+  for (const friend of friends) {
+    if (publicKey == friend.publicKey) {
+      found = true;
+      friend.lastSeen = getTime();
+      break;
+    }
+  }
+  friendsStore.setValue(friends);
+};
+
 pageNavigate.addListener((newUrl) => {
   const url = new URL(newUrl, location.href);
   const path = url.pathname;
@@ -686,16 +699,7 @@ wsMessageReceived.addListener((json) => {
                 console.log('Shared secret set for %s', publicKey);
                 sessionIdMap.set(publicKey, message.sessionId);
                 channelOpened.dispatch(publicKey);
-                const friends = friendsStore.getValue();
-                let found = false;
-                for (const friend of friends) {
-                  if (publicKey == friend.publicKey) {
-                    found = true;
-                    friend.lastSeen = getTime();
-                    break;
-                  }
-                }
-                friendsStore.setValue(friends);
+                updateLastSeen(publicKey);
                 break;
               }
               case 'encrypted_envelope': {
@@ -782,6 +786,7 @@ encryptedMessageReceived.addListener(async ({publicKey, message}) => {
         text: payload.text,
         caretOffset: payload.caretOffset,
       });
+      updateLastSeen(publicKey);
       break;
     }
     case 'ring': {
@@ -792,6 +797,7 @@ encryptedMessageReceived.addListener(async ({publicKey, message}) => {
         ringEnd();
         ringingEnd.dispatch(null);
       }, RING_TIMEOUT);
+      updateLastSeen(publicKey);
       break;
     }
     case 'ring_accept': {
@@ -818,6 +824,7 @@ encryptedMessageReceived.addListener(async ({publicKey, message}) => {
       createCall(publicKey, false).catch((e) => {
         console.error(e);
       });
+      updateLastSeen(publicKey);
       break;
     }
     case 'rtc_ice_candidate': {
@@ -837,6 +844,7 @@ encryptedMessageReceived.addListener(async ({publicKey, message}) => {
     case 'rtc_hangup': {
       console.log('Received hangup message');
       hangup();
+      updateLastSeen(publicKey);
       break;
     }
     case 'file_chunk': {
@@ -886,6 +894,7 @@ encryptedMessageReceived.addListener(async ({publicKey, message}) => {
         console.info('File received in %f s:', duration / 1000, transfer);
         fileReceived.dispatch(transfer);
       }
+      updateLastSeen(publicKey);
       break;
     }
     default: {
