@@ -21,6 +21,9 @@
 
 
 import { app } from './app.js';
+import { Console } from './lib/console.js';
+
+const console = new Console('sw-register');
 
 
 /** @type {ServiceWorkerRegistration} */

@@ -19,6 +19,15 @@
   @file
 */
 
+/**
+ * @typedef {'debug' | 'info' | 'warn' | 'error'} LogLevel
+ */
+
+export const DEBUG = 'debug';
+export const INFO = 'info';
+export const WARN = 'warn';
+export const ERROR = 'error';
+
 export const objectToString = (value) => {
   switch (typeof value) {
     case 'bigint': {
@@ -63,3 +72,114 @@ export const objectToString = (value) => {
 };
 
 globalThis.objectToString = objectToString;
+
+const zeroPadNumber = (n, digits) => {
+  const pad = '0'.repeat(digits);
+  const str = String(n);
+  return pad.slice(str.length) + str;
+};
+
+const formatTime = (time = Date.now()) => {
+  const date = new Date(time);
+  const hours = zeroPadNumber(date.getHours(), 2);
+  const minutes = zeroPadNumber(date.getHours(), 2);
+  const seconds = zeroPadNumber(date.getSeconds(), 2);
+  const milliseconds = zeroPadNumber(date.getMilliseconds(), 3);
+  return `${hours}:${minutes}:${seconds}.${milliseconds}`;
+};
+
+/**
+ * Log to console with the specified level.
+ * @param {LogLevel} level 
+ * @param {string} tag 
+ * @param  {...any} args 
+ */
+export const logWithLevel = (level, tag, ... args) => {
+  if (args.length < 1) {
+    return;
+  }
+  tag = String(tag);
+  let logging = console.log.bind(console);
+  switch (level) {
+    case 'debug': {
+      logging = console.debug.bind(console);
+      break;
+    }
+    case 'info': {
+      logging = console.info.bind(console);
+      break;
+    }
+    case 'warn': {
+      logging = console.warn.bind(console);
+      break;
+    }
+    case 'error': {
+      logging = console.error.bind(console);
+      break;
+    }
+  }
+  if ('string' == typeof args[0]) {
+    const dateStyle = `color: #888888`;
+    const tagStyle = `color: #b777d5; font-weight: bold`;
+    const textStyle = `color: unset; font-weight: unset`;
+    args = [`%c%s %c[%s]%c ` + args[0], dateStyle, formatTime(), tagStyle, tag, textStyle, ... args.slice(1)];
+  } else {
+    args = [`%c%s %c[%s]%c`, dateStyle, formatTime(), tagStyle, tag, textStyle, ... args];
+  }
+  logging(... args);
+};
+
+export const debug = (tag, ... args) => {
+  logWithLevel(DEBUG, tag, ... args);
+};
+
+export const info = (tag, ... args) => {
+  logWithLevel(INFO, tag, ... args);
+};
+
+export const warn = (tag, ... args) => {
+  logWithLevel(WARN, tag, ... args);
+};
+
+export const error = (tag, ... args) => {
+  logWithLevel(ERROR, tag, ... args);
+};
+
+export class Console {
+  #tag = '';
+  constructor(tag = '') {
+    if (!tag) {
+      this.#tag = 'default';
+    } else {
+      this.#tag = String(tag).trim();
+    }
+  }
+
+  debug(... args) {
+    debug(this.#tag, ... args);
+  }
+
+  log(... args) {
+    debug(this.#tag, ... args);
+  }
+
+  info(... args) {
+    info(this.#tag, ... args);
+  }
+
+  warn(... args) {
+    warn(this.#tag, ... args);
+  }
+
+  error(... args) {
+    error(this.#tag, ... args);
+  }
+
+  get clear() {
+    return console.clear.bind(console);
+  }
+
+  get assert() {
+    return console.assert.bind(console);
+  }
+}
