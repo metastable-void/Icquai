@@ -1559,6 +1559,9 @@ const getAudio = async () => {
  */
 let mediaStream = null;
 
+let rtcIceCandidateListener = null;
+let rtcDescriptionListener = null;
+
 const createCall = async (base64PublicKey, selfInitiated, acceptanceToken) => {
   hangup();
   const audioElement = document.querySelector('#rtc_audio');
@@ -1651,15 +1654,16 @@ const createCall = async (base64PublicKey, selfInitiated, acceptanceToken) => {
     });
   };
 
-  rtcIceCandidate.addListener(async (candidate) => {
+  rtcIceCandidateListener = async (candidate) => {
     if (pc.connectionState == 'closed') {
       return;
     }
     console.log('RTC: Received ICE candidate');
     await pc.addIceCandidate(candidate);
-  });
+  };
+  rtcIceCandidate.addListener(rtcIceCandidateListener);
 
-  rtcDescription.addListener(async (description) => {
+  rtcDescriptionListener = async (description) => {
     if (pc.connectionState == 'closed') {
       return;
     }
@@ -1680,7 +1684,8 @@ const createCall = async (base64PublicKey, selfInitiated, acceptanceToken) => {
       await pc.setRemoteDescription(description);
       console.log('RTC: Set answer description');
     }
-  });
+  };
+  rtcDescription.addListener(rtcDescriptionListener);
 
   if (selfInitiated) {
     globalThis.dataChannel = pc.createDataChannel('data_channel');
@@ -1796,6 +1801,14 @@ const hangup = () => {
     globalThis.pc.close();
   }
   globalThis.pc = null;
+  if (rtcIceCandidateListener) {
+    rtcIceCandidate.removeListener(rtcIceCandidateListener);
+    rtcIceCandidateListener = null;
+  }
+  if (rtcDescriptionListener) {
+    rtcDescription.removeListener(rtcDescriptionListener);
+    rtcDescriptionListener = null;
+  }
 };
 
 const callRing = async (base64PublicKey) => {
