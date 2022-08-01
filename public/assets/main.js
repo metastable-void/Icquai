@@ -400,13 +400,13 @@ const sendKexPing = async (base64PublicKey) => {
   await wsForwardMessage(base64PublicKey, message);
 };
 
-globalThis.sendEncryptedMessage = async (base64PublicKey, message) => {
+globalThis.sendEncryptedMessage = async (base64PublicKey, message, useWebSocket) => {
   if (!base64PublicKey) {
     throw new Error('Public key must be specified');
   }
   const json = JSON.stringify(message);
   const state = store.state;
-  if (state.callOngoing == base64PublicKey && dataChannel && dataChannel.readyState == 'open') {
+  if (state.callOngoing == base64PublicKey && dataChannel && dataChannel.readyState == 'open' && !useWebSocket) {
     dataChannel.send(json);
     return;
   }
@@ -1594,7 +1594,7 @@ const createCall = async (base64PublicKey, selfInitiated, acceptanceToken) => {
     await sendEncryptedMessage(base64PublicKey, {
       type: 'rtc_init',
       acceptance_token: acceptanceToken,
-    });
+    }, true);
   }
 
   console.info('Making call with %s', base64PublicKey);
@@ -1606,7 +1606,7 @@ const createCall = async (base64PublicKey, selfInitiated, acceptanceToken) => {
     sendEncryptedMessage(base64PublicKey, {
       type: 'rtc_ice_candidate',
       candidate,
-    }).catch((e) => {
+    }, true).catch((e) => {
       console.error(e);
     });
   };
@@ -1618,7 +1618,7 @@ const createCall = async (base64PublicKey, selfInitiated, acceptanceToken) => {
       await sendEncryptedMessage(base64PublicKey, {
         type: 'rtc_description',
         description: pc.localDescription,
-      });
+      }, true);
     } catch (e) {
       console.error(e);
     }
@@ -1696,7 +1696,7 @@ const createCall = async (base64PublicKey, selfInitiated, acceptanceToken) => {
       await sendEncryptedMessage(base64PublicKey, {
         type: 'rtc_description',
         description: pc.localDescription,
-      });
+      }, true);
     } else {
       await pc.setRemoteDescription(description);
       console.debug('RTC: Set answer description');
@@ -1794,7 +1794,7 @@ const hangup = () => {
   if (callOngoing) {
     sendEncryptedMessage(callOngoing, {
       type: 'rtc_hangup',
-    }).catch((e) => {
+    }, true).catch((e) => {
       console.error(e);
     });
   }
@@ -1836,7 +1836,7 @@ const callRing = async (base64PublicKey) => {
   await sendEncryptedMessage(base64PublicKey, {
     type: 'ring',
     name: myNameStore.getValue(),
-  });
+  }, true);
 };
 
 const ringAccept = async (base64PublicKey) => {
@@ -1848,7 +1848,7 @@ const ringAccept = async (base64PublicKey) => {
     type: 'ring_accept',
     name: myNameStore.getValue(),
     acceptance_token: acceptanceToken,
-  });
+  }, true);
 };
 
 const isDataChannelOpen = () => {
