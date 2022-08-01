@@ -320,7 +320,9 @@ globalThis.ringStart = () => {
   console.log('ringing start');
   ringAudio = new Audio('/assets/sounds/ring_jp.wav');
   ringAudio.loop = true;
-  ringAudio.play();
+  ringAudio.play().catch((e) => {
+    console.error(e);
+  });
 };
 
 globalThis.ringEnd = () => {
@@ -1616,7 +1618,9 @@ const createCall = async (base64PublicKey, selfInitiated, acceptanceToken) => {
     }
     audioElement.srcObject = event.streams[0];
     console.log('RTC: Set srcObject:', event.streams[0]);
-    audioElement.play();
+    audioElement.play().catch((e) => {
+      console.error(e);
+    });
     callStart.dispatch(base64PublicKey);
   };
 
