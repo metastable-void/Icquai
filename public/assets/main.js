@@ -2181,11 +2181,13 @@ store.render(containerElement, async (state) => {
 
       const accounts = state.accounts;
       const accountOptions = [];
+      let currentPublicKey = '';
+      const currentPrivateKey = privateKeyStore.getValue();
       for (const account of accounts) {
         let selected = false;
-        const currentPrivateKey = privateKeyStore.getValue();
         if (currentPrivateKey == account.privateKey) {
           selected = true;
+          currentPublicKey = account.publicKey;
         }
         let name = account.fingerprint;
         if (account.name) {
@@ -2245,6 +2247,18 @@ store.render(containerElement, async (state) => {
               });
             }),
           ], [EH.text('Create account')]),
+        ]),
+        EH.hr(),
+        EH.p([], [
+          EH.text('Delete the current account permanently: '),
+          EH.button([
+            EP.eventListener('click', (ev) => {
+              const confirmation = window.confirm('Do you really want to delete this account?');
+              if (confirmation) {
+                deleteAccount(currentPublicKey);
+              }
+            }),
+          ], [EH.text('Delete account')]),
         ]),
       ]);
       break;
