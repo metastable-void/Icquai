@@ -400,7 +400,14 @@ const sendKexPing = async (base64PublicKey) => {
   await wsForwardMessage(base64PublicKey, message);
 };
 
-globalThis.sendEncryptedMessage = async (base64PublicKey, message, useWebSocket) => {
+/**
+ * Send an encrypted message.
+ * @param {string} base64PublicKey 
+ * @param {any} message 
+ * @param {boolean} useWebSocket 
+ * @returns 
+ */
+globalThis.sendEncryptedMessage = async (base64PublicKey, message, useWebSocket = false) => {
   if (!base64PublicKey) {
     throw new Error('Public key must be specified');
   }
