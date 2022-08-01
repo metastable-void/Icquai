@@ -1675,8 +1675,12 @@ const createCall = async (base64PublicKey, selfInitiated, acceptanceToken) => {
     if (pc.connectionState == 'closed') {
       return;
     }
-    console.debug('RTC: Received ICE candidate');
-    await pc.addIceCandidate(candidate);
+    try {
+      console.debug('RTC: Received ICE candidate');
+      await pc.addIceCandidate(candidate);
+    } catch (e) {
+      console.error(e);
+    }
   };
   rtcIceCandidate.addListener(rtcIceCandidateListener);
 
@@ -1684,22 +1688,26 @@ const createCall = async (base64PublicKey, selfInitiated, acceptanceToken) => {
     if (pc.connectionState == 'closed') {
       return;
     }
-    if (description.type == 'offer') {
-      await pc.setRemoteDescription(description);
-      console.debug('RTC: Set offer description');
-      const stream = await getAudio();
-      mediaStream = stream;
-      stream.getAudioTracks().forEach((track) => {
-        pc.addTrack(track, stream);
-      });
-      await pc.setLocalDescription(await pc.createAnswer());
-      await sendEncryptedMessage(base64PublicKey, {
-        type: 'rtc_description',
-        description: pc.localDescription,
-      }, true);
-    } else {
-      await pc.setRemoteDescription(description);
-      console.debug('RTC: Set answer description');
+    try {
+      if (description.type == 'offer') {
+        await pc.setRemoteDescription(description);
+        console.debug('RTC: Set offer description');
+        const stream = await getAudio();
+        mediaStream = stream;
+        stream.getAudioTracks().forEach((track) => {
+          pc.addTrack(track, stream);
+        });
+        await pc.setLocalDescription(await pc.createAnswer());
+        await sendEncryptedMessage(base64PublicKey, {
+          type: 'rtc_description',
+          description: pc.localDescription,
+        }, true);
+      } else {
+        await pc.setRemoteDescription(description);
+        console.debug('RTC: Set answer description');
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
   rtcDescription.addListener(rtcDescriptionListener);
