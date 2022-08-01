@@ -214,7 +214,7 @@ globalThis.deleteAccount = (publicKey) => {
       switchAccount(publicKey);
     });
   }
-}
+};
 
 myNameStore.observe((name) => {
   const currentPrivateKey = privateKeyStore.getValue();
