@@ -118,10 +118,10 @@ export const logWithLevel = (level, tag, ... args) => {
       break;
     }
   }
+  const dateStyle = `color: #888888`;
+  const tagStyle = `color: #b777d5; font-weight: bold`;
+  const textStyle = `color: unset; font-weight: unset`;
   if ('string' == typeof args[0]) {
-    const dateStyle = `color: #888888`;
-    const tagStyle = `color: #b777d5; font-weight: bold`;
-    const textStyle = `color: unset; font-weight: unset`;
     args = [`%c%s %c[%s]%c ` + args[0], dateStyle, formatTime(), tagStyle, tag, textStyle, ... args.slice(1)];
   } else {
     args = [`%c%s %c[%s]%c`, dateStyle, formatTime(), tagStyle, tag, textStyle, ... args];
