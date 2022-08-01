@@ -38,6 +38,7 @@ const ASSETS = new URLSet([
   '/assets/img/app-icon-192px.png',
   '/assets/main.js',
   '/assets/components/IcquaiTextarea.js',
+  '/assets/lib/console.js',
   '/assets/lib/es-first-aid.d.ts',
   '/assets/lib/Eternity.js',
   '/assets/lib/es-first-aid.js',

@@ -29,6 +29,7 @@ import { sha256 } from "./lib/crypto.js";
 import { app } from './app.js';
 import { store } from "./store.js";
 import { IcquaiTextarea } from "./components/IcquaiTextarea.js";
+import { objectToString } from "./lib/console.js";
 import {
   wsOpen,
   wsConnecting,
