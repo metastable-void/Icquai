@@ -52,5 +52,6 @@ export const store = app.getStore("store", (state) => {
     ringing: null,
     imagesShown: {},
     filesReceived: {},
+    accounts: [],
   };
 });

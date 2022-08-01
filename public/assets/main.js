@@ -65,6 +65,7 @@ import {
   displayImages,
   fileReceived,
   flashScreen,
+  accountsChange,
 } from "./topics.js";
 
 const ed = nobleEd25519;
@@ -112,8 +113,11 @@ const myNumberStore = new LocalStorageData('icquai.my.number', () => {
     const privateKey = firstAid.decodeBase64(base64PrivateKey);
     const publicKey = await ed.getPublicKey(privateKey);
     const base64PublicKey = firstAid.encodeBase64(publicKey);
+    const sha256Fingerprint = await sha256(publicKey);
+    const hexFingerprint = firstAid.encodeHex(sha256Fingerprint);
     const account = {
       publicKey: base64PublicKey,
+      fingerprint: hexFingerprint,
       privateKey: base64PrivateKey,
       friends,
       name: myName,
@@ -167,9 +171,12 @@ globalThis.createAccount = async (name = '') => {
   const base64PrivateKey = firstAid.encodeBase64(privateKey);
   const publicKey = await ed.getPublicKey(privateKey);
   const base64PublicKey = firstAid.encodeBase64(publicKey);
+  const sha256Fingerprint = await sha256(publicKey);
+  const hexFingerprint = firstAid.encodeHex(sha256Fingerprint);
   const friends = [];
   const account = {
     publicKey: base64PublicKey,
+    fingerprint: hexFingerprint,
     privateKey: base64PrivateKey,
     friends,
     name: String(name).trim(),
@@ -1315,6 +1322,13 @@ store.subscribe(friendsChange, (state, friends) => {
   };
 });
 
+store.subscribe(accountsChange, (state, accounts) => {
+  return {
+    ... state,
+    accounts,
+  };
+});
+
 store.subscribe(friendsInviteNicknameChange, (state, friendsInviteNickname) => {
   return {
     ... state,
@@ -1463,6 +1477,10 @@ themeColorStore.observe((color) => {
   document.documentElement.style.setProperty('--theme-accent-color', color);
 });
 
+accountsStore.observe((accounts) => {
+  accountsChange.dispatch(accounts);
+});
+
 const renderDrawer = (isOpen, mainContent, drawerContent, mainHeader, drawerHeader) => {
   return EH.div([
     EA.id('drawer-wrapper'),
@@ -1587,8 +1605,8 @@ const createInputField = (label, id, eventListeners, placeholder) => {
     EH.input([
       EP.attribute('type', 'text'),
       EA.id(id),
-      ... eventListeners,
       EP.attribute('placeholder', placeholder),
+      ... eventListeners,
     ]),
   ]);
   //
@@ -2098,8 +2116,7 @@ store.render(containerElement, async (state) => {
           }
           myNameStore.setValue(value);
         }),
-        EP.attribute('placeholder', 'Input your name'),
-      ], 'name');
+      ], 'Your name');
       const inviteLink = createInputField('Invite Link', 'my-invite-link', [
         EP.attribute('readonly', ''),
         EP.attribute('value', state.myInviteLink),
@@ -2108,6 +2125,28 @@ store.render(containerElement, async (state) => {
         EP.attribute('readonly', ''),
         EP.attribute('value', getMyNumber()),
       ], '');
+
+      const newAccountName = createInputField('Name', 'new-account-name', [
+        EP.key('new-account-name'),
+        EP.eventListener('change', (ev) => {
+          //
+        }),
+      ], 'Name of your new account');
+
+      const accounts = state.accounts;
+      const accountOptions = [];
+      for (const account of accounts) {
+        //
+        let name = account.fingerprint;
+        if (account.name) {
+          name = account.name;
+        }
+        const option = EH.option([
+          EP.attribute('value', account.publicKey),
+        ], [EH.text(name)]);
+        accountOptions.push(option);
+      }
+
       mainContent = EH.div([
         EA.classes(['profile']),
         EP.key('view-my-profile'),
@@ -2125,6 +2164,29 @@ store.render(containerElement, async (state) => {
               });
             }),
           ], [EH.text('Copy link')]),
+        ]),
+        EH.hr(),
+        EH.p([], [
+          EH.text('Switch accounts: '),
+          EH.select([
+            EP.eventListener('change', (ev) => {
+              switchAccount(ev.target.value);
+            }),
+          ], [
+            ... accountOptions,
+          ]),
+        ]),
+        EH.p([], [EH.text('Create a new account:')]),
+        newAccountName,
+        EH.p([], [
+          EH.button([
+            EP.eventListener('click', (ev) => {
+              const name = String(document.querySelector('#new-account-name').value).trim();
+              createAccount(name).catch((e) => {
+                console.error(e);
+              });
+            }),
+          ], [EH.text('Create account')]),
         ]),
       ]);
       break;
