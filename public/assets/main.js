@@ -29,7 +29,7 @@ import { sha256 } from "./lib/crypto.js";
 import { app } from './app.js';
 import { store } from "./store.js";
 import { IcquaiTextarea } from "./components/IcquaiTextarea.js";
-import { objectToString } from "./lib/console.js";
+import { Console } from "./lib/console.js";
 import {
   wsOpen,
   wsConnecting,
@@ -71,6 +71,8 @@ import {
 
 const ed = nobleEd25519;
 
+const console = new Console('main');
+
 const HISTORY_BUFFER_LENGTH = 10;
 const CLIENT_SRC_REPOSITORY = 'https://github.com/metastable-void/Icquai';
 const SERVER_SRC_REPOSITORY = 'https://github.com/metastable-void/icquai-server';
@@ -81,9 +83,9 @@ const FILE_CHUNK_COUNT = 128;
 // watchdog
 let scriptCompleted = false;
 window.addEventListener('error', ev => {
-    if (!scriptCompleted) {
-        setTimeout(() => location.reload(), 10000);
-    }
+  if (!scriptCompleted) {
+    setTimeout(() => location.reload(), 10000);
+  }
 });
 
 /**
@@ -153,6 +155,7 @@ const myNumberStore = new LocalStorageData('icquai.my.number', () => {
  * @returns {boolean}
  */
 globalThis.switchAccount = (publicKey) => {
+  const console = new Console('Accounts');
   if (!publicKey) {
     throw new Error('Public key must be specified on account switch');
   }
@@ -186,6 +189,7 @@ globalThis.switchAccount = (publicKey) => {
 };
 
 globalThis.createAccount = async (name = '') => {
+  const console = new Console('Accounts');
   const privateKey = ed.utils.randomPrivateKey();
   const base64PrivateKey = firstAid.encodeBase64(privateKey);
   const publicKey = await ed.getPublicKey(privateKey);
@@ -208,6 +212,7 @@ globalThis.createAccount = async (name = '') => {
 };
 
 globalThis.deleteAccount = (publicKey) => {
+  const console = new Console('Accounts');
   let accountFound = false;
   let accountCreationNeeded = false;
   let accountSwitchNeeded = false;
@@ -347,6 +352,7 @@ const verifyMessage = async (message) => {
  * TODO: subscribe push as well
  */
 const requestNotificationPermission = async () => {
+  const console = new Console('Notifications');
   if (!window.Notification) {
     console.warn('Notification not supported');
   } else if (Notification.permission == 'granted') {
@@ -367,6 +373,7 @@ const requestNotificationPermission = async () => {
 };
 
 const notificationAllowed = () => {
+  const console = new Console('Notifications');
   if (!window.Notification) {
     console.warn('Notification not supported');
     return false;
@@ -399,6 +406,7 @@ const waitForWs = () => new Promise((res) => {
 
 let wsClosedCallback = null;
 const openSocket = (force) => {
+  const console = new Console('WebSocket');
   if (!ws || ws.readyState == WebSocket.CLOSED || ws.readyState == WebSocket.CLOSING || force) {
     let keepAliveInterval = null;
 
@@ -719,6 +727,7 @@ pageShow.addListener(() => {
 });
 
 wsMessageReceived.addListener((json) => {
+  const console = new Console('Messages');
   try {
     const message = JSON.parse(json);
     if (message.type != 'signed_envelope' && verboseMessageLogging) {
@@ -974,6 +983,7 @@ const receivingFileTransfers = new Map;
 const callAcceptanceTokens = new Map; // <public key> => <token>
 
 encryptedMessageReceived.addListener(async ({publicKey, message}) => {
+  const console = new Console('Encrypted Messages');
   const payload = message;
   switch (payload.type) {
     case 'text_cleared': {
@@ -1789,6 +1799,7 @@ let rtcIceCandidateListener = null;
 let rtcDescriptionListener = null;
 
 const createCall = async (base64PublicKey, selfInitiated, acceptanceToken) => {
+  const console = new Console('WebRTC');
   hangup();
   const audioElement = document.querySelector('#rtc_audio');
   const configuration = {
@@ -1956,6 +1967,7 @@ const createCall = async (base64PublicKey, selfInitiated, acceptanceToken) => {
 };
 
 const reconnectAudio = async () => {
+  const console = new Console('WebRTC');
   if (!pc) {
     console.debug('Not in call');
     return;
@@ -1980,6 +1992,7 @@ const reconnectAudio = async () => {
 };
 
 const toggleMute = async () => {
+  const console = new Console('Audio');
   if (!mediaStream) {
     return;
   }
@@ -2009,6 +2022,7 @@ setInterval(async () => {
 }, 1000);
 
 const hangup = () => {
+  const console = new Console('WebRTC');
   const state = store.state;
   const {callOngoing} = state;
   if (callOngoing) {
@@ -2097,6 +2111,7 @@ const createToast = (text, actionText, actionEventListeners) => {
  * @param {FileList} files 
  */
 const sendFiles = async (base64PublicKey, files) => {
+  const console = new Console('File Transfer');
   //
   console.info('Sending files to %s:', base64PublicKey, files);
   
@@ -2156,6 +2171,7 @@ const sendFiles = async (base64PublicKey, files) => {
 let callButtonPressed = false;
 const containerElement = document.querySelector('#container');
 store.render(containerElement, async (state) => {
+  const console = new Console('Render');
   const query = new URLSearchParams(state.urlQuery);
   const hash = state.urlHash;
   let mainHeader;
