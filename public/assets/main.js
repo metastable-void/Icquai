@@ -324,67 +324,83 @@ const notificationAllowed = () => {
 /**
  * @type {WebSocket?}
  * */
- let ws = null;
+let ws = null;
 
- let wsUrl = `wss://${location.host}/ws`;
+let wsUrl = `wss://${location.host}/ws`;
 
- const wsCallbacks = [];
+const wsCallbacks = [];
 
- /**
+/**
   * 
   * @returns {Promise<WebSocket}
   */
- const waitForWs = () => new Promise((res) => {
+const waitForWs = () => new Promise((res) => {
   if (ws && ws.readyState == ws.OPEN) {
     res(ws);
   }
   wsCallbacks.push(res);
- });
+});
 
- const openSocket = (force) => {
+let wsClosedCallback = null;
+const openSocket = (force) => {
   if (!ws || ws.readyState == WebSocket.CLOSED || ws.readyState == WebSocket.CLOSING || force) {
-      if (ws && ws.readyState == WebSocket.OPEN) {
-          ws.close();
+    let keepAliveInterval = null;
+
+    if (ws && ws.readyState != WebSocket.CLOSED) {
+      if (wsClosedCallback) {
+        ws.removeEventListener('close', wsClosedCallback);
+        wsClosedCallback = null;
       }
+      ws.close();
+      if (keepAliveInterval !== null) {
+        clearInterval(keepAliveInterval);
+        keepAliveInterval = null;
+      }
+      wsClosed.dispatch(null);
+    }
 
-      ws = new WebSocket(String(wsUrl));
+    ws = new WebSocket(String(wsUrl));
 
-      wsConnecting.dispatch(null);
-      let keepAliveInterval;
-      
-      ws.addEventListener('open', ev => {
-          console.debug('ws: open');
-          (async () => {
-            wsOpen.dispatch(ws);
-            for (const callback of wsCallbacks) {
-              callback(ws);
-            }
-            wsCallbacks.length = 0; // clear the array
-            keepAliveInterval = setInterval(() => {
-              const message = {
-                type: "keep_alive",
-              };
-              const messageJson = JSON.stringify(message);
-              ws.send(messageJson);
-            }, 15000);
-          })();
-      });
-      ws.addEventListener('close', ev => {
-          console.debug('ws: close');
-          clearInterval(keepAliveInterval);
-          wsClosed.dispatch(null);
-          setTimeout(() => {
-              if (document.hidden || !navigator.onLine) return;
-              console.debug('Trying reconnection...');
-              openSocket();
-          }, 50);
-      });
+    wsConnecting.dispatch(null);
+    
+    ws.addEventListener('open', (ev) => {
+      console.debug('ws: open');
+      (async () => {
+        wsOpen.dispatch(ws);
+        for (const callback of wsCallbacks) {
+          callback(ws);
+        }
+        wsCallbacks.length = 0; // clear the array
+        keepAliveInterval = setInterval(() => {
+          const message = {
+            type: "keep_alive",
+          };
+          const messageJson = JSON.stringify(message);
+          ws.send(messageJson);
+        }, 15000);
+      })();
+    });
 
-      ws.addEventListener('message', ev => {
-          if (ev.target.readyState != WebSocket.OPEN) return;
-          if (ws != ev.target) return;
-          wsMessageReceived.dispatch(ev.data);
-      });
+    wsClosedCallback = (ev) => {
+      console.debug('ws: close');
+      if (keepAliveInterval !== null) {
+        clearInterval(keepAliveInterval);
+        keepAliveInterval = null;
+      }
+      wsClosed.dispatch(null);
+      setTimeout(() => {
+        if (document.hidden || !navigator.onLine) return;
+        console.debug('Trying reconnection...');
+        openSocket();
+      }, 50);
+    };
+    ws.addEventListener('close', wsClosedCallback);
+
+    ws.addEventListener('message', (ev) => {
+      if (ev.target.readyState != WebSocket.OPEN) return;
+      if (ws != ev.target) return;
+      wsMessageReceived.dispatch(ev.data);
+    });
   }
 };
 
