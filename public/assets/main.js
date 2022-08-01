@@ -86,10 +86,27 @@ window.addEventListener('error', ev => {
     }
 });
 
+/**
+ * @typedef {{publicKey: string, savedName: string, nickname: string, lastSeen: number}} Friend
+ */
+
+/**
+ * @typedef {{publickey: string, fingerprint: string, privateKey: string, friends: Friend[], name: string}} Account
+ */
+
+/**
+ * @type {LocalStorageData<Account[]>}
+ */
 const accountsStore = new LocalStorageData('icquai.accounts', () => []);
+
 const privateKeyStore = new LocalStorageData('icquai.private_key', () => firstAid.encodeBase64(ed.utils.randomPrivateKey()));
 const myNameStore = new LocalStorageData('icquai.my.name', () => '');
+
+/**
+ * @type {LocalStorageData<Friend[]>}
+ */
 const friendsStore = new LocalStorageData('icquai.friends', () => []);
+
 const themeColorStore = new LocalStorageData('icquai.theme.accent_color', () => '#3B9EA3');
 const myNumberStore = new LocalStorageData('icquai.my.number', () => {
   let number = '';
@@ -2161,7 +2178,11 @@ store.render(containerElement, async (state) => {
       // my profile
       mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('My Profile')]);
 
+      /**
+       * @type {Account[]}
+       */
       const accounts = state.accounts;
+
       const accountOptions = [];
       let currentPublicKey = '';
       const currentPrivateKey = privateKeyStore.getValue();
@@ -2358,6 +2379,10 @@ store.render(containerElement, async (state) => {
     case '/friends': {
       // friends
       const friendsList = [];
+
+      /**
+       * @type {Friend[]}
+       */
       const friends = [... state.friends].sort((friendA, friendB) => {
         const a = friendA.lastSeen;
         const b = friendB.lastSeen;
