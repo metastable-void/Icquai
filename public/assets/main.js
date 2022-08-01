@@ -553,7 +553,10 @@ wsMessageReceived.addListener((json) => {
           }
           if ('forward' == payload.type) {
             const message = payload.payload;
-            console.warn('Bounced message to %s:', recipient, message);
+            if (payload.recipient != recipient) {
+              console.error(`Mismatch of server-returned bounce recipient: signed for: '%s' / reported: '%s'`, payload.recipient, recipient);
+            }
+            console.warn('Bounced message to %s:', payload.recipient, message);
           }
         })().catch((e) => {
           console.error(e);
