@@ -130,7 +130,7 @@ const myNumberStore = new LocalStorageData('icquai.my.number', () => {
  * @param {string} publicKey Base64 public key
  * @returns {boolean}
  */
-const switchAccount = (publicKey) => {
+globalThis.switchAccount = (publicKey) => {
   if (!publicKey) {
     throw new Error('Public key must be specified on account switch');
   }
@@ -162,7 +162,7 @@ const switchAccount = (publicKey) => {
   return false;
 };
 
-const createAccount = async (name = '') => {
+globalThis.createAccount = async (name = '') => {
   const privateKey = ed.utils.randomPrivateKey();
   const base64PrivateKey = firstAid.encodeBase64(privateKey);
   const publicKey = await ed.getPublicKey(privateKey);
