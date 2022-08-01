@@ -53,7 +53,7 @@ export const objectToString = (value) => {
       if (Symbol.toStringTag in value) {
         toStringTag = String(value[Symbol.toStringTag]);
       }
-      let content = '(unknown)';
+      let content = '{ (unknown) }';
       try {
         content = JSON.stringify(value);
       } catch (e) {}

@@ -2171,7 +2171,7 @@ store.render(containerElement, async (state) => {
           selected = true;
           currentPublicKey = account.publicKey;
         }
-        let name = account.fingerprint;
+        let name = '<' + String(account.fingerprint).slice(0, 8) + '…>';
         if (account.name) {
           name = account.name;
         }
@@ -2189,6 +2189,10 @@ store.render(containerElement, async (state) => {
       const fingerprint = createInputField('Fingerprint', 'my-fingerprint', [
         EP.attribute('readonly', ''),
         EP.attribute('value', state.myFingerprint),
+        EP.eventListener('click', (ev) => {
+          ev.target.focus();
+          ev.target.select();
+        }),
       ], '');
       const name = createInputField('Name', 'my-name', [
         EP.key('my-name-' + currentPublicKey),
@@ -2204,10 +2208,18 @@ store.render(containerElement, async (state) => {
       const inviteLink = createInputField('Invite Link', 'my-invite-link', [
         EP.attribute('readonly', ''),
         EP.attribute('value', state.myInviteLink),
+        EP.eventListener('click', (ev) => {
+          ev.target.focus();
+          ev.target.select();
+        }),
       ], '');
       const myNumber = createInputField('My number', 'my-number', [
         EP.attribute('readonly', ''),
         EP.attribute('value', getMyNumber()),
+        EP.eventListener('click', (ev) => {
+          ev.target.focus();
+          ev.target.select();
+        }),
       ], '');
 
       const newAccountName = createInputField('Name', 'new-account-name', [
