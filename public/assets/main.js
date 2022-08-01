@@ -891,7 +891,7 @@ encryptedMessageReceived.addListener(async ({publicKey, message}) => {
         transfer.url = URL.createObjectURL(transfer.blob);
         const endTime = getTime();
         const duration = endTime - transfer.startTime;
-        console.info('File received in %f s:', duration / 1000, transfer);
+        console.info('File received in %f s from %s:', duration / 1000, publicKey, transfer);
         fileReceived.dispatch(transfer);
       }
       updateLastSeen(publicKey);
