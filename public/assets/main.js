@@ -646,7 +646,7 @@ wsMessageReceived.addListener((json) => {
                   console.error(e);
                 });
                 const sharedSecret = await sha256(x25519.sharedKey(keyPair.privateKey, firstAid.decodeBase64(message.publicKey)));
-                console.log('Shared secret set for %s', publicKey);
+                console.info('Shared secret set for %s', publicKey);
                 sharedSecretMap.set(publicKey, sharedSecret);
                 sessionIdMap.set(publicKey, message.peerSessionId);
                 channelOpened.dispatch(publicKey);
@@ -696,7 +696,7 @@ wsMessageReceived.addListener((json) => {
                 validKexNonces.delete(nonce);
                 const sharedSecret = await sha256(x25519.sharedKey(myKeyPair.privateKey, firstAid.decodeBase64(message.publicKey)));
                 sharedSecretMap.set(publicKey, sharedSecret);
-                console.log('Shared secret set for %s', publicKey);
+                console.info('Shared secret set for %s', publicKey);
                 sessionIdMap.set(publicKey, message.sessionId);
                 channelOpened.dispatch(publicKey);
                 updateLastSeen(publicKey);
@@ -741,7 +741,7 @@ wsMessageReceived.addListener((json) => {
                 }
                 if (message.sessionId == peerSessionId) {
                   sharedSecretMap.delete(publicKey);
-                  console.log('Shared secret removed for %s', publicKey);
+                  console.info('Shared secret removed for %s', publicKey);
                   channelClosed.dispatch(publicKey);
                 }
                 break;
@@ -2224,7 +2224,7 @@ store.render(containerElement, async (state) => {
               EP.eventListener('click', (ev) => {
                 //
                 sharedSecretMap.delete(publicKey);
-                console.log('Shared secret removed for %s', publicKey);
+                console.info('Shared secret removed for %s', publicKey);
                 channelClosed.dispatch(publicKey);
                 wsForwardMessage(publicKey, {
                   type: 'ch_rst',
