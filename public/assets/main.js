@@ -186,7 +186,35 @@ globalThis.createAccount = async (name = '') => {
   accounts.push(account);
   accountsStore.setValue(accounts);
   console.info(`Created account: '%s' (%s)`, name, base64PublicKey);
+  return base64PublicKey;
 };
+
+globalThis.deleteAccount = (publicKey) => {
+  let accountFound = false;
+  let accountCreationNeeded = false;
+  const accounts = accountsStore.getValue();
+  for (const account of accounts) {
+    if (account.publicKey == publicKey) {
+      accountFound = true;
+      console.info(`Deleting account: '%s' (%s)`, account.name, publicKey);
+    }
+  }
+  if (!accountFound) {
+    return;
+  }
+  if (accounts.length < 2) {
+    console.info('Deleting the last account, will re-create one');
+    accountCreationNeeded = true;
+  }
+  accountsStore.setValue(accounts.filter((account) => {
+    return account.publicKey != publicKey;
+  }));
+  if (accountCreationNeeded) {
+    createAccount('').then((publicKey) => {
+      switchAccount(publicKey);
+    });
+  }
+}
 
 myNameStore.observe((name) => {
   const currentPrivateKey = privateKeyStore.getValue();
