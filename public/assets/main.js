@@ -351,6 +351,7 @@ const openSocket = (force) => {
         ws.removeEventListener('close', wsClosedCallback);
         wsClosedCallback = null;
       }
+      console.debug('ws: close()');
       ws.close();
       if (keepAliveInterval !== null) {
         clearInterval(keepAliveInterval);
