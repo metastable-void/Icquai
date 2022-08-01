@@ -2136,13 +2136,22 @@ store.render(containerElement, async (state) => {
       const accounts = state.accounts;
       const accountOptions = [];
       for (const account of accounts) {
-        //
+        let selected = false;
+        const currentPrivateKey = privateKeyStore.getValue();
+        if (currentPrivateKey == account.privateKey) {
+          selected = true;
+        }
         let name = account.fingerprint;
         if (account.name) {
           name = account.name;
         }
+        const attributes = [];
+        if (selected) {
+          attributes.push(EP.attribute('selected', ''));
+        }
         const option = EH.option([
           EP.attribute('value', account.publicKey),
+          ... attributes,
         ], [EH.text(name)]);
         accountOptions.push(option);
       }
@@ -2182,6 +2191,9 @@ store.render(containerElement, async (state) => {
           EH.button([
             EP.eventListener('click', (ev) => {
               const name = String(document.querySelector('#new-account-name').value).trim();
+              if (!name) {
+                return;
+              }
               createAccount(name).catch((e) => {
                 console.error(e);
               });
