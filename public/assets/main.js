@@ -173,9 +173,9 @@ const requestNotificationPermission = async () => {
   if (!window.Notification) {
     console.warn('Notification not supported');
   } else if (Notification.permission == 'granted') {
-    console.log('Notification already granted');
+    console.debug('Notification already granted');
   } else if (Notification.permission == 'denied') {
-    console.log('Notification already denied by user');
+    console.debug('Notification already denied by user');
   } else {
     const permission = await Notification.requestPermission();
     if (permission == 'granted') {
@@ -184,7 +184,7 @@ const requestNotificationPermission = async () => {
         requireInteraction: false,
       });
     } else if (permission == 'denied') {
-      console.log('Notification just denied by user');
+      console.debug('Notification just denied by user');
     }
   }
 };
@@ -232,7 +232,7 @@ const notificationAllowed = () => {
       let keepAliveInterval;
       
       ws.addEventListener('open', ev => {
-          console.log('ws: open');
+          console.debug('ws: open');
           (async () => {
             wsOpen.dispatch(ws);
             for (const callback of wsCallbacks) {
@@ -249,12 +249,12 @@ const notificationAllowed = () => {
           })();
       });
       ws.addEventListener('close', ev => {
-          console.log('ws: close');
+          console.debug('ws: close');
           clearInterval(keepAliveInterval);
           wsClosed.dispatch(null);
           setTimeout(() => {
               if (document.hidden || !navigator.onLine) return;
-              console.log('Trying reconnection...');
+              console.debug('Trying reconnection...');
               openSocket();
           }, 50);
       });
@@ -317,7 +317,7 @@ const sendPing = async (base64PublicKey) => {
  */
 let ringAudio;
 globalThis.ringStart = () => {
-  console.log('ringing start');
+  console.debug('ringing start');
   ringAudio = new Audio('/assets/sounds/ring_jp.wav');
   ringAudio.loop = true;
   ringAudio.play().catch((e) => {
@@ -326,7 +326,7 @@ globalThis.ringStart = () => {
 };
 
 globalThis.ringEnd = () => {
-  console.log('ringing end');
+  console.debug('ringing end');
   ringAudio.pause();
   ringAudio.currentTime = 0;
 };
@@ -473,7 +473,7 @@ pageNavigate.addListener((newUrl) => {
 });
 
 wsMessageSend.addListener((message) => {
-  console.log('Sending message:', message);
+  console.debug('Sending message:', message);
   wsSendMessage(message).catch((e) => {
     console.error(e);
   });
@@ -481,12 +481,12 @@ wsMessageSend.addListener((message) => {
 
 becomingHidden.addListener(() => {
   // This is the last place to do something reliably.
-  console.log('Page is now hidden!');
+  console.debug('Page is now hidden!');
   // navigator.sendBeacon('/log', analyticsData);
 });
 
 becomingVisible.addListener(() => {
-  console.log('Page is now visible!');
+  console.debug('Page is now visible!');
   openSocket();
   //const audioElement = document.querySelector('#rtc_audio');
   /*try {
@@ -500,20 +500,20 @@ becomingVisible.addListener(() => {
 });
 
 becomingOnline.addListener(() => {
-  console.log('Becoming online, reconnecting...');
+  console.debug('Becoming online, reconnecting...');
   openSocket();
 });
 
 becomingOffline.addListener(() => {
-  console.log('Becoming offline');
+  console.debug('Becoming offline');
 });
 
 becomingInteractive.addListener(() => {
-  console.log('Becoming interactive');
+  console.debug('Becoming interactive');
 });
 
 pageShow.addListener(() => {
-  console.log('pageshow');
+  console.debug('pageshow');
   openSocket();
 });
 
@@ -521,7 +521,7 @@ wsMessageReceived.addListener((json) => {
   try {
     const message = JSON.parse(json);
     if (message.type != 'signed_envelope' && verboseMessageLogging) {
-      console.log('Message received:', message);
+      console.debug('Message received:', message);
     }
     switch (message.type) {
       case 'server_hello': {
@@ -566,11 +566,11 @@ wsMessageReceived.addListener((json) => {
           if ('forward' == payload.type) {
             const message = payload.payload;
             if (verboseMessageLogging) {
-              console.log('Message from %s:', publicKey, message);
+              console.debug('Message from %s:', publicKey, message);
             }
             switch (message.type) {
               case 'ping': {
-                console.log('Received ping; ponging.');
+                console.debug('Received ping; ponging.');
                 const name = myNameStore.getValue();
                 const pongMsg = {
                   type: 'pong',
@@ -586,7 +586,7 @@ wsMessageReceived.addListener((json) => {
                   if (publicKey == friend.publicKey) {
                     friendFound = true;
                     if (friend.savedName != message.name && message.name) {
-                      console.log('Received ping from %s, name: %s => %s', publicKey, friend.savedName, message.name);
+                      console.debug('Received ping from %s, name: %s => %s', publicKey, friend.savedName, message.name);
                       friend.savedName = message.name;
                     }
                   }
@@ -610,7 +610,7 @@ wsMessageReceived.addListener((json) => {
                   if (publicKey == friend.publicKey) {
                     friendFound = true;
                     if (friend.savedName != message.name && message.name) {
-                      console.log('Received pong from %s, name: %s => %s', publicKey, friend.savedName, message.name);
+                      console.debug('Received pong from %s, name: %s => %s', publicKey, friend.savedName, message.name);
                       friend.savedName = message.name;
                     }
                   }
@@ -618,7 +618,7 @@ wsMessageReceived.addListener((json) => {
                 /*
                 // commented out because at this state friends need not be added and confusing (name not set yet, etc.)
                 if (!friendFound) {
-                  console.log('Received pong and learned friend: %s, name: %s', publicKey, message.name);
+                  console.debug('Received pong and learned friend: %s, name: %s', publicKey, message.name);
                   const friend = {
                     nickname: message.name,
                     savedName: message.name,
@@ -631,7 +631,7 @@ wsMessageReceived.addListener((json) => {
                 break;
               }
               case 'kex_ping': {
-                console.log('Received kex ping, ponging.');
+                console.debug('Received kex ping, ponging.');
                 const keyPair = x25519Generate();
                 const name = myNameStore.getValue();
                 const pongMsg = {
@@ -673,14 +673,14 @@ wsMessageReceived.addListener((json) => {
                 break;
               }
               case 'kex_pong': {
-                console.log('Received kex pong.');
+                console.debug('Received kex pong.');
                 const sessionId = message.peerSessionId;
                 const savedSessionId = sessionIdMap.get(publicKey);
                 if (savedSessionId && savedSessionId != message.sessionId) {
-                  console.log('Unmatching peer session id, ignoring key exchange...');
+                  console.debug('Unmatching peer session id, ignoring key exchange...');
                 }
                 if (app.sessionId != sessionId) {
-                  console.log('Unmatching session id, ignoring key exchange...');
+                  console.debug('Unmatching session id, ignoring key exchange...');
                   break;
                 }
                 const nonce = message.nonce;
@@ -707,7 +707,7 @@ wsMessageReceived.addListener((json) => {
                 if (message.sessionId) {
                   const savedSessionId = sessionIdMap.get(publicKey);
                   if (savedSessionId != message.sessionId) {
-                    console.log('Unmatching peer session id, ignoring signed message...');
+                    console.debug('Unmatching peer session id, ignoring signed message...');
                     break;
                   }
                 }
@@ -725,7 +725,7 @@ wsMessageReceived.addListener((json) => {
                 const data = await decrypt(message, sharedSecret);
                 const payload = JSON.parse(firstAid.decodeString(data));
                 if (verboseMessageLogging) {
-                  console.log('encrypted message from %s:', publicKey, payload);
+                  console.debug('encrypted message from %s:', publicKey, payload);
                 }
                 encryptedMessageReceived.dispatch({
                   publicKey,
@@ -734,7 +734,7 @@ wsMessageReceived.addListener((json) => {
                 break;
               }
               case 'ch_rst': {
-                console.log('Received encrypted channel reset');
+                console.debug('Received encrypted channel reset');
                 const peerSessionId = sessionIdMap.get(publicKey);
                 if (!peerSessionId) {
                   break;
@@ -801,7 +801,7 @@ encryptedMessageReceived.addListener(async ({publicKey, message}) => {
       break;
     }
     case 'ring_accept': {
-      console.log('Ringing call accepted');
+      console.debug('Ringing call accepted');
       ringEnd();
       ringingEnd.dispatch(null);
       const acceptanceToken = payload.acceptance_token;
@@ -811,7 +811,7 @@ encryptedMessageReceived.addListener(async ({publicKey, message}) => {
       break;
     }
     case 'rtc_init': {
-      console.log('Received RTC init');
+      console.debug('Received RTC init');
       const acceptanceToken = payload.acceptance_token;
       const savedToken = callAcceptanceTokens.get(publicKey);
       if (!savedToken || acceptanceToken != savedToken) {
@@ -829,20 +829,20 @@ encryptedMessageReceived.addListener(async ({publicKey, message}) => {
     }
     case 'rtc_ice_candidate': {
       if (verboseMessageLogging) {
-        console.log('RTC: Received ice candidate:', payload.candidate);
+        console.debug('RTC: Received ice candidate:', payload.candidate);
       }
       rtcIceCandidate.dispatch(payload.candidate);
       break;
     }
     case 'rtc_description': {
       if (verboseMessageLogging) {
-        console.log('RTC: Received RTC description:', payload.description);
+        console.debug('RTC: Received RTC description:', payload.description);
       }
       rtcDescription.dispatch(payload.description);
       break;
     }
     case 'rtc_hangup': {
-      console.log('Received hangup message');
+      console.debug('Received hangup message');
       hangup();
       updateLastSeen(publicKey);
       break;
@@ -1256,7 +1256,7 @@ flashScreen.addListener((_action) => {
   const time = getTime();
   if (time - lastFlash < 5000) return;
   lastFlash = time;
-  console.log('flashing the screen...');
+  console.debug('flashing the screen...');
   document.body.classList.add('flash');
   setTimeout(() => {
     document.body.classList.remove('flash');
@@ -1525,7 +1525,7 @@ const commit = (textBox, base64PublicKey) => {
   previousText = text;
   lastUpdate = getTime();
   historyBuffer.push(previousText);
-  console.log('Added text to history: ', previousText);
+  console.debug('Added text to history: ', previousText);
   while (historyBuffer.length > HISTORY_BUFFER_LENGTH) {
     historyBuffer.shift();
   }
@@ -1542,7 +1542,7 @@ const commit = (textBox, base64PublicKey) => {
 const historyBack = (textBox, base64PublicKey) => {
   if (historyBuffer.length < 1) return;
   const text = historyBuffer.pop();
-  console.log('Hitory from buffer:', text);
+  console.debug('Hitory from buffer:', text);
   textBox.value = text;
   const offset = textBox.caretOffset;
   previousText = text;
@@ -1599,7 +1599,7 @@ const createCall = async (base64PublicKey, selfInitiated, acceptanceToken) => {
   globalThis.pc = pc;
 
   pc.onicecandidate = ({candidate}) => {
-    console.log('RTC: onicecandidate');
+    console.debug('RTC: onicecandidate');
     sendEncryptedMessage(base64PublicKey, {
       type: 'rtc_ice_candidate',
       candidate,
@@ -1610,7 +1610,7 @@ const createCall = async (base64PublicKey, selfInitiated, acceptanceToken) => {
 
   pc.onnegotiationneeded = async () => {
     try {
-      console.log('RTC: onnegotiationneeded, creating offer');
+      console.debug('RTC: onnegotiationneeded, creating offer');
       await pc.setLocalDescription(await pc.createOffer({offerToReceiveAudio: true, offerToReceiveVideo: false}));
       await sendEncryptedMessage(base64PublicKey, {
         type: 'rtc_description',
@@ -1622,12 +1622,12 @@ const createCall = async (base64PublicKey, selfInitiated, acceptanceToken) => {
   };
 
   pc.ontrack = (event) => {
-    console.log('RTC: got remote stream');
+    console.debug('RTC: got remote stream');
     if (audioElement.srcObject == event.streams[0]) {
       return;
     }
     audioElement.srcObject = event.streams[0];
-    console.log('RTC: Set srcObject:', event.streams[0]);
+    console.debug('RTC: Set srcObject:', event.streams[0]);
     audioElement.play().catch((e) => {
       console.error(e);
     });
@@ -1636,10 +1636,10 @@ const createCall = async (base64PublicKey, selfInitiated, acceptanceToken) => {
 
   let connectionState = pc.connectionState;
   pc.onconnectionstatechange = (ev) => {
-    console.log('RTC connection state change: %s => %s', connectionState, pc.connectionState);
+    console.debug('RTC connection state change: %s => %s', connectionState, pc.connectionState);
     connectionState = pc.connectionState;
     if (pc.connectionState == 'disconnected' || pc.connectionState == 'failed') {
-      console.log('RTC: Call is ended');
+      console.debug('RTC: Call is ended');
       hangup();
     }
   };
@@ -1655,7 +1655,7 @@ const createCall = async (base64PublicKey, selfInitiated, acceptanceToken) => {
         try {
           const message = JSON.parse(ev.data);
           if (verboseMessageLogging) {
-            console.log('RTC: DataChannel: Message received:', message);
+            console.debug('RTC: DataChannel: Message received:', message);
           }
           encryptedMessageReceived.dispatch({
             publicKey: base64PublicKey,
@@ -1672,7 +1672,7 @@ const createCall = async (base64PublicKey, selfInitiated, acceptanceToken) => {
     if (pc.connectionState == 'closed') {
       return;
     }
-    console.log('RTC: Received ICE candidate');
+    console.debug('RTC: Received ICE candidate');
     await pc.addIceCandidate(candidate);
   };
   rtcIceCandidate.addListener(rtcIceCandidateListener);
@@ -1683,7 +1683,7 @@ const createCall = async (base64PublicKey, selfInitiated, acceptanceToken) => {
     }
     if (description.type == 'offer') {
       await pc.setRemoteDescription(description);
-      console.log('RTC: Set offer description');
+      console.debug('RTC: Set offer description');
       const stream = await getAudio();
       mediaStream = stream;
       stream.getAudioTracks().forEach((track) => {
@@ -1696,7 +1696,7 @@ const createCall = async (base64PublicKey, selfInitiated, acceptanceToken) => {
       });
     } else {
       await pc.setRemoteDescription(description);
-      console.log('RTC: Set answer description');
+      console.debug('RTC: Set answer description');
     }
   };
   rtcDescription.addListener(rtcDescriptionListener);
@@ -1712,7 +1712,7 @@ const createCall = async (base64PublicKey, selfInitiated, acceptanceToken) => {
         try {
           const message = JSON.parse(ev.data);
           if (verboseMessageLogging) {
-            console.log('RTC: DataChannel: Message received:', message);
+            console.debug('RTC: DataChannel: Message received:', message);
           }
           encryptedMessageReceived.dispatch({
             publicKey: base64PublicKey,
@@ -1734,11 +1734,11 @@ const createCall = async (base64PublicKey, selfInitiated, acceptanceToken) => {
 
 const reconnectAudio = async () => {
   if (!pc) {
-    console.log('Not in call');
+    console.debug('Not in call');
     return;
   }
   if (pc.connectionState != 'connected') {
-    console.log('Call not connected');
+    console.debug('Call not connected');
     return;
   }
   let enabled = true;
@@ -1749,7 +1749,7 @@ const reconnectAudio = async () => {
   }
   const stream = await getAudio();
   mediaStream = stream;
-  console.log('RTC: reconnecting audio');
+  console.debug('RTC: reconnecting audio');
   stream.getAudioTracks().forEach((track) => {
     track.enabled = enabled;
     pc.addTrack(track, stream);
@@ -1762,11 +1762,11 @@ const toggleMute = async () => {
   }
   const audioTracks = mediaStream.getAudioTracks();
   if (audioTracks[0].enabled) {
-    console.log('RTC: Muting the audio track');
+    console.debug('RTC: Muting the audio track');
     audioTracks[0].enabled = false;
     updateCallMuted.dispatch(true);
   } else {
-    console.log('RTC: Unmuting the audio track');
+    console.debug('RTC: Unmuting the audio track');
     audioTracks[0].enabled = true;
     updateCallMuted.dispatch(false);
   }
@@ -1797,7 +1797,7 @@ const hangup = () => {
   }
   callEnd.dispatch(null);
   if (mediaStream) {
-    console.log('Closing MediaStream');
+    console.debug('Closing MediaStream');
     mediaStream.getTracks().forEach((track) => {
       track.stop();
     });
@@ -1895,7 +1895,7 @@ const sendFiles = async (base64PublicKey, files) => {
   let fileIndex = 0;
   const transactionId = firstAid.getRandomUuid();
   for (const file of files) {
-    console.log('Sending file:', file);
+    console.debug('Sending file:', file);
     const chunkCount = Math.ceil(file.size / FILE_CHUNK_SIZE);
     let sentChunks = 0;
     const fileId = firstAid.getRandomUuid();
@@ -1927,7 +1927,7 @@ const sendFiles = async (base64PublicKey, files) => {
     fileIndex++;
   }
   const endTime = getTime();
-  console.log('%d file(s) sent in %f s', files.length, (endTime - startTime) / 1000);
+  console.debug('%d file(s) sent in %f s', files.length, (endTime - startTime) / 1000);
 };
 
 let callButtonPressed = false;
@@ -2327,7 +2327,7 @@ store.render(containerElement, async (state) => {
           EP.eventListener('click', (ev) => {
             //
             if (callButtonPressed) {
-              console.log('Call button repeatedly pressed, ignoring.');
+              console.debug('Call button repeatedly pressed, ignoring.');
               return;
             }
             callButtonPressed = true;
@@ -2339,7 +2339,7 @@ store.render(containerElement, async (state) => {
               if (state.callOngoing) {
                 hangup();
               } else if (globalThis.pc) {
-                console.log('RTC: Call connecting; hanging up.');
+                console.debug('RTC: Call connecting; hanging up.');
                 hangup();
               } else if (state.ringing) {
                 ringAccept(state.ringing).catch((e) => {
@@ -2353,11 +2353,11 @@ store.render(containerElement, async (state) => {
             } else {
               const channelOpenedCallback = (openedChannelPublicKey) => {
                 if (openedChannelPublicKey != publicKey) {
-                  console.log('Ignoring unrelated channel open');
+                  console.debug('Ignoring unrelated channel open');
                   return;
                 }
                 channelOpened.removeListener(channelOpenedCallback);
-                console.log('Automatically calling after reconnection');
+                console.debug('Automatically calling after reconnection');
                 callRing(publicKey).catch((e) => {
                   console.error(e);
                 });
@@ -2412,7 +2412,7 @@ store.render(containerElement, async (state) => {
           EH.button([
             EA.eventListener('click', (ev) => {
               toggleMute().catch((e) => {
-                console.log(e);
+                console.warn(e);
               });
             }),
             EA.classes(['material-icons']),
@@ -2420,7 +2420,7 @@ store.render(containerElement, async (state) => {
           EH.button([
             EA.eventListener('click', (ev) => {
               reconnectAudio().catch((e) => {
-                console.log(e);
+                console.warn(e);
               });
             }),
             EA.classes(['material-icons']),
@@ -2453,7 +2453,7 @@ store.render(containerElement, async (state) => {
           if (!files) {
             return;
           }
-          console.log('File dropped');
+          console.debug('File dropped');
           sendFiles(publicKey, files).catch((e) => {
             console.error(e);
           });
@@ -2789,7 +2789,7 @@ document.addEventListener('dblclick', ev => {
 document.addEventListener ('click', ev => {
   const composedPath = ev.composedPath();
   for (let target of composedPath) {
-    if (!target.tagName || 'a' !== target.tagName.toLowerCase ()) {
+    if (!target.tagName || 'a' !== target.tagName.toLowerCase()) {
       continue;
     }
     
@@ -2800,7 +2800,7 @@ document.addEventListener ('click', ev => {
     ev.preventDefault();
     
     const action = new URL (target.href, location.href);
-    console.log (action);
+    console.debug(action);
     if (action.host !== location.host) {
       window.open(action.href, '_blank');
     } else {
