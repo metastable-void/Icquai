@@ -158,6 +158,7 @@ globalThis.switchAccount = (publicKey) => {
         myNameStore.setValue(account.name);
         friendsStore.setValue(account.friends);
         console.info(`Switched accounts: '%s' (%s) => '%s' (%s)`, currentName, currentPublicKey, account.name, account.publicKey);
+        openSocket(true);
       }
       return true;
     }
