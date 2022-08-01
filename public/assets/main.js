@@ -2200,7 +2200,6 @@ store.render(containerElement, async (state) => {
       ], '');
 
       const newAccountName = createInputField('Name', 'new-account-name', [
-        EP.key('new-account-name-' + currentPublicKey),
         EP.eventListener('change', (ev) => {
           //
         }),
@@ -2240,7 +2239,9 @@ store.render(containerElement, async (state) => {
         EH.p([], [
           EH.button([
             EP.eventListener('click', (ev) => {
-              const name = String(document.querySelector('#new-account-name').value).trim();
+              const inputNewAccountName = document.querySelector('#new-account-name');
+              const name = String(inputNewAccountName.value).trim();
+              inputNewAccountName.value = '';
               if (!name) {
                 return;
               }
