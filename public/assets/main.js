@@ -84,6 +84,7 @@ window.addEventListener('error', ev => {
     }
 });
 
+const accountsStore = new LocalStorageData('icquai.accounts', () => []);
 const privateKeyStore = new LocalStorageData('icquai.private_key', () => firstAid.encodeBase64(ed.utils.randomPrivateKey()));
 const myNameStore = new LocalStorageData('icquai.my.name', () => '');
 const friendsStore = new LocalStorageData('icquai.friends', () => []);
@@ -94,6 +95,118 @@ const myNumberStore = new LocalStorageData('icquai.my.number', () => {
     number += Math.min(9, Math.floor(firstAid.random()*10));
   }
   return number;
+});
+
+(async () => {
+  const accounts = accountsStore.getValue();
+  const base64PrivateKey = privateKeyStore.getValue();
+  const myName = myNameStore.getValue();
+  const friends = friendsStore.getValue();
+  let accountFound = false;
+  for (const account of accounts) {
+    if (account.privateKey == base64PrivateKey) {
+      accountFound = true;
+    }
+  }
+  if (!accountFound) {
+    const privateKey = firstAid.decodeBase64(base64PrivateKey);
+    const publicKey = await ed.getPublicKey(privateKey);
+    const base64PublicKey = firstAid.encodeBase64(publicKey);
+    const account = {
+      publicKey: base64PublicKey,
+      privateKey: base64PrivateKey,
+      friends,
+      name: myName,
+    };
+    accounts.push(account);
+    accountsStore.setValue(accounts);
+  }
+})().catch((e) => {
+  console.error(e);
+});
+
+/**
+ * Switch accounts.
+ * @param {string} publicKey Base64 public key
+ * @returns {boolean}
+ */
+const switchAccount = (publicKey) => {
+  if (!publicKey) {
+    throw new Error('Public key must be specified on account switch');
+  }
+  const accounts = accountsStore.getValue();
+  let currentPublicKey = '';
+  const currentPrivateKey = privateKeyStore.getValue();
+  for (const account of accounts) {
+    if (account.privateKey == currentPrivateKey) {
+      currentPublicKey = account.publicKey;
+      break;
+    }
+  }
+
+  for (const account of accounts) {
+    if (account.publicKey == publicKey) {
+      if (currentPrivateKey != account.privateKey) {
+        // account switch needed
+        const currentName = myNameStore.getValue();
+        // the change order is important
+        privateKeyStore.setValue(account.privateKey);
+        myNameStore.setValue(account.name);
+        friendsStore.setValue(account.friends);
+        console.info(`Switched accounts: '%s' (%s) => '%s' (%s)`, currentName, currentPublicKey, account.name, account.publicKey);
+      }
+      return true;
+    }
+  }
+  // matching account not found
+  return false;
+};
+
+const createAccount = async (name = '') => {
+  const privateKey = ed.utils.randomPrivateKey();
+  const base64PrivateKey = firstAid.encodeBase64(privateKey);
+  const publicKey = await ed.getPublicKey(privateKey);
+  const base64PublicKey = firstAid.encodeBase64(publicKey);
+  const friends = [];
+  const account = {
+    publicKey: base64PublicKey,
+    privateKey: base64PrivateKey,
+    friends,
+    name: String(name).trim(),
+  };
+  const accounts = accountsStore.getValue();
+  accounts.push(account);
+  accountsStore.setValue(accounts);
+  console.info(`Created account: '%s' (%s)`, name, base64PublicKey);
+};
+
+myNameStore.observe((name) => {
+  const currentPrivateKey = privateKeyStore.getValue();
+  const accounts = accountsStore.getValue();
+  for (const account of accounts) {
+    if (account.privateKey == currentPrivateKey) {
+      if (account.name == name) {
+        return;
+      }
+      account.name = name;
+    }
+  }
+  accountsStore.setValue(accounts);
+  //
+});
+
+friendsStore.observe((friends) => {
+  const currentPrivateKey = privateKeyStore.getValue();
+  const accounts = accountsStore.getValue();
+  for (const account of accounts) {
+    if (account.privateKey == currentPrivateKey) {
+      if (JSON.stringify(account.friends) == JSON.stringify(friends)) {
+        return;
+      }
+      account.friends = friends;
+    }
+  }
+  accountsStore.setValue(accounts);
 });
 
 /**
