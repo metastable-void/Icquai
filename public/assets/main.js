@@ -790,7 +790,7 @@ encryptedMessageReceived.addListener(async ({publicKey, message}) => {
       break;
     }
     case 'ring': {
-      console.log('Received call');
+      console.info('Received call from %s', publicKey);
       ringStart();
       ringingBegin.dispatch(publicKey);
       setTimeout(() => {
@@ -1594,6 +1594,7 @@ const createCall = async (base64PublicKey, selfInitiated, acceptanceToken) => {
     });
   }
 
+  console.info('Making call with %s', base64PublicKey);
   const pc = new RTCPeerConnection(configuration);
   globalThis.pc = pc;
 
