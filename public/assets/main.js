@@ -192,11 +192,18 @@ globalThis.createAccount = async (name = '') => {
 globalThis.deleteAccount = (publicKey) => {
   let accountFound = false;
   let accountCreationNeeded = false;
+  let accountSwitchNeeded = false;
   const accounts = accountsStore.getValue();
+  const currentPrivateKey = privateKeyStore.getValue();
   for (const account of accounts) {
     if (account.publicKey == publicKey) {
       accountFound = true;
-      console.info(`Deleting account: '%s' (%s)`, account.name, publicKey);
+      if (currentPrivateKey == account.privateKey) {
+        console.info(`Deleting current account: '%s' (%s)`, account.name, publicKey);
+        accountSwitchNeeded = true;
+      } else {
+        console.info(`Deleting account: '%s' (%s)`, account.name, publicKey);
+      }
     }
   }
   if (!accountFound) {
@@ -213,6 +220,9 @@ globalThis.deleteAccount = (publicKey) => {
     createAccount('').then((publicKey) => {
       switchAccount(publicKey);
     });
+  } else if (accountSwitchNeeded) {
+    const accounts = accountsStore.getValue();
+    switchAccount(accounts[0].publicKey);
   }
 };
 
