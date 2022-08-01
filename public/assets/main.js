@@ -2149,35 +2149,6 @@ store.render(containerElement, async (state) => {
     case '/me': {
       // my profile
       mainHeader = EH.h2([EP.classes(['header-headding'])], [EH.text('My Profile')]);
-      const fingerprint = createInputField('Fingerprint', 'my-fingerprint', [
-        EP.attribute('readonly', ''),
-        EP.attribute('value', state.myFingerprint),
-      ], '');
-      const name = createInputField('Name', 'my-name', [
-        EP.attribute('value', state.myName),
-        EP.eventListener('change', (ev) => {
-          const value = String(ev.target.value).trim();
-          if ('' == value) {
-            return;
-          }
-          myNameStore.setValue(value);
-        }),
-      ], 'Your name');
-      const inviteLink = createInputField('Invite Link', 'my-invite-link', [
-        EP.attribute('readonly', ''),
-        EP.attribute('value', state.myInviteLink),
-      ], '');
-      const myNumber = createInputField('My number', 'my-number', [
-        EP.attribute('readonly', ''),
-        EP.attribute('value', getMyNumber()),
-      ], '');
-
-      const newAccountName = createInputField('Name', 'new-account-name', [
-        EP.key('new-account-name'),
-        EP.eventListener('change', (ev) => {
-          //
-        }),
-      ], 'Name of your new account');
 
       const accounts = state.accounts;
       const accountOptions = [];
@@ -2203,6 +2174,37 @@ store.render(containerElement, async (state) => {
         ], [EH.text(name)]);
         accountOptions.push(option);
       }
+
+      const fingerprint = createInputField('Fingerprint', 'my-fingerprint', [
+        EP.attribute('readonly', ''),
+        EP.attribute('value', state.myFingerprint),
+      ], '');
+      const name = createInputField('Name', 'my-name', [
+        EP.key('my-name-' + currentPublicKey),
+        EP.attribute('value', state.myName),
+        EP.eventListener('change', (ev) => {
+          const value = String(ev.target.value).trim();
+          if ('' == value) {
+            return;
+          }
+          myNameStore.setValue(value);
+        }),
+      ], 'Your name');
+      const inviteLink = createInputField('Invite Link', 'my-invite-link', [
+        EP.attribute('readonly', ''),
+        EP.attribute('value', state.myInviteLink),
+      ], '');
+      const myNumber = createInputField('My number', 'my-number', [
+        EP.attribute('readonly', ''),
+        EP.attribute('value', getMyNumber()),
+      ], '');
+
+      const newAccountName = createInputField('Name', 'new-account-name', [
+        EP.key('new-account-name-' + currentPublicKey),
+        EP.eventListener('change', (ev) => {
+          //
+        }),
+      ], 'Name of your new account');
 
       mainContent = EH.div([
         EA.classes(['profile']),
