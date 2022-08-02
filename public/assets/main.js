@@ -766,7 +766,7 @@ wsMessageReceived.addListener((json) => {
             if (payload.recipient != recipient) {
               console.error(`Mismatch of server-returned bounce recipient: signed for: '%s' / reported: '%s'`, payload.recipient, recipient);
             }
-            console.warn('Bounced message to %s:', payload.recipient, message);
+            console.debug('Bounced message to %s:', payload.recipient, message);
           }
         })().catch((e) => {
           console.error(e);
@@ -1207,6 +1207,32 @@ store.subscribe(fileReceived, (state, aTransfer) => {
     fileSize: transfer.total_size,
     url: transfer.url,
   });
+  const {urlPath, urlQuery, urlHash} = state;
+  const query = new URLSearchParams(urlQuery);
+  if (urlPath != '/talk' || query.get('public_key') != publicKey || document.visibilityState == 'hidden') {
+    // chat not open, send notification
+    if (notificationAllowed()) {
+      const notification = new Notification('File received', {
+        body: friendName,
+        requireInteraction: false,
+        renotify: false,
+        tag: 'notification-new-message',
+        data: {
+          url: location.href,
+          clientId: sw.getClientId(),
+          targetUrl: new URL(targetUrl, location.href).href,
+        },
+      });
+      notification.addEventListener('click', (ev) => {
+        window.focus();
+        notification.close();
+        pageNavigate.dispatch(targetUrl);
+      });
+    }
+  } else if (urlPath == '/talk' && query.get('public_key') == publicKey) {
+    // talk visible, so flash screen
+    flashScreen.dispatch(null);
+  }
   return {
     ... state,
   };
