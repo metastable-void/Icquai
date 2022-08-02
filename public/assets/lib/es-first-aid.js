@@ -88,6 +88,16 @@ do {
 		nodeCrypto = require('crypto');
 	} catch (e) {}
 
+	let textEncoder;
+	if (globalThis.TextEncoder) {
+		textEncoder = new TextEncoder;
+	}
+
+	let textDecoder;
+	if (globalThis.TextDecoder) {
+		textDecoder = new TextDecoder;
+	}
+
 	const FirstAid = function FirstAid () {
 		if (!new.target) {
 			throw new TypeError(`FirstAid constructor called without 'new'`);
@@ -298,7 +308,7 @@ do {
 		},
 
 		// TODO: Throw on invalid surrogate pair
-		encodeString: (str) => new Uint8Array(function* () {
+		encodeString: textEncoder ? (str) => textEncoder.encode(str) : (str) => new Uint8Array(function* () {
 			for (const codePoint of firstAid.getCodePoints(str)) {
 				if (codePoint <= 0x7f) {
 					yield codePoint;
@@ -319,7 +329,7 @@ do {
 		}()),
 
 		// TODO: Throw on invalid surrogate pair
-		decodeString: (buffer) => String.fromCodePoint(... function* () {
+		decodeString: textDecoder ? (buffer) => textDecoder.decode(buffer) : (buffer) => String.fromCodePoint(... function* () {
 			const bytes = firstAid.toUint8Array(buffer);
 			let i = 0;
 			while (i < bytes.length) {
