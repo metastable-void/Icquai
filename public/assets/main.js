@@ -1193,6 +1193,7 @@ store.subscribe(fileReceived, (state, aTransfer) => {
       friendName = friend.savedName;
     }
   }
+  const targetUrl = `/talk?public_key=${encodeURIComponent(publicKey)}`;
   const query = new URLSearchParams(urlQuery);
   if (urlPath != '/talk' || query.get('public_key') != publicKey || document.visibilityState == 'hidden') {
     // chat not open, send notification
