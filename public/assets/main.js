@@ -1211,6 +1211,7 @@ store.subscribe(fileReceived, (state, aTransfer) => {
   const query = new URLSearchParams(urlQuery);
   if (urlPath != '/talk' || query.get('public_key') != publicKey || document.visibilityState == 'hidden') {
     // chat not open, send notification
+    console.info('File received, sending notification...');
     if (notificationAllowed()) {
       const notification = new Notification('File received', {
         body: friendName,
@@ -1231,6 +1232,7 @@ store.subscribe(fileReceived, (state, aTransfer) => {
     }
   } else if (urlPath == '/talk' && query.get('public_key') == publicKey) {
     // talk visible, so flash screen
+    console.info('File received, flashing screen...');
     flashScreen.dispatch(null);
   }
   return {
@@ -1339,7 +1341,7 @@ store.subscribe(channelTextUpdate, (state, action) => {
   if (urlPath != '/talk' || query.get('public_key') != publicKey || document.visibilityState == 'hidden') {
     // chat not open, send notification
     if (!previousText || previousText.text == '' && text != '') {
-      //
+      console.info('Message received, sending notification...');
       if (notificationAllowed()) {
         const notification = new Notification('New message', {
           body: friendName,
@@ -1362,6 +1364,7 @@ store.subscribe(channelTextUpdate, (state, action) => {
   } else if (urlPath == '/talk' && query.get('public_key') == publicKey) {
     // talk visible, so flash screen
     if (!previousText || previousText.text == '' && text != '') {
+      console.info('Message received, flashing screen...');
       flashScreen.dispatch(null);
     }
   }
