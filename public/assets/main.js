@@ -1184,7 +1184,15 @@ store.subscribe(fileReceived, (state, aTransfer) => {
    */
   const transfer = aTransfer;
   const {publicKey} = transfer;
-  const {urlPath, urlQuery, urlHash} = state;
+  const {urlPath, urlQuery} = state;
+  const {friends} = state;
+
+  let friendName = 'Unknown friend';
+  for (const friend of friends) {
+    if (friend.publicKey == publicKey) {
+      friendName = friend.savedName;
+    }
+  }
   const query = new URLSearchParams(urlQuery);
   if (urlPath != '/talk' || query.get('public_key') != publicKey || document.visibilityState == 'hidden') {
     // chat not open, send notification
