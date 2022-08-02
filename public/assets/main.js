@@ -1183,30 +1183,7 @@ store.subscribe(fileReceived, (state, aTransfer) => {
    * @type {FileTransfer}
    */
   const transfer = aTransfer;
-  // preview images
-  if ((transfer.file_type == 'image/png' || transfer.file_type == 'image/jpeg') && transfer.total_size < 10000000) {
-    const imageUrls = [];
-    const url = transfer.url;
-    imageUrls.push(url);
-
-    const {imagesShown} = state;
-    imagesShown[transfer.publicKey] = imageUrls;
-    return {
-      ... state,
-      imagesShown,
-    };
-  }
-  const {filesReceived} = state;
   const {publicKey} = transfer;
-  if (!(publicKey in filesReceived)) {
-    filesReceived[publicKey] = [];
-  }
-  filesReceived[publicKey].push({
-    fileName: transfer.file_name,
-    fileType: transfer.file_type,
-    fileSize: transfer.total_size,
-    url: transfer.url,
-  });
   const {urlPath, urlQuery, urlHash} = state;
   const query = new URLSearchParams(urlQuery);
   if (urlPath != '/talk' || query.get('public_key') != publicKey || document.visibilityState == 'hidden') {
@@ -1235,6 +1212,30 @@ store.subscribe(fileReceived, (state, aTransfer) => {
     console.info('File received, flashing screen...');
     flashScreen.dispatch(null);
   }
+
+  // preview images
+  if ((transfer.file_type == 'image/png' || transfer.file_type == 'image/jpeg') && transfer.total_size < 10000000) {
+    const imageUrls = [];
+    const url = transfer.url;
+    imageUrls.push(url);
+
+    const {imagesShown} = state;
+    imagesShown[transfer.publicKey] = imageUrls;
+    return {
+      ... state,
+      imagesShown,
+    };
+  }
+  const {filesReceived} = state;
+  if (!(publicKey in filesReceived)) {
+    filesReceived[publicKey] = [];
+  }
+  filesReceived[publicKey].push({
+    fileName: transfer.file_name,
+    fileType: transfer.file_type,
+    fileSize: transfer.total_size,
+    url: transfer.url,
+  });
   return {
     ... state,
   };
