@@ -303,6 +303,8 @@ const getMyNumber = () => {
   return rawNumber.slice(0, 4) + '-' + rawNumber.slice(4);
 };
 
+let cachedBase64PrivateKey;
+let cachedPublicKey;
 const getMyKeys = async () => {
   const base64PrivateKey = privateKeyStore.getValue();
   const privateKey = firstAid.decodeBase64(base64PrivateKey);
@@ -310,7 +312,9 @@ const getMyKeys = async () => {
   /**
    * @type {Uint8Array}
    */
-  const publicKey = await ed.getPublicKey(privateKey);
+  const publicKey = cachedBase64PrivateKey == base64PrivateKey ? cachedPublicKey : await ed.getPublicKey(privateKey);
+  cachedPublicKey = publicKey;
+  cachedBase64PrivateKey = base64PrivateKey;
 
   const sha256Fingerprint = await sha256(publicKey);
 
