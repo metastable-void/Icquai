@@ -164,14 +164,25 @@ self.addEventListener('notificationclick', ev => {
       type: 'window',
     });
     for (const client of windowClients) {
-      if ((!url || url == client.url) && (!clientId || client.id == clientId) && 'function' == typeof client.focus) {
+      if (client.id == clientId && 'function' == typeof client.focus) {
         await client.focus();
         notification.close();
         client.postMessage({
           command: 'notification_click',
           notificationData: data,
         });
-        break;
+        return;
+      }
+    }
+    for (const client of windowClients) {
+      if ((!url || url == client.url) && 'function' == typeof client.focus) {
+        await client.focus();
+        notification.close();
+        client.postMessage({
+          command: 'notification_click',
+          notificationData: data,
+        });
+        return;
       }
     }
   })(ev.notification));
