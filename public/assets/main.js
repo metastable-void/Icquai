@@ -71,6 +71,7 @@ import {
   storagePersistenceDisabled,
   requestStoragePersistence,
   updateNotificationPermission,
+  updateStorageEstimate,
 } from "./topics.js";
 
 const ed = nobleEd25519;
@@ -1163,15 +1164,26 @@ ringingBegin.addListener((base64PublicKey) => {
 });
 
 if ("storage" in navigator) {
-  const monitorStoragePersistence = () => void navigator.storage.persisted().then((persisted) => {
-    if (persisted) {
-      storagePersistenceEnabled.dispatch(null);
-    } else {
-      storagePersistenceDisabled.dispatch(null);
+  const monitorStorageStatus = () => {
+    navigator.storage.persisted().then((persisted) => {
+      if (persisted) {
+        storagePersistenceEnabled.dispatch(null);
+      } else {
+        storagePersistenceDisabled.dispatch(null);
+      }
+    }).catch((e) => {
+      console.error(e);
+    });
+    if ('estimate' in navigator.storage) {
+      navigator.storage.estimate().then((estimate) => {
+        updateStorageEstimate.dispatch(estimate);
+      }).catch((e) => {
+        console.error(e);
+      });
     }
-  });
-  monitorStoragePersistence();
-  setInterval(monitorStoragePersistence, 5000);
+  };
+  monitorStorageStatus();
+  setInterval(monitorStorageStatus, 5000);
 }
 
 requestStoragePersistence.addListener((_action) => {
@@ -1189,6 +1201,14 @@ requestStoragePersistence.addListener((_action) => {
   }
 });
 
+
+store.subscribe(updateStorageEstimate, (state, estimate) => {
+  return {
+    ... state,
+    storageQuota: estimate.quota,
+    storageUsage: estimate.usage,
+  };
+});
 
 store.subscribe(updateNotificationPermission, (state, permission) => {
   return {
@@ -3014,6 +3034,30 @@ store.render(containerElement, async (state) => {
         EP.attribute('value', permissionNotification),
         EP.attribute('readonly', ''),
       ]);
+      let storageQuota = 'Unknown';
+      if (state.storageQuota >= 0) {
+        storageQuota = (state.storageQuota / 1000).toFixed(2) + ' kB';
+      }
+      let storageUsage = 'Unknown';
+      if (state.storageUsage >= 0) {
+        storageUsage = (state.storageUsage / 1000).toFixed(2) + ' kB';
+      }
+      let storagePercent = 'Unknown';
+      if (state.storageQuota >= 0 && state.storageUsage >= 0) {
+        storagePercent = (state.storageUsage / state.storageQuota * 100).toFixed(2) + ' %';
+      }
+      const fieldStorageQuota = createInputTextarea('Storage available', 'settings-storage-quota', [
+        EP.attribute('value', storageQuota),
+        EP.attribute('readonly', ''),
+      ]);
+      const fieldStorageUsage = createInputTextarea('Storage used', 'settings-storage-usage', [
+        EP.attribute('value', storageUsage),
+        EP.attribute('readonly', ''),
+      ]);
+      const fieldStoragePercent = createInputTextarea('Storage percent used', 'settings-storage-percent', [
+        EP.attribute('value', storagePercent),
+        EP.attribute('readonly', ''),
+      ]);
       mainContent = EH.div([
         EA.classes(['profile']),
         EP.key('view-settings'),
@@ -3069,6 +3113,9 @@ store.render(containerElement, async (state) => {
         storagePersistence,
         ... storagePersistButton,
         fieldPermissionNotification,
+        fieldStorageQuota,
+        fieldStorageUsage,
+        fieldStoragePercent,
       ]);
       break;
     }
