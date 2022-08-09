@@ -2823,6 +2823,15 @@ store.render(containerElement, async (state) => {
         toasts.push(toast);
       }
 
+      if (!state.storagePersisted) {
+        const toast = createToast('Allow persistent storage to avoid losing your data in the app.', 'Allow', [
+          EP.eventListener('click', (ev) => {
+            requestStoragePersistence.dispatch(null);
+          }),
+        ]);
+        toasts.push(toast);
+      }
+
       let muteStatus;
       if (state.callOngoing) {
         muteStatus = EH.div([
