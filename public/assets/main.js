@@ -396,16 +396,6 @@ const notificationAllowed = () => {
   return false;
 };
 
-if (!window.Notification) {
-  updateNotificationPermission.dispatch('unsupported');
-} else if (Notification.permission == 'granted') {
-  updateNotificationPermission.dispatch('granted');
-} else if (Notification.permission == 'denied') {
-  updateNotificationPermission.dispatch('denied');
-} else {
-  updateNotificationPermission.dispatch('prompt');
-}
-
 
 /**
  * @type {WebSocket?}
@@ -1674,6 +1664,16 @@ themeColorStore.observe((color) => {
 accountsStore.observe((accounts) => {
   accountsChange.dispatch(accounts);
 });
+
+if (!window.Notification) {
+  updateNotificationPermission.dispatch('unsupported');
+} else if (Notification.permission == 'granted') {
+  updateNotificationPermission.dispatch('granted');
+} else if (Notification.permission == 'denied') {
+  updateNotificationPermission.dispatch('denied');
+} else {
+  updateNotificationPermission.dispatch('prompt');
+}
 
 const renderDrawer = (isOpen, mainContent, drawerContent, mainHeader, drawerHeader) => {
   return EH.div([
