@@ -86,3 +86,11 @@ export const getClientId = () => {
 };
 
 export const isEnabled = () => swStatus == 'ready';
+
+export const getRegistration = async () => {
+  if ('serviceWorker' in navigator) {
+    return await navigator.serviceWorker.getRegistration();
+  } else {
+    return undefined;
+  }
+};

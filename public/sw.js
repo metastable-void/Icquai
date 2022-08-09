@@ -39,6 +39,7 @@ const ASSETS = new URLSet([
   '/assets/main.js',
   '/assets/components/IcquaiTextarea.js',
   '/assets/lib/console.js',
+  '/assets/lib/notification.js',
   '/assets/lib/es-first-aid.d.ts',
   '/assets/lib/Eternity.js',
   '/assets/lib/es-first-aid.js',
@@ -109,7 +110,9 @@ self.addEventListener('activate', ev => {
 self.addEventListener('fetch', ev => {
   ev.respondWith((async (request) => {
     const cache = await caches.open(ASSETS_CACHE);
-    let match = await cache.match(request);
+    let match = await cache.match(request, {
+      ignoreSearch: true,
+    });
     const freshRequest = createFreshRequest(request);
     if (!match) {
       console.warn('Not cached:', request.url);
@@ -137,13 +140,23 @@ self.addEventListener('fetch', ev => {
 
 self.addEventListener('notificationclick', ev => {
   ev.waitUntil((async (notification) => {
-    console.log('sw: notificationclick', {
+    let data = notification.data;
+    if (!data) {
+      const iconUrl = new URL(notification.icon, location.href);
+      const query = iconUrl.searchParams.get('d');
+      try {
+        if (!query) throw undefined;
+        data = JSON.parse(query);
+      } catch (e) {
+        data = {};
+      }
+    }
+    console.info('sw: Notification clicked:', {
       title: notification.title,
       tag: notification.tag,
       body: notification.body,
-      data: notification.data,
+      data,
     });
-    const data = notification.data || {};
     const url = data.url || '';
     const clientId = data.clientId || null;
     const windowClients = await clients.matchAll({

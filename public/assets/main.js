@@ -30,6 +30,7 @@ import { app } from './app.js';
 import { store } from "./store.js";
 import { IcquaiTextarea } from "./components/IcquaiTextarea.js";
 import { Console } from "./lib/console.js";
+import { showNotification } from "./lib/notification.js";
 import {
   wsOpen,
   wsConnecting,
@@ -375,9 +376,11 @@ const requestNotificationPermission = async () => {
     const permission = await Notification.requestPermission();
     if (permission == 'granted') {
       updateNotificationPermission.dispatch('granted');
-      const notification = new Notification('Notification enabled!', {
+      showNotification('Notification enabled!', {
         body: 'You are in full control of which notification is shown.',
         requireInteraction: false,
+      }).catch((e) => {
+        console.error(e);
       });
     } else if (permission == 'denied') {
       updateNotificationPermission.dispatch('denied');
@@ -1143,22 +1146,21 @@ ringingBegin.addListener((base64PublicKey) => {
   }
   const callingFriendName = callingFriend ? callingFriend.savedName : 'Unknown friend';
   if (notificationAllowed()) {
-    const notification = new Notification('Call incoming', {
+    showNotification('Call incoming', {
       body: callingFriendName,
       requireInteraction: true,
       renotify: true,
       tag: 'notification-call-incoming',
-      data: {
-        url: location.href,
-        clientId: sw.getClientId(),
-      },
-    });
-    notification.addEventListener('click', (ev) => {
-      window.focus();
-      notification.close();
-      ringAccept(base64PublicKey).catch((e) => {
-        console.error(e);
+    }).then((notification) => {
+      notification.addEventListener('click', (ev) => {
+        window.focus();
+        notification.close();
+        ringAccept(base64PublicKey).catch((e) => {
+          console.error(e);
+        });
       });
+    }).catch((e) => {
+      console.error(e);
     });
   }
 });
@@ -1280,21 +1282,22 @@ store.subscribe(fileReceived, (state, aTransfer) => {
     // chat not open, send notification
     console.info('File received, sending notification...');
     if (notificationAllowed()) {
-      const notification = new Notification('File received', {
+      showNotification('File received', {
         body: friendName,
         requireInteraction: false,
         renotify: false,
         tag: 'notification-new-message',
         data: {
-          url: location.href,
-          clientId: sw.getClientId(),
           targetUrl: new URL(targetUrl, location.href).href,
         },
-      });
-      notification.addEventListener('click', (ev) => {
-        window.focus();
-        notification.close();
-        pageNavigate.dispatch(targetUrl);
+      }).then((notification) => {
+        notification.addEventListener('click', (ev) => {
+          window.focus();
+          notification.close();
+          pageNavigate.dispatch(targetUrl);
+        });
+      }).catch((e) => {
+        console.error(e);
       });
     }
   } else if (urlPath == '/talk' && query.get('public_key') == publicKey) {
@@ -1434,7 +1437,7 @@ store.subscribe(channelTextUpdate, (state, action) => {
     if (!previousText || previousText.text == '' && text != '') {
       console.info('Message received, sending notification...');
       if (notificationAllowed()) {
-        const notification = new Notification('New message', {
+        showNotification('New message', {
           body: friendName,
           requireInteraction: false,
           renotify: false,
@@ -1444,11 +1447,14 @@ store.subscribe(channelTextUpdate, (state, action) => {
             clientId: sw.getClientId(),
             targetUrl: new URL(targetUrl, location.href).href,
           },
-        });
-        notification.addEventListener('click', (ev) => {
-          window.focus();
-          notification.close();
-          pageNavigate.dispatch(targetUrl);
+        }).then((notification) => {
+          notification.addEventListener('click', (ev) => {
+            window.focus();
+            notification.close();
+            pageNavigate.dispatch(targetUrl);
+          });
+        }).catch((e) => {
+          console.error(e);
         });
       }
     }
