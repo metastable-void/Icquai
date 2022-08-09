@@ -60,6 +60,9 @@ export const displayImages = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'images.
 export const fileReceived = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'file.received'); // <file transfer object>
 export const flashScreen = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'screen.flash'); // <void>
 export const accountsChange = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'accounts.change'); // <accounts>
+export const storagePersistenceEnabled = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'storage.persistence.enabled'); // <void>
+export const storagePersistenceDisabled = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'storage.persistence.disabled'); // <void>
+export const requestStoragePersistence = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'storage.persistence.request'); // <void>
 
 
 // global event listeners

@@ -53,5 +53,6 @@ export const store = app.getStore("store", (state) => {
     imagesShown: {},
     filesReceived: {},
     accounts: [],
+    storagePersisted: false,
   };
 });

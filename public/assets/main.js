@@ -67,6 +67,9 @@ import {
   fileReceived,
   flashScreen,
   accountsChange,
+  storagePersistenceEnabled,
+  storagePersistenceDisabled,
+  requestStoragePersistence,
 } from "./topics.js";
 
 const ed = nobleEd25519;
@@ -1153,6 +1156,47 @@ ringingBegin.addListener((base64PublicKey) => {
   }
 });
 
+if ("storage" in navigator) {
+  const monitorStoragePersistence = () => void navigator.storage.persisted().then((persisted) => {
+    if (persisted) {
+      storagePersistenceEnabled.dispatch(null);
+    } else {
+      storagePersistenceDisabled.dispatch(null);
+    }
+  });
+  monitorStoragePersistence();
+  setInterval(monitorStoragePersistence, 5000);
+}
+
+requestStoragePersistence.addListener((_action) => {
+  try {
+    navigator.storage.persist().then((persisted) => {
+      if (persisted) {
+        storagePersistenceEnabled.dispatch(null);
+        console.info('Storage persistence enabled');
+      } else {
+        storagePersistenceDisabled.dispatch(null);
+      }
+    });
+  } catch (e) {
+    console.error(e);
+  }
+});
+
+
+store.subscribe(storagePersistenceEnabled, (state, _action) => {
+  return {
+    ... state,
+    storagePersisted: true,
+  };
+});
+
+store.subscribe(storagePersistenceDisabled, (state, _action) => {
+  return {
+    ... state,
+    storagePersisted: false,
+  };
+});
 
 store.subscribe(ringingBegin, (state, publicKey) => {
   return {
@@ -2901,6 +2945,10 @@ store.render(containerElement, async (state) => {
         EP.attribute('value', app.clientId),
         EP.attribute('readonly', ''),
       ]);
+      const storagePersistence = createInputTextarea('Persistent storage', 'settings-persistent-storage', [
+        EP.attribute('value', state.storagePersisted ? 'Enabled' : 'Disabled'),
+        EP.attribute('readonly', ''),
+      ]);
       mainContent = EH.div([
         EA.classes(['profile']),
         EP.key('view-settings'),
@@ -2953,6 +3001,7 @@ store.render(containerElement, async (state) => {
         uaField,
         clientIdField,
         sessionIdField,
+        storagePersistence,
       ]);
       break;
     }
