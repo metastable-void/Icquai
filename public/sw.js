@@ -168,7 +168,7 @@ self.addEventListener('notificationclick', ev => {
         await client.focus();
         notification.close();
         client.postMessage({
-          type: 'notification_click',
+          command: 'notification_click',
           notificationData: data,
         });
         break;
