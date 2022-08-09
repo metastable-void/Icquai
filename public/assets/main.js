@@ -73,6 +73,7 @@ import {
   requestStoragePersistence,
   updateNotificationPermission,
   updateStorageEstimate,
+  swNotificationClicked,
 } from "./topics.js";
 
 const ed = nobleEd25519;
@@ -1145,12 +1146,17 @@ ringingBegin.addListener((base64PublicKey) => {
     }
   }
   const callingFriendName = callingFriend ? callingFriend.savedName : 'Unknown friend';
+  const targetUrl = `/talk?public_key=${encodeURIComponent(base64PublicKey)}`;
   if (notificationAllowed()) {
     showNotification('Call incoming', {
       body: callingFriendName,
       requireInteraction: true,
       renotify: true,
       tag: 'notification-call-incoming',
+      data: {
+        targetUrl: new URL(targetUrl, location.href).href,
+        ringAccept: base64PublicKey,
+      },
     }).then((notification) => {
       notification.addEventListener('click', (ev) => {
         window.focus();
@@ -1200,6 +1206,17 @@ requestStoragePersistence.addListener((_action) => {
     });
   } catch (e) {
     console.error(e);
+  }
+});
+
+swNotificationClicked.addListener((data) => {
+  if (data.targetUrl) {
+    pageNavigate.dispatch(data.targetUrl);
+  }
+  if (data.ringAccept) {
+    ringAccept(data.ringAccept).catch((e) => {
+      console.error(e);
+    });
   }
 });
 
@@ -1443,8 +1460,6 @@ store.subscribe(channelTextUpdate, (state, action) => {
           renotify: false,
           tag: 'notification-new-message',
           data: {
-            url: location.href,
-            clientId: sw.getClientId(),
             targetUrl: new URL(targetUrl, location.href).href,
           },
         }).then((notification) => {

@@ -167,6 +167,10 @@ self.addEventListener('notificationclick', ev => {
       if ((!url || url == client.url) && (!clientId || client.id == clientId) && 'function' == typeof client.focus) {
         await client.focus();
         notification.close();
+        client.postMessage({
+          type: 'notification_click',
+          notificationData: data,
+        });
         break;
       }
     }

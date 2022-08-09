@@ -22,6 +22,7 @@
 
 import { app } from './app.js';
 import { Console } from './lib/console.js';
+import { swNotificationClicked } from './topics.js';
 
 const console = new Console('sw-register');
 
@@ -71,6 +72,11 @@ if ('serviceWorker' in navigator) {
         swClientId = data.clientId;
         console.log(`Learned: my clientId=${swClientId}`);
         console.log('Current ServiceWorker clients:', data.clients);
+        break;
+      }
+
+      case 'notification_click': {
+        swNotificationClicked.dispatch(data.notificationData);
         break;
       }
 

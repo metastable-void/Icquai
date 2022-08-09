@@ -21,6 +21,10 @@
 
 import * as sw from '../sw-register.js';
 import './es-first-aid.js';
+import { Console } from './console.js';
+import { swNotificationClicked } from '../topics.js';
+
+const console = new Console('Notification');
 
 export const showNotification = async (title, options = {}) => {
   if (!options || 'object' != typeof options) {
