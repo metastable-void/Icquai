@@ -76,6 +76,7 @@ if ('serviceWorker' in navigator) {
       }
 
       case 'notification_click': {
+        console.log('Notification click received:', data.notificationData);
         swNotificationClicked.dispatch(data.notificationData);
         break;
       }
