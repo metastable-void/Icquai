@@ -3032,9 +3032,11 @@ store.render(containerElement, async (state) => {
         EP.key('view-help'),
       ], [
         EH.h2([], [EH.text('Icquai')]),
-        EH.p([], [EH.text(`
-          Future of realtime communication realized.
-        `)]),
+        EH.p([], [EH.em([], [
+          EH.text(`
+            Future of realtime communication realized.
+          `)
+        ])]),
         EH.table([], [
           EH.tbody([], [
             EH.tr([], [
