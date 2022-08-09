@@ -34,6 +34,8 @@ let activeServiceWorker;
 
 let swClientId;
 
+let swStatus = 'unsupported';
+
 /** @param {ServiceWorker} sw */
 const newServiceWorkerCallback = (sw) => {
   if (sw == activeServiceWorker) return;
@@ -53,6 +55,7 @@ if ('serviceWorker' in navigator) {
     console.error('ServiceWorker registration failed:', e);
   });
   navigator.serviceWorker.ready.then(reg => {
+    swStatus = 'ready';
     if (!reg.active) return;
     newServiceWorkerCallback(reg.active);
   });
@@ -81,3 +84,5 @@ if ('serviceWorker' in navigator) {
 export const getClientId = () => {
   return swClientId;
 };
+
+export const isEnabled = () => swStatus == 'ready';

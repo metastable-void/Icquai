@@ -3058,6 +3058,10 @@ store.render(containerElement, async (state) => {
         EP.attribute('value', storagePercent),
         EP.attribute('readonly', ''),
       ]);
+      const fieldServiceWorkerStatus = createInputTextarea('ServiceWorker', 'settings-serviceworker-status', [
+        EP.attribute('value', sw.isEnabled() ? 'Enabled' : 'Disabled'),
+        EP.attribute('readonly', ''),
+      ]);
       mainContent = EH.div([
         EA.classes(['profile']),
         EP.key('view-settings'),
@@ -3116,6 +3120,7 @@ store.render(containerElement, async (state) => {
         fieldStorageQuota,
         fieldStorageUsage,
         fieldStoragePercent,
+        fieldServiceWorkerStatus,
       ]);
       break;
     }
