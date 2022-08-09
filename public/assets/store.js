@@ -54,5 +54,8 @@ export const store = app.getStore("store", (state) => {
     filesReceived: {},
     accounts: [],
     storagePersisted: false,
+    permissionNotification: 'unsupported', // 'unsupported' | 'prompt' | 'granted' | 'denied'
+    storageQuota: -1,
+    storageUsage: -1,
   };
 });

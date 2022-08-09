@@ -70,6 +70,7 @@ import {
   storagePersistenceEnabled,
   storagePersistenceDisabled,
   requestStoragePersistence,
+  updateNotificationPermission,
 } from "./topics.js";
 
 const ed = nobleEd25519;
@@ -362,18 +363,23 @@ const requestNotificationPermission = async () => {
   const console = new Console('Notifications');
   if (!window.Notification) {
     console.warn('Notification not supported');
+    updateNotificationPermission.dispatch('unsupported');
   } else if (Notification.permission == 'granted') {
     console.debug('Notification already granted');
+    updateNotificationPermission.dispatch('granted');
   } else if (Notification.permission == 'denied') {
     console.debug('Notification already denied by user');
+    updateNotificationPermission.dispatch('denied');
   } else {
     const permission = await Notification.requestPermission();
     if (permission == 'granted') {
+      updateNotificationPermission.dispatch('granted');
       const notification = new Notification('Notification enabled!', {
         body: 'You are in full control of which notification is shown.',
         requireInteraction: false,
       });
     } else if (permission == 'denied') {
+      updateNotificationPermission.dispatch('denied');
       console.debug('Notification just denied by user');
     }
   }
@@ -389,6 +395,16 @@ const notificationAllowed = () => {
   }
   return false;
 };
+
+if (!window.Notification) {
+  updateNotificationPermission.dispatch('unsupported');
+} else if (Notification.permission == 'granted') {
+  updateNotificationPermission.dispatch('granted');
+} else if (Notification.permission == 'denied') {
+  updateNotificationPermission.dispatch('denied');
+} else {
+  updateNotificationPermission.dispatch('prompt');
+}
 
 
 /**
@@ -1183,6 +1199,13 @@ requestStoragePersistence.addListener((_action) => {
   }
 });
 
+
+store.subscribe(updateNotificationPermission, (state, permission) => {
+  return {
+    ... state,
+    permissionNotification: permission,
+  };
+});
 
 store.subscribe(storagePersistenceEnabled, (state, _action) => {
   return {
@@ -2968,6 +2991,29 @@ store.render(containerElement, async (state) => {
           ], [EH.text('Enable persistent storage')]),
         ]));
       }
+      let permissionNotification;
+      switch (state.permissionNotification) {
+        case 'prompt': {
+          permissionNotification = 'Disabled';
+          break;
+        }
+        case 'granted': {
+          permissionNotification = 'Enabled';
+          break;
+        }
+        case 'denied': {
+          permissionNotification = 'Denied by user';
+          break;
+        }
+        default: {
+          permissionNotification = 'Not supported';
+          break;
+        }
+      }
+      const fieldPermissionNotification = createInputTextarea('Notifications', 'settings-permission-notification', [
+        EP.attribute('value', permissionNotification),
+        EP.attribute('readonly', ''),
+      ]);
       mainContent = EH.div([
         EA.classes(['profile']),
         EP.key('view-settings'),
@@ -3022,6 +3068,7 @@ store.render(containerElement, async (state) => {
         sessionIdField,
         storagePersistence,
         ... storagePersistButton,
+        fieldPermissionNotification,
       ]);
       break;
     }

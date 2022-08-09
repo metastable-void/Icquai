@@ -63,6 +63,7 @@ export const accountsChange = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'accoun
 export const storagePersistenceEnabled = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'storage.persistence.enabled'); // <void>
 export const storagePersistenceDisabled = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'storage.persistence.disabled'); // <void>
 export const requestStoragePersistence = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'storage.persistence.request'); // <void>
+export const updateNotificationPermission = app.getTopic(Eternity.TOPIC_SCOPE_SESSION, 'permission.update.notification'); // 'unsupported' | 'prompt' | 'granted' | 'denied'
 
 
 // global event listeners
