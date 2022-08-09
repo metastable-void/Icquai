@@ -706,7 +706,7 @@ export class HtmlView {
       } else if (attribute instanceof ViewKey) {
         this.#key = attribute.key;
       } else {
-        throw new TypeError('Invalid ViewAttribute');
+        throw new TypeError('Invalid ViewProperty');
       }
     }
   }
@@ -986,7 +986,9 @@ const render = (element, aViews) => {
         prevNode = node;
         //console.log('Found at %d: searched from index %d, tagName: %s, key: %s', i, nodeIndex, view.tagName, view.key);
         if (node.nodeName == '#text' && view instanceof HtmlText) {
-          node.textContent = view.text;
+          if (node.textContent != view.text) {
+            node.textContent = view.text;
+          }
         } else if (node instanceof HTMLElement) {
           const eventListeners = registeredEventListeners.get(node);
           if (eventListeners) {
