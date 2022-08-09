@@ -2949,6 +2949,16 @@ store.render(containerElement, async (state) => {
         EP.attribute('value', state.storagePersisted ? 'Enabled' : 'Disabled'),
         EP.attribute('readonly', ''),
       ]);
+      const storagePersistButton = [];
+      if (!state.storagePersisted) {
+        storagePersistButton.push(EH.p([], [
+          EH.button([
+            EP.eventListener('click', (ev) => {
+              requestStoragePersistence.dispatch(null);
+            }),
+          ], [EH.text('Enable persistent storage')]),
+        ]));
+      }
       mainContent = EH.div([
         EA.classes(['profile']),
         EP.key('view-settings'),
@@ -3002,6 +3012,7 @@ store.render(containerElement, async (state) => {
         clientIdField,
         sessionIdField,
         storagePersistence,
+        ... storagePersistButton,
       ]);
       break;
     }
