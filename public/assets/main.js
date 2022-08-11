@@ -784,7 +784,9 @@ wsMessageReceived.addListener((json) => {
             if (payload.recipient != recipient) {
               console.error(`Mismatch of server-returned bounce recipient: signed for: '%s' / reported: '%s'`, payload.recipient, recipient);
             }
-            console.debug('Bounced message to %s:', payload.recipient, message);
+            if (verboseMessageLogging) {
+              console.debug('Bounced message to %s:', payload.recipient, message);
+            }
           }
         })().catch((e) => {
           console.error(e);
@@ -801,7 +803,7 @@ wsMessageReceived.addListener((json) => {
             }
             switch (message.type) {
               case 'ping': {
-                console.debug('Received ping; ponging.');
+                //console.debug('Received ping; ponging.');
                 const name = myNameStore.getValue();
                 const pongMsg = {
                   type: 'pong',
@@ -1564,6 +1566,7 @@ store.subscribe(friendsInviteNicknameChange, (state, friendsInviteNickname) => {
 store.subscribe(friendBecomingOnline, (state, publicKey) => {
   const {onlineFriends} = state;
   if (!onlineFriends.includes(publicKey)) {
+    console.debug('Friend becoming online: %s', publicKey);
     onlineFriends.push(publicKey);
   }
   return {
@@ -1575,6 +1578,9 @@ store.subscribe(friendBecomingOnline, (state, publicKey) => {
 store.subscribe(friendBecomingOffline, (state, publicKey) => {
   const {onlineFriends} = state;
   const set = new Set(onlineFriends);
+  if (set.has(publicKey)) {
+    console.debug('Friend becoming offline: %s', publicKey);
+  }
   set.delete(publicKey);
   return {
     ... state,
