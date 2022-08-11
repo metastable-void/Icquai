@@ -801,6 +801,7 @@ wsMessageReceived.addListener((json) => {
             if (verboseMessageLogging) {
               console.debug('Message from %s:', publicKey, message);
             }
+            friendBecomingOnline.dispatch(publicKey);
             switch (message.type) {
               case 'ping': {
                 //console.debug('Received ping; ponging.');
